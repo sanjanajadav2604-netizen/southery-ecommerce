@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Southery Sentie</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="description"
+        content="Get in touch with Southery Sentie for support, queries, or feedback. We are here to help you with your jewelry needs.">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/tailwind.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Contact Form logic is handled via backend API in layout.js -->
+</head>
+
+<body class="bg-[#F7F6F0] font-body">
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        &#10024; Free shipping on all orders over &#8377;4,999 + Extra 10% off on your first purchase! Use code: FIRST10
+    </div>
+    <!-- Navigation -->
+    <nav
+        class="site-header sticky top-0 z-40 flex items-center px-4 lg:px-12 h-20 bg-cream/95 backdrop-blur-md border-b border-black/5">
+        <div class="max-w-7xl w-full mx-auto flex items-center justify-between">
+            <div class="flex items-center z-10 transition-transform duration-300 hover:scale-[1.02]">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div
+                        class="w-10 h-10 rounded-full bg-terracotta flex items-center justify-center text-white font-display text-lg shadow-lg group-hover:rotate-[15deg] transition-all">
+                        S</div>
+                    <div class="flex items-baseline">
+                        <span
+                            class="font-display italic font-bold text-[36px] lg:text-[40px] text-terracotta leading-none">Southery</span>
+                        <span
+                            class="font-display font-semibold text-[32px] lg:text-[36px] text-terracotta leading-none ml-1">Sentie</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="absolute left-1/2 transform -translate-x-1/2 hidden md:flex items-center gap-1">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="shop.html" class="nav-link">Shop</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+
+            <div class="hidden md:flex items-center gap-4 z-10">
+                <button onclick="toggleSearch()" aria-label="Search" class="header-icon-btn"><svg class="w-5 h-5"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg></button>
+                <button onclick="toggleWishlist()" aria-label="Wishlist" class="header-icon-btn"><svg class="w-5 h-5"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg><span id="d-wish-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleCart()" aria-label="Cart" class="header-icon-btn"><svg class="w-5 h-5"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg><span id="d-cart-count" class="icon-badge hidden">0</span></button>
+                <div id="auth-section" class="flex items-center">
+                    <div id="auth-default" onclick="openAuthModal()"
+                        class="flex items-center gap-2 px-3 py-2 rounded-full cursor-pointer bg-white/50 border border-transparent hover:bg-white hover:border-terracotta/20 hover:shadow-md active:scale-95 transition-all">
+                        <div
+                            class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white shadow-sm">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg></div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-charcoal">Sign In</span>
+                    </div>
+                    <div id="auth-logged-in" class="hidden items-center gap-3 cursor-pointer group"
+                        onclick="window.location.href='account.html'">
+                        <div
+                            class="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full group-hover:bg-white transition-colors">
+                            <div
+                                class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white text-xs font-bold ring-2 ring-terracotta/10">
+                                <span id="user-avatar-initial">U</span></div>
+                            <span class="text-sm font-semibold text-charcoal" id="user-name-display">User</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex md:hidden items-center gap-1 z-10">
+                <button onclick="toggleSearch()" aria-label="Search"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg></button>
+                <button onclick="toggleWishlist()" aria-label="Wishlist"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg><span id="m-top-wish-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleCart()" aria-label="Cart"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg><span id="m-top-cart-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleMobileMenu()" aria-label="Mobile Menu"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal"><svg class="w-6 h-6" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg></button>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <!-- Main Content -->
+    <main class="relative bg-cream min-h-screen pt-32 pb-20 overflow-hidden">
+        <!-- Subtle Background Deco -->
+        <div
+            class="absolute top-0 right-0 w-full h-[500px] bg-gradient-to-b from-sage/5 to-transparent pointer-events-none">
+        </div>
+        <div class="absolute -top-32 -right-32 w-96 h-96 bg-terracotta/5 rounded-full blur-[100px] pointer-events-none">
+        </div>
+
+        <div class="atelier-container relative z-10">
+            <div class="text-center mb-16 lg:mb-24 max-w-2xl mx-auto">
+                <p class="text-[11px] tracking-[0.4em] uppercase text-terracotta font-bold mb-6">Connect</p>
+                <h1 class="font-display text-5xl md:text-7xl font-bold text-charcoal mb-8 leading-tight drop-shadow-sm">
+                    We'd Love to Hear <br> <span class="italic text-sage">From You</span>
+                </h1>
+                <p class="text-gray-500 text-base md:text-lg mx-auto leading-relaxed font-light">
+                    Whether you have a question about our collections, shipping, or anything else, our team is ready to
+                    answer all your questions.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start mb-24">
+                <!-- Contact Form -->
+                <div
+                    class="bg-white rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)] border border-gray-100/50 hover:shadow-[0_20px_50px_-20px_rgba(196,92,38,0.05)] transition-shadow duration-500 relative group overflow-hidden">
+                    <form id="contact-form" class="space-y-8 relative z-10" onsubmit="handleContactForm(event)">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div class="group/input">
+                                <label
+                                    class="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3 group-focus-within/input:text-terracotta transition-colors">Full
+                                    Name</label>
+                                <input type="text" id="name"
+                                    class="w-full bg-gray-50 border border-transparent border-b-gray-200 px-4 py-3 rounded-xl focus:outline-none focus:bg-white focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 text-sm transition-all duration-300 shadow-inner"
+                                    placeholder="E.g. Jane Doe" required>
+                            </div>
+                            <div class="group/input">
+                                <label
+                                    class="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3 group-focus-within/input:text-terracotta transition-colors">Email
+                                    Address</label>
+                                <input type="email" id="email"
+                                    class="w-full bg-gray-50 border border-transparent border-b-gray-200 px-4 py-3 rounded-xl focus:outline-none focus:bg-white focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 text-sm transition-all duration-300 shadow-inner"
+                                    placeholder="jane@example.com" required>
+                            </div>
+                        </div>
+                        <div class="group/input">
+                            <label
+                                class="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3 group-focus-within/input:text-terracotta transition-colors">Subject</label>
+                            <select id="subject"
+                                class="w-full bg-gray-50 border border-transparent border-b-gray-200 px-4 py-3 rounded-xl focus:outline-none focus:bg-white focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 text-sm transition-all duration-300 shadow-inner cursor-pointer"
+                                required>
+                                <option value="" disabled selected>Select a topic</option>
+                                <option value="Order Status">Order Status</option>
+                                <option value="Product Inquiry">Product Inquiry</option>
+                                <option value="Exchange/Return">Exchange/Return</option>
+                                <option value="Business Inquiry">Business Inquiry</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="group/input">
+                            <label
+                                class="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3 group-focus-within/input:text-terracotta transition-colors">Message</label>
+                            <textarea id="message" rows="5"
+                                class="w-full bg-gray-50 border border-transparent border-b-gray-200 px-4 py-3 rounded-xl focus:outline-none focus:bg-white focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 text-sm transition-all duration-300 shadow-inner resize-none"
+                                placeholder="How can we help you?" required></textarea>
+                        </div>
+
+                        <!-- Honeypot Field (Hidden from humans, filled by bots) -->
+                        <div style="display:none !important;">
+                            <label>Leave this field empty</label>
+                            <input type="text" id="website" name="website" autocomplete="off">
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-terracotta text-white rounded-xl font-bold uppercase tracking-widest text-[11px] py-4 shadow-[0_10px_30px_-10px_rgba(196,92,38,0.5)] hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(196,92,38,0.7)] transition-all duration-300 flex justify-center items-center gap-2 relative overflow-hidden group/btn">
+                            <span class="relative z-10">Send Message</span>
+                        </button>
+                        <div id="form-success"
+                            class="hidden !mt-6 p-4 rounded-xl bg-sage/10 border border-sage/20 flex flex-col sm:flex-row items-center sm:items-start gap-3 text-sage animate-fade-in">
+                            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <p class="text-[13px] font-semibold text-center sm:text-left leading-relaxed">Message Sent!
+                                <br> <span class="font-normal text-gray-500">We will get back to you within 24
+                                    hours.</span></p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="space-y-10">
+                    <div class="grid sm:grid-cols-2 gap-8">
+                        <div
+                            class="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                            <div
+                                class="w-14 h-14 rounded-[20px] bg-terracotta/5 flex items-center justify-center text-terracotta mb-6 group-hover:bg-terracotta group-hover:text-white transition-all">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h3 class="font-display text-2xl font-bold text-charcoal mb-2">Email Us</h3>
+                            <a href="mailto:hello@southerysentie.com"
+                                class="text-terracotta font-semibold text-sm hover:underline tracking-wide">hello@southerysentie.com</a>
+                        </div>
+                        <div
+                            class="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                            <div
+                                class="w-14 h-14 rounded-[20px] bg-sage/5 flex items-center justify-center text-sage mb-6 group-hover:bg-sage group-hover:text-white transition-all">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h3 class="font-display text-2xl font-bold text-charcoal mb-2">Call Us</h3>
+                            <a href="tel:+919624118668"
+                                class="text-sage font-semibold text-sm hover:underline tracking-wide">+91 96241
+                                18668</a>
+                        </div>
+                    </div>
+                    <!-- Map Placeholder -->
+                    <div
+                        class="relative rounded-[32px] overflow-hidden h-64 shadow-lg bg-gray-200 border border-white/50 group">
+                        <img loading="lazy"
+                            src="https://images.unsplash.com/photo-1524666643752-b381eb00effb?w=800&q=80"
+                            class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:scale-105 transition-transform duration-700">
+                        <div
+                            class="absolute inset-0 flex items-center justify-center bg-charcoal/40 backdrop-blur-[2px]">
+                            <div
+                                class="text-center bg-white/95 px-8 py-6 rounded-2xl shadow-2xl border border-white/50">
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-terracotta mb-2">Office
+                                </p>
+                                <p class="text-sm font-semibold text-charcoal text-center leading-relaxed">B/46 Kartik
+                                    Nagar<br>Ahmedabad, India</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ SECTION -->
+            <div class="max-w-4xl mx-auto mb-24">
+                <div class="text-center mb-16">
+                    <p class="text-[11px] tracking-[0.4em] uppercase text-sage font-bold mb-6">Support</p>
+                    <h2 class="font-display text-2xl xs:text-3xl md:text-5xl font-bold text-charcoal">Common Questions
+                    </h2>
+                </div>
+                <div class="space-y-6">
+                    <div class="faq-card bg-white rounded-2xl p-6 md:p-8 cursor-pointer border border-gray-100 hover:shadow-lg transition-all"
+                        onclick="toggleContactFAQ(this)">
+                        <h3 class="font-bold text-charcoal flex justify-between items-center text-lg">
+                            How long does shipping take?
+                            <svg class="w-5 h-5 text-terracotta transition-transform duration-300" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"></path>
+                            </svg>
+                        </h3>
+                        <div class="faq-content overflow-hidden transition-all duration-300 max-h-0 opacity-0 mt-0">
+                            <p class="text-sm text-gray-500 leading-relaxed font-light mt-4">Most orders are delivered
+                                within 3-5 business days across India.</p>
+                        </div>
+                    </div>
+                    <div class="faq-card bg-white rounded-2xl p-6 md:p-8 cursor-pointer border border-gray-100 hover:shadow-lg transition-all"
+                        onclick="toggleContactFAQ(this)">
+                        <h3 class="font-bold text-charcoal flex justify-between items-center text-lg">
+                            Is your jewelry anti-tarnish?
+                            <svg class="w-5 h-5 text-terracotta transition-transform duration-300" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"></path>
+                            </svg>
+                        </h3>
+                        <div class="faq-content overflow-hidden transition-all duration-300 max-h-0 opacity-0 mt-0">
+                            <p class="text-sm text-gray-500 leading-relaxed font-light mt-4">Yes, our anti-tarnish
+                                collection is water-resistant and durable, made from high-quality stainless steel with
+                                18k gold PVD coating.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#1c1917] text-white pt-12 pb-16 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto w-full px-4">
+            <div class="mb-16">
+                <div
+                    class="bg-white/5 border border-white/10 rounded-[32px] md:rounded-[40px] p-6 xs:p-10 md:p-20 flex flex-col md:flex-row items-center justify-between gap-16 relative overflow-hidden group">
+                    <div
+                        class="absolute top-0 right-0 w-64 h-64 bg-terracotta/10 rounded-full blur-[100px] -mr-32 -mt-32">
+                    </div>
+                    <div class="relative z-10 max-w-lg">
+                        <h3
+                            class="font-display text-2xl xs:text-3xl md:text-5xl font-bold mb-4 md:mb-6 text-white text-center md:text-left">
+                            Join the <span class="text-terracotta italic font-medium">Sentie</span> Inner Circle</h3>
+                        <p class="text-gray-400 text-sm md:text-base leading-relaxed text-center md:text-left">Subscribe
+                            to receive early access to new collections, style inspiration, and exclusive offers.</p>
+                    </div>
+                    <form class="relative z-10 w-full md:w-auto flex flex-col sm:flex-row gap-6"
+                        onsubmit="handleNewsletter(event)">
+                        <input type="email" placeholder="Email Address" required
+                            class="bg-white/10 border border-white/20 px-8 py-5 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-terracotta transition-all w-full min-w-0">
+                        <button type="submit"
+                            class="px-12 py-5 bg-terracotta text-white rounded-full font-bold hover:scale-105 active:scale-95 transition-all shadow-xl shadow-terracotta/20">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-20 border-b border-white/[0.05] pb-16 lg:pb-24">
+                <div class="col-span-1 md:col-span-1">
+                    <a href="index.html" class="flex items-center gap-2 mb-8">
+                        <div
+                            class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white font-display text-sm">
+                            S</div>
+                        <span class="font-display text-lg font-semibold">Southery Sentie</span>
+                    </a>
+                    <p class="text-[13px] text-gray-500 leading-relaxed mb-8">Crafting timeless elegance for the modern
+                        soul. Sustainable, handcrafted, and designed to last generations.</p>
+                    <div class="flex gap-4">
+                        <a href="https://instagram.com/southerysentie" target="_blank"
+                            class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-terracotta hover:text-white transition-all"><svg
+                                class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.258-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg></a>
+                        <a href="https://x.com/southerysentie" target="_blank"
+                            class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-terracotta hover:text-white transition-all"><svg
+                                class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.632 5.905-5.632Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+                            </svg></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-xs uppercase tracking-wider text-white mb-4">Adornments</h4>
+                    <div class="flex flex-col gap-5">
+                        <a href="shop.html?category=necklace"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Necklaces</a>
+                        <a href="shop.html?category=earring"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Earrings</a>
+                        <a href="shop.html?category=ring"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Rings</a>
+                        <a href="shop.html?category=bracelet"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Bracelets</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-xs uppercase tracking-wider text-white mb-4">Care & Support</h4>
+                    <div class="flex flex-col gap-5">
+                        <a href="order-tracking.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Track
+                            Order</a>
+                        <a href="shipping.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Shipping &
+                            Returns</a>
+                        <a href="care-guide.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Jewelry
+                            Care Guide</a>
+                        <a href="faq.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">FAQ</a>
+                        <a href="contact.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Contact
+                            Boutique</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-xs uppercase tracking-wider text-white mb-4">Our Story</h4>
+                    <div class="flex flex-col gap-5">
+                        <a href="about.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">The
+                            Legacy</a>
+                        <a href="privacy.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Privacy
+                            Policy</a>
+                        <a href="terms.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Terms of
+                            Service</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-[10px] text-gray-600 uppercase tracking-widest font-bold">&copy; <span id="yr"></span>
+                    Southery Sentie. Handcrafted with love.</p>
+                <div class="flex items-center gap-6 grayscale opacity-30">
+                    <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
+                        class="h-4">
+                    <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+                        class="h-6">
+                    <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                        class="h-4">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/products.js"></script>
+    <script src="js/layout.js"></script>
+    <script>
+
+
+        function toggleContactFAQ(el) {
+            const content = el.querySelector('.faq-content');
+            const icon = el.querySelector('svg');
+
+            // Close others
+            document.querySelectorAll('.faq-card').forEach(card => {
+                if (card !== el) {
+                    card.querySelector('.faq-content').style.maxHeight = '0';
+                    card.querySelector('.faq-content').style.opacity = '0';
+                    card.querySelector('.faq-content').classList.remove('mt-4');
+                    card.querySelector('svg').style.transform = 'rotate(0deg)';
+                }
+            });
+
+            if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+                content.style.maxHeight = '0';
+                content.style.opacity = '0';
+                content.classList.remove('mt-4');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('mt-4');
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.opacity = '1';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
+</body>
+
+</html>

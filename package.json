@@ -1,0 +1,22 @@
+{
+  "name": "southery-website",
+  "version": "1.0.0",
+  "description": "Southery Sentie — Premium Handcrafted Jewelry E-Commerce Website",
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./src/input.css -o ./css/tailwind.css --minify",
+    "watch:css": "npx tailwindcss -i ./src/input.css -o ./css/tailwind.css --watch"
+  },
+  "keywords": [
+    "jewelry",
+    "ecommerce",
+    "tailwindcss"
+  ],
+  "author": "Southery Sentie",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.12",
+    "tailwindcss": "^3.4.19"
+  }
+}

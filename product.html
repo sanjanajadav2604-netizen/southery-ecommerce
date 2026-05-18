@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - Southery Sentie</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="description"
+        content="Shop premium handcrafted and anti-tarnish jewelry pieces at Southery Sentie. Free shipping, easy returns.">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/tailwind.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-[#FDFCF9]">
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        &#10024; Free shipping on all orders over &#8377;4,999 + Extra 10% off on your first purchase! Use code: FIRST10
+    </div>
+    <!-- Navigation -->
+    <nav id="main-nav"
+        class="site-header sticky top-0 z-40 flex items-center px-4 lg:px-12 h-20 bg-cream/95 backdrop-blur-md border-b border-black/5">
+        <div class="max-w-7xl w-full mx-auto flex items-center justify-between">
+            <div class="flex items-center z-10 transition-transform duration-300 hover:scale-[1.02]">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div
+                        class="w-10 h-10 rounded-full bg-terracotta flex items-center justify-center text-white font-display text-lg shadow-lg group-hover:rotate-[15deg] transition-all">
+                        S</div>
+                    <div class="flex items-baseline">
+                        <span
+                            class="font-display italic font-bold text-[32px] lg:text-[40px] text-terracotta leading-none">Southery</span>
+                        <span
+                            class="font-display font-semibold text-[28px] lg:text-[36px] text-terracotta leading-none ml-1">Sentie</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="absolute left-1/2 transform -translate-x-1/2 hidden md:flex items-center gap-1">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="shop.html" class="nav-link">Shop</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+
+            <div class="hidden md:flex items-center gap-4 z-10">
+                <button onclick="toggleSearch()" aria-label="Search" class="header-icon-btn"><svg class="w-5 h-5"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg></button>
+                <button onclick="toggleWishlist()" aria-label="Wishlist" class="header-icon-btn"><svg class="w-5 h-5"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg><span id="d-wish-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleCart()" aria-label="Cart" class="header-icon-btn"><svg class="w-5 h-5"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg><span id="d-cart-count" class="icon-badge hidden">0</span></button>
+                <div id="auth-section" class="flex items-center">
+                    <div id="auth-default" onclick="openAuthModal()"
+                        class="flex items-center gap-2 px-3 py-2 rounded-full cursor-pointer bg-white/50 border border-transparent hover:bg-white hover:border-terracotta/20 hover:shadow-md active:scale-95 transition-all">
+                        <div
+                            class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white shadow-sm">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg></div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-charcoal">Sign In</span>
+                    </div>
+                    <div id="auth-logged-in" class="hidden items-center gap-3 cursor-pointer group"
+                        onclick="window.location.href='account.html'">
+                        <div
+                            class="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full group-hover:bg-white transition-colors">
+                            <div
+                                class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white text-xs font-bold ring-2 ring-terracotta/10">
+                                <span id="user-avatar-initial">U</span></div>
+                            <span class="text-sm font-semibold text-charcoal" id="user-name-display">User</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex md:hidden items-center gap-1 z-10">
+                <button onclick="toggleSearch()" aria-label="Search"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg></button>
+                <button onclick="toggleWishlist()" aria-label="Wishlist"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg><span id="m-top-wish-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleCart()" aria-label="Cart"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg><span id="m-top-cart-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleMobileMenu()" aria-label="Mobile Menu"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal"><svg class="w-6 h-6" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg></button>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <main class="flex-1 atelier-container py-8 md:py-20 pt-28 md:pt-16">
+
+        <!-- Breadcrumbs -->
+        <nav class="flex text-xs text-muted mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="index.html" class="hover:text-terracotta transition">Home</a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 9 4-4-4-4" />
+                        </svg>
+                        <a href="shop.html" class="ml-1 hover:text-terracotta transition md:ml-2">Shop</a>
+                    </div>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 9 4-4-4-4" />
+                        </svg>
+                        <span class="ml-1 font-bold text-charcoal md:ml-2 truncate max-w-[150px] sm:max-w-none"
+                            id="breadcrumb-product">Product Name</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <div id="product-container"
+            class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start opacity-0 transition-opacity duration-500">
+            <!-- Left: Gallery -->
+            <div class="md:col-span-6 lg:col-span-5 space-y-4 w-full mx-auto">
+                <div class="relative group overflow-hidden rounded-[32px] bg-white border border-gray-100">
+                    <img loading="lazy" id="product-image" src="" alt="Product"
+                        class="w-full aspect-square object-cover rounded-[32px] transition-transform duration-700 hover:scale-105">
+                    <!-- Heart Icon Overlay -->
+                    <button onclick="toggleWishlistItem(currentId); updateWishlistUI();"
+                        class="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm border border-gray-100 flex items-center justify-center shadow-sm hover:bg-white hover:scale-110 active:scale-95 transition-all z-20">
+                        <svg id="product-image-heart-icon" class="w-6 h-6 text-gray-400" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="product-gallery" class="grid grid-cols-4 gap-4">
+                    <!-- Thumbnails will be injected here -->
+                </div>
+            </div>
+
+            <!-- Right: Details -->
+            <div class="md:col-span-6 lg:col-span-7 space-y-8 py-4 lg:pl-10">
+                <div>
+                    <p id="product-category"
+                        class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4B483] mb-1">
+                        Collection</p>
+                    <div class="flex items-start justify-between gap-4 mb-0.5">
+                        <h1 id="product-title"
+                            class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-charcoal leading-tight">
+                            Product Name
+                        </h1>
+                        <button onclick="toggleWishlistItem(currentId); updateWishlistUI();"
+                            class="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center bg-white shadow-sm hover:scale-110 active:scale-95 transition-all shrink-0 mt-1">
+                            <svg id="wishlist-btn-icon" class="w-7 h-7 text-gray-400 transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-3 flex-wrap mt-1">
+                        <span id="product-price"
+                            class="text-2xl xs:text-3xl font-bold text-terracotta leading-none">&#8377;0</span>
+                        <span id="product-compare" class="text-base text-muted line-through opacity-60">&#8377;0</span>
+                        <span id="product-discount"
+                            class="text-[10px] font-bold bg-sage text-white px-2 py-0.5 rounded-full"></span>
+                        <div class="flex items-center gap-2 ml-auto">
+                            <span id="stock-alert"
+                                class="hidden text-[9px] font-bold text-terracotta bg-terracotta/5 px-2 py-1 rounded-md">
+                                Only <span id="stock-count">0</span>!
+                            </span>
+                            <span
+                                class="text-[9px] font-bold text-sage flex items-center gap-1 uppercase tracking-tighter">
+                                <span class="w-1.5 h-1.5 rounded-full bg-sage"></span>
+                                In Stock
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 mt-3">
+                        <span class="text-xs text-muted font-medium">Share:</span>
+                        <button onclick="shareProduct('whatsapp')"
+                            class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-[#25d366] hover:text-white transition"
+                            title="Share on WhatsApp">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.411-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                            </svg>
+                        </button>
+                        <button onclick="shareProduct('copy')"
+                            class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-charcoal hover:text-white transition"
+                            title="Copy Link">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <p id="product-desc" class="text-sm md:text-base text-muted leading-relaxed">Product description goes
+                    here...</p>
+
+                <div class="space-y-6 pt-6 border-t">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-6">
+                            <span class="text-sm font-bold uppercase tracking-widest text-charcoal">Quantity</span>
+                            <div class="flex items-center gap-4 bg-white px-4 py-2 rounded-full border">
+                                <button onclick="updateQty(-1)"
+                                    class="w-6 h-6 flex items-center justify-center text-charcoal hover:text-terracotta font-bold">-</button>
+                                <span id="qty-display" class="w-8 text-center font-bold">1</span>
+                                <button onclick="updateQty(1)"
+                                    class="w-6 h-6 flex items-center justify-center text-charcoal hover:text-terracotta font-bold">+</button>
+                            </div>
+                        </div>
+                        <button onclick="openSizeGuide()"
+                            class="text-xs font-bold uppercase tracking-widest text-muted hover:text-terracotta underline underline-offset-4">Size
+                            Guide</button>
+                    </div>
+
+                    <div class="flex flex-row gap-2 xs:gap-3">
+                        <button onclick="addToCart(currentId, qty)"
+                            class="btn-dynamic btn-base flex-1 py-3 text-[11px] xs:text-xs uppercase tracking-widest font-bold">Add
+                            to Bag</button>
+                        <button onclick="buyNow()"
+                            class="btn-base bg-charcoal text-white hover:bg-black flex-1 py-3 text-[11px] xs:text-xs uppercase tracking-widest font-bold">Buy
+                            Now</button>
+                    </div>
+
+                    <!-- WhatsApp Business Integration -->
+                    <button onclick="orderOnWhatsApp()"
+                        class="w-full border border-sage text-sage py-4 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-sage hover:text-white transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.411-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                        </svg>
+                        Inquire on WhatsApp
+                    </button>
+                </div>
+
+                <!-- Pincode Delivery Checker -->
+                <div class="pt-6 border-t">
+                    <p class="text-xs font-bold uppercase tracking-widest text-muted mb-3">Check Delivery</p>
+                    <div class="flex gap-2">
+                        <div class="relative flex-1">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <input type="tel" id="pincode-input" maxlength="6" placeholder="Enter 6-digit pincode"
+                                oninput="this.value=this.value.replace(/[^0-9]/,'')"
+                                onkeydown="if(event.key==='Enter') checkPincode()"
+                                class="w-full pl-9 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-terracotta transition-all">
+                        </div>
+                        <button onclick="checkPincode()"
+                            class="px-5 py-3 bg-charcoal text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-black transition-all active:scale-95">
+                            Check
+                        </button>
+                    </div>
+                    <div id="pincode-result" class="mt-3 hidden">
+                        <div id="pincode-success"
+                            class="hidden flex items-start gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+                            <svg class="w-4 h-4 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            <div>
+                                <p class="text-xs font-bold text-green-800">Delivery available!</p>
+                                <p id="pincode-delivery-msg" class="text-xs text-green-700 mt-0.5">Estimated delivery in
+                                    3-5 business days. Free shipping!</p>
+                            </div>
+                        </div>
+                        <div id="pincode-error"
+                            class="hidden flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                            <svg class="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                                <p class="text-xs font-bold text-red-700">Please enter a valid 6-digit pincode.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-6 border-t">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        <span class="text-xs font-medium text-muted">Free shipping on all orders in India</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        <span class="text-xs font-medium text-muted">7-day easy returns & exchanges</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                            </path>
+                        </svg>
+                        <span class="text-xs font-medium text-muted">100% authentic & certified jewelry</span>
+                    </div>
+                </div>
+
+                <!-- Extra Details / Accordion Mockup -->
+                <div class="pt-8 border-t space-y-4">
+                    <details class="group border-b pb-4 cursor-pointer">
+                        <summary class="flex justify-between items-center font-bold text-sm">
+                            Product Details
+                            <span class="transition group-open:rotate-180">
+                                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    viewBox="0 0 24 24" width="24">
+                                    <path d="M6 9l6 6 6-6"></path>
+                                </svg>
+                            </span>
+                        </summary>
+                        <p class="text-sm text-muted mt-3 leading-relaxed">Crafted with high-quality materials to ensure
+                            longevity. Avoid direct contact with perfume and water to maintain the premium finish.</p>
+                    </details>
+                    <details class="group border-b pb-4 cursor-pointer">
+                        <summary class="flex justify-between items-center font-bold text-sm">
+                            Atelier Specifications
+                            <span class="transition group-open:rotate-180">
+                                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    viewBox="0 0 24 24" width="24">
+                                    <path d="M6 9l6 6 6-6"></path>
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="mt-4 space-y-3 text-[10px] uppercase tracking-widest font-bold text-muted">
+                            <div class="flex justify-between border-b border-gray-50 pb-2"><span>Metal Base</span><span
+                                    id="spec-metal" class="text-charcoal">-</span></div>
+                            <div class="flex justify-between border-b border-gray-50 pb-2"><span>Net Weight</span><span
+                                    id="spec-weight" class="text-charcoal">-</span></div>
+                            <div class="flex justify-between border-b border-gray-50 pb-2"><span>Stone
+                                    Detail</span><span id="spec-stones" class="text-charcoal">-</span></div>
+                            <div class="flex justify-between border-b border-gray-50 pb-2"><span>Atelier
+                                    Finish</span><span id="spec-finish" class="text-charcoal">-</span></div>
+                        </div>
+                    </details>
+                    <details class="group border-b pb-4 cursor-pointer">
+                        <summary class="flex justify-between items-center font-bold text-sm">
+                            Shipping & Returns
+                            <span class="transition group-open:rotate-180">
+                                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    viewBox="0 0 24 24" width="24">
+                                    <path d="M6 9l6 6 6-6"></path>
+                                </svg>
+                            </span>
+                        </summary>
+                        <p class="text-sm text-muted mt-3 leading-relaxed">Free standard shipping on all orders. Returns
+                            are accepted within 7 days of delivery in original packaging.</p>
+                    </details>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Customer Reviews Section -->
+        <div class="mt-32 max-w-4xl mx-auto py-12 border-t">
+            <h2 class="font-display text-4xl text-center mb-10">Customer Reviews</h2>
+            <div class="flex flex-col md:flex-row gap-12 mb-12">
+                <!-- Aggregate Score -->
+                <div
+                    class="flex-1 text-center md:text-left flex flex-col items-center md:items-start justify-center border-b md:border-b-0 md:border-r pb-8 md:pb-0 pr-0 md:pr-12">
+                    <h3 class="text-6xl font-display font-bold text-charcoal">4.8</h3>
+                    <div class="flex gap-1 text-[#D4B483] my-2">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                            <path
+                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                            </path>
+                        </svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                            <path
+                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                            </path>
+                        </svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                            <path
+                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                            </path>
+                        </svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                            <path
+                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                            </path>
+                        </svg>
+                        <svg class="w-5 h-5 fill-current text-gray-300" viewBox="0 0 20 20">
+                            <path
+                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                            </path>
+                        </svg>
+                    </div>
+                    <p class="text-sm text-muted">Early customer reviews</p>
+                </div>
+
+                <!-- Write a review call to action -->
+                <div class="flex-1 flex flex-col justify-center items-center md:items-start">
+                    <h4 class="font-bold text-lg mb-2">Share your thoughts</h4>
+                    <p class="text-sm text-muted mb-4 text-center md:text-left">If you've used this product, we'd love
+                        to hear about your experience.</p>
+                    <button onclick="openReviewModal()"
+                        class="px-6 py-2 border border-charcoal text-charcoal hover:bg-charcoal hover:text-white transition rounded-full text-sm font-bold">Write
+                        a Review</button>
+                </div>
+            </div>
+
+            <!-- Review List Mockup -->
+            <div id="reviews-list" class="space-y-8">
+                <!-- Review Item -->
+                <div class="border-b pb-8">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="font-bold text-sm">Priya M.</p>
+                            <p class="text-xs text-muted">Verified Buyer - 2 weeks ago</p>
+                        </div>
+                        <div class="flex gap-1 text-[#D4B483]">
+                            <!-- SVG stars... -->
+                        </div>
+                    </div>
+                    <h5 class="font-bold text-sm mb-2">Absolutely Beautiful</h5>
+                    <p class="text-sm text-muted leading-relaxed">The craftsmanship is really amazing, giving it such a
+                        premium feel. It's become my go-to piece for special occasions.</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <button onclick="openReviewModal()"
+                    class="btn-base border border-charcoal/10 hover:bg-charcoal hover:text-white transition shadow-sm text-xs uppercase tracking-widest font-bold px-12">Write
+                    a Review</button>
+            </div>
+        </div>
+
+        <!-- Review Modal -->
+        <div id="review-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+            <div class="backdrop-bg absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeReviewModal()"></div>
+            <div class="bg-white rounded-[32px] w-full max-w-lg relative z-10 overflow-hidden shadow-2xl p-8 transform transition-all scale-95 opacity-0"
+                id="review-modal-content">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-display text-3xl font-bold text-charcoal">Write a Review</h3>
+                    <button onclick="closeReviewModal()"
+                        class="text-2xl text-gray-400 hover:text-black">&times;</button>
+                </div>
+                <form onsubmit="handleReviewSubmit(event)" class="space-y-6">
+                    <div>
+                        <label class="auth-label">Rating</label>
+                        <div class="flex gap-2 text-2xl text-gray-200 cursor-pointer" id="star-rating">
+                            <span onclick="setRating(1)" class="star">&#9733;</span>
+                            <span onclick="setRating(2)" class="star">&#9733;</span>
+                            <span onclick="setRating(3)" class="star">&#9733;</span>
+                            <span onclick="setRating(4)" class="star">&#9733;</span>
+                            <span onclick="setRating(5)" class="star">&#9733;</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="auth-label">Review Headline</label>
+                        <input type="text" id="review-title" class="auth-input" placeholder="Sum up your experience"
+                            required>
+                    </div>
+                    <div>
+                        <label class="auth-label">Your Review</label>
+                        <textarea id="review-body" class="auth-input resize-none h-32 p-4"
+                            placeholder="Tell us what you liked..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-dynamic btn-base w-full py-4 shadow-xl">Submit Review</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- You May Also Like Section -->
+        <div class="mt-32 border-t pt-16">
+            <h2 class="font-display text-4xl text-center mb-12">You May Also Like</h2>
+            <div id="related-products" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Related products will be injected here via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Size Guide Modal -->
+    <div id="size-guide-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4"
+        onclick="if(event.target===this)closeSizeGuide()">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"></div>
+        <div id="size-guide-content"
+            class="relative bg-white rounded-[28px] w-full max-w-lg z-10 overflow-hidden shadow-2xl transition-all duration-300 scale-95 opacity-0"
+            style="transition: transform 0.3s, opacity 0.3s;">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-[#F7F6F0] to-white px-8 py-6 border-b flex items-center justify-between">
+                <div>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-terracotta mb-1">Southery Sentie</p>
+                    <h3 class="font-display text-3xl font-bold text-charcoal">Size Guide</h3>
+                </div>
+                <button onclick="closeSizeGuide()"
+                    class="w-10 h-10 rounded-full bg-gray-100 hover:bg-terracotta hover:text-white transition flex items-center justify-center text-xl">&times;</button>
+            </div>
+            <!-- Body -->
+            <div class="px-8 py-6 max-h-[65vh] overflow-y-auto space-y-6">
+                <!-- Ring Sizes -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-charcoal mb-3 flex items-center gap-2">
+                        <span
+                            class="w-5 h-5 rounded-full bg-terracotta/10 inline-flex items-center justify-center text-terracotta text-[10px]">&#9679;</span>Rings
+                    </h4>
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-[#F7F6F0]">
+                                <th
+                                    class="py-2 px-3 text-left text-[10px] uppercase tracking-widest text-muted font-bold rounded-l-lg">
+                                    US Size</th>
+                                <th
+                                    class="py-2 px-3 text-left text-[10px] uppercase tracking-widest text-muted font-bold">
+                                    Circumference</th>
+                                <th
+                                    class="py-2 px-3 text-left text-[10px] uppercase tracking-widest text-muted font-bold rounded-r-lg">
+                                    Diameter</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            <tr class="hover:bg-cream/50">
+                                <td class="py-2.5 px-3 font-semibold">Size 5</td>
+                                <td class="py-2.5 px-3 text-muted">49.3 mm</td>
+                                <td class="py-2.5 px-3 text-muted">15.7 mm</td>
+                            </tr>
+                            <tr class="hover:bg-cream/50">
+                                <td class="py-2.5 px-3 font-semibold">Size 6</td>
+                                <td class="py-2.5 px-3 text-muted">51.9 mm</td>
+                                <td class="py-2.5 px-3 text-muted">16.5 mm</td>
+                            </tr>
+                            <tr class="hover:bg-cream/50">
+                                <td class="py-2.5 px-3 font-semibold">Size 7</td>
+                                <td class="py-2.5 px-3 text-muted">54.4 mm</td>
+                                <td class="py-2.5 px-3 text-muted">17.3 mm</td>
+                            </tr>
+                            <tr class="hover:bg-cream/50">
+                                <td class="py-2.5 px-3 font-semibold">Size 8</td>
+                                <td class="py-2.5 px-3 text-muted">57.2 mm</td>
+                                <td class="py-2.5 px-3 text-muted">18.2 mm</td>
+                            </tr>
+                            <tr class="hover:bg-cream/50">
+                                <td class="py-2.5 px-3 font-semibold">Size 9</td>
+                                <td class="py-2.5 px-3 text-muted">59.9 mm</td>
+                                <td class="py-2.5 px-3 text-muted">19.1 mm</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Bracelet Sizes -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-charcoal mb-3 flex items-center gap-2">
+                        <span
+                            class="w-5 h-5 rounded-full bg-sage/10 inline-flex items-center justify-center text-sage text-[10px]">&#9673;</span>Bracelets
+                        & Bangles
+                    </h4>
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-[#F7F6F0]">
+                                <th
+                                    class="py-2 px-3 text-left text-[10px] uppercase tracking-widest text-muted font-bold rounded-l-lg">
+                                    Size</th>
+                                <th
+                                    class="py-2 px-3 text-left text-[10px] uppercase tracking-widest text-muted font-bold rounded-r-lg">
+                                    Wrist Circumference</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            <tr class="hover:bg-cream/50">
+                                <td class="py-2.5 px-3 font-semibold">XS / 2.4"</td>
+                                <td class="py-2.5 px-3 text-muted">14 - 15 cm</td>
+                            </tr>
+                            <tr class="hover:bg-cream/50">
+                                <td class="py-2.5 px-3 font-semibold">S / 2.6"</td>
+                                <td class="py-2.5 px-3 text-muted">15 - 16 cm</td>
+                            </tr>
+                            <tr class="hover:bg-cream/50">
+                                <td class="py-2.5 px-3 font-semibold">M / 2.8"</td>
+                                <td class="py-2.5 px-3 text-muted">16 - 17 cm</td>
+                            </tr>
+                            <tr class="hover:bg-cream/50">
+                                <td class="py-2.5 px-3 font-semibold">L / 3.0"</td>
+                                <td class="py-2.5 px-3 text-muted">17 - 18 cm</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-[10px] text-muted italic">💡 Tip: Measure your finger / wrist with a tape measure or
+                    string for the best fit. Size up if you're between sizes.</p>
+            </div>
+            <div class="px-8 py-4 border-t bg-[#F7F6F0]/50">
+                <button onclick="closeSizeGuide()"
+                    class="w-full py-3 bg-charcoal text-white rounded-full font-bold text-xs uppercase tracking-widest hover:bg-black transition">Got
+                    It!</button>
+            </div>
+        </div>
+    </div>
+    <!-- FOOTER -->
+    <footer class="bg-[#1c1917] text-white pt-12 pb-16 relative overflow-hidden">
+        <!-- Newsletter Section inside Footer -->
+        <div class="max-w-7xl mx-auto w-full px-4">
+            <div class="mb-16">
+                <div
+                    class="bg-white/5 border border-white/10 rounded-[32px] md:rounded-[40px] p-6 xs:p-10 md:p-20 flex flex-col md:flex-row items-center justify-between gap-16 relative overflow-hidden group">
+                    <div
+                        class="absolute top-0 right-0 w-64 h-64 bg-terracotta/10 rounded-full blur-[100px] -mr-32 -mt-32">
+                    </div>
+                    <div class="relative z-10 max-w-lg">
+                        <h3
+                            class="font-display text-2xl xs:text-3xl md:text-5xl font-bold mb-4 md:mb-6 text-white text-center md:text-left">
+                            Join the <span class="text-terracotta italic font-medium">Sentie</span> Inner Circle</h3>
+                        <p class="text-gray-400 text-sm md:text-base leading-relaxed text-center md:text-left">Subscribe
+                            to receive early access to new collections, style inspiration, and exclusive offers.</p>
+                    </div>
+                    <form class="relative z-10 w-full md:w-auto flex flex-col sm:flex-row gap-6"
+                        onsubmit="handleNewsletter(event)">
+                        <input type="email" placeholder="Email Address" required
+                            class="bg-white/10 border border-white/20 px-8 py-5 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-terracotta transition-all w-full min-w-0">
+                        <button type="submit"
+                            class="px-12 py-5 bg-terracotta text-white rounded-full font-bold hover:scale-105 active:scale-95 transition-all shadow-xl shadow-terracotta/20">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-20 border-b border-white/[0.05] pb-16 lg:pb-24">
+                <div class="col-span-1 md:col-span-1">
+                    <a href="index.html" class="flex items-center gap-2 mb-8">
+                        <div
+                            class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white font-display text-sm">
+                            S</div>
+                        <span class="font-display text-lg font-semibold">Southery Sentie</span>
+                    </a>
+                    <p class="text-[13px] text-gray-500 leading-relaxed mb-8">Crafting timeless elegance for the modern
+                        soul. Sustainable, handcrafted, and designed to last generations.</p>
+                    <div class="flex gap-4">
+                        <a href="https://instagram.com/southerysentie" target="_blank"
+                            class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-terracotta hover:text-white transition-all"><svg
+                                class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.258-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg></a>
+                        <a href="https://x.com/southerysentie" target="_blank"
+                            class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-terracotta hover:text-white transition-all"><svg
+                                class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.632 5.905-5.632Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+                            </svg></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-xs uppercase tracking-wider text-white mb-4">Adornments</h4>
+                    <div class="flex flex-col gap-5">
+                        <a href="shop.html?category=necklace"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Necklaces</a>
+                        <a href="shop.html?category=earring"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Earrings</a>
+                        <a href="shop.html?category=ring"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Rings</a>
+                        <a href="shop.html?category=bracelet"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Bracelets</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-xs uppercase tracking-wider text-white mb-4">Care & Support</h4>
+                    <div class="flex flex-col gap-5">
+                        <a href="order-tracking.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Track
+                            Order</a>
+                        <a href="shipping.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Shipping &
+                            Returns</a>
+                        <a href="care-guide.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Jewelry
+                            Care Guide</a>
+                        <a href="faq.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">FAQ</a>
+                        <a href="contact.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Contact
+                            Boutique</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-xs uppercase tracking-wider text-white mb-4">Our Story</h4>
+                    <div class="flex flex-col gap-5">
+                        <a href="about.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">The
+                            Legacy</a>
+                        <a href="privacy.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Privacy
+                            Policy</a>
+                        <a href="terms.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Terms of
+                            Service</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-[10px] text-gray-600 uppercase tracking-widest font-bold">&copy; <span id="yr"></span>
+                    Southery Sentie. Handcrafted with love.</p>
+                <div class="flex items-center gap-6 grayscale opacity-30">
+                    <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
+                        class="h-4">
+                    <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+                        class="h-6">
+                    <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                        class="h-4">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="js/products.js"></script>
+    <script src="js/layout.js"></script>
+    <script>
+        let currentId = null;
+        let qty = 1;
+
+        function checkPincode() {
+            const input = document.getElementById('pincode-input');
+            const result = document.getElementById('pincode-result');
+            const success = document.getElementById('pincode-success');
+            const error = document.getElementById('pincode-error');
+            const msg = document.getElementById('pincode-delivery-msg');
+            const errMsg = error.querySelector('p');
+            const pin = input.value.trim();
+
+            result.classList.remove('hidden');
+            success.classList.add('hidden');
+            error.classList.add('hidden');
+            input.classList.remove('border-green-400', 'border-red-400');
+
+            if (!/^\d{6}$/.test(pin)) {
+                errMsg.textContent = 'Please enter a valid 6-digit pincode.';
+                error.classList.remove('hidden');
+                input.classList.add('border-red-400');
+                return;
+            }
+
+            const firstDigit = parseInt(pin[0]);
+            if (firstDigit === 0 || firstDigit === 9) {
+                errMsg.textContent = 'This pincode does not exist.';
+                error.classList.remove('hidden');
+                input.classList.add('border-red-400');
+                return;
+            }
+
+            const metroPrefixes = ['110', '400', '401', '402', '403', '500', '501', '502', '560', '561', '562', '600', '601', '602', '603', '700', '701', '702', '380', '381', '382', '383', '411', '412', '302', '303', '226', '227', '208', '209', '440', '530', '531', '641', '642', '643', '682', '683', '684'];
+            const isMetro = metroPrefixes.some(p => pin.startsWith(p));
+
+            success.classList.remove('hidden');
+            input.classList.add('border-green-400');
+            msg.textContent = isMetro ? 'Delivery in 2-3 days. Free shipping!' : 'Delivery in 3-5 days. Free shipping!';
+            setTimeout(() => input.classList.remove('border-green-400'), 2000);
+        }
+
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            currentId = parseInt(params.get('id'));
+            if (typeof products === 'undefined') return;
+            const product = products.find(p => p.id === currentId);
+
+            if (!product) {
+                window.location.href = 'shop.html';
+                return;
+            }
+
+            document.title = product.name + " - Southery Sentie";
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) metaDesc.setAttribute('content', `Discover the ${product.name} from Southery Sentie. ${product.description.substring(0, 150)}...`);
+
+            const bCrumb = document.getElementById('breadcrumb-product');
+            if (bCrumb) bCrumb.textContent = product.name;
+            const pTitle = document.getElementById('product-title');
+            if (pTitle) pTitle.textContent = product.name;
+            const pCat = document.getElementById('product-category');
+            if (pCat) pCat.textContent = product.category.toUpperCase() + ' Collection';
+
+            document.getElementById('product-price').innerHTML = `&#8377;${product.price.toLocaleString()}`;
+            const comp = document.getElementById('product-compare');
+            const disc = document.getElementById('product-discount');
+            if (product.comparePrice) {
+                comp.innerHTML = `&#8377;${product.comparePrice.toLocaleString()}`;
+                disc.textContent = `-${Math.round((1 - product.price / product.comparePrice) * 100)}%`;
+                comp.classList.remove('hidden'); disc.classList.remove('hidden');
+            } else {
+                comp.classList.add('hidden'); disc.classList.add('hidden');
+            }
+
+            document.getElementById('product-desc').textContent = product.description;
+            document.getElementById('product-image').src = product.image;
+
+            // Render Gallery
+            renderGallery(product);
+
+            // Stock Alert Logic
+            const stockAlert = document.getElementById('stock-alert');
+            const stockCount = document.getElementById('stock-count');
+            if (product.stock && product.stock <= 10) {
+                stockCount.textContent = product.stock;
+                stockAlert.classList.remove('hidden');
+            } else {
+                stockAlert.classList.add('hidden');
+            }
+
+            // Atelier Specifications Logic
+            if (product.specs) {
+                document.getElementById('spec-metal').textContent = product.specs.metal || '-';
+                document.getElementById('spec-weight').textContent = product.specs.weight || '-';
+                document.getElementById('spec-stones').textContent = product.specs.stones || '-';
+                document.getElementById('spec-finish').textContent = product.specs.finish || '-';
+            }
+
+            document.getElementById('product-container').style.opacity = '1';
+            renderRelatedProducts(product);
+            updateWishlistUI();
+            renderReviews();
+        }
+
+        function renderGallery(product) {
+            const galleryContainer = document.getElementById('product-gallery');
+            if (!galleryContainer) return;
+
+            const imgs = product.images || [product.image];
+            galleryContainer.innerHTML = imgs.map((img, idx) => `
+                <div class="aspect-square bg-white rounded-2xl overflow-hidden border cursor-pointer transition-all duration-300 ${idx === 0 ? 'border-terracotta shadow-md' : 'border-gray-100 opacity-60 hover:opacity-100'}" 
+                     onclick="switchMainImage(this, '${img}')">
+                    <img loading="lazy" src="${img}" class="w-full h-full object-cover">
+                </div>
+            `).join('');
+        }
+
+        function switchMainImage(thumb, src) {
+            const mainImg = document.getElementById('product-image');
+            if (mainImg) {
+                mainImg.style.opacity = '0';
+                setTimeout(() => {
+                    mainImg.src = src;
+                    mainImg.style.opacity = '1';
+                }, 200);
+            }
+
+            // Update active state of thumbnails
+            const gallery = document.getElementById('product-gallery');
+            if (gallery) {
+                gallery.querySelectorAll('div').forEach(div => {
+                    div.classList.remove('border-terracotta', 'shadow-md', 'opacity-100');
+                    div.classList.add('border-gray-100', 'opacity-60');
+                });
+                thumb.classList.add('border-terracotta', 'shadow-md', 'opacity-100');
+                thumb.classList.remove('border-gray-100', 'opacity-60');
+            }
+        }
+
+        function renderReviews() {
+            const reviewsList = document.getElementById('reviews-list');
+            if (!reviewsList) return;
+
+            const sampleReviews = [
+                { name: 'Priya M.', date: '2 weeks ago', title: 'Absolutely Beautiful', body: 'The craftsmanship is really amazing, giving it such a premium feel. It\'s become my go-to piece for special occasions.', rating: 5 },
+                { name: 'Ananya S.', date: '1 month ago', title: 'Perfect for Gifting', body: 'Bought this for my sister\'s wedding. The anti-tarnish quality is exactly as promised. She loved the packaging too!', rating: 5 },
+                { name: 'Rahul K.', date: '3 days ago', title: 'Fast Delivery & Great Quality', body: 'The pincode checker was accurate. Received it in Mumbai within 2 days. The gold finish is very realistic.', rating: 4 }
+            ];
+
+            reviewsList.innerHTML = sampleReviews.map(r => `
+                <div class="border-b pb-8">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="font-bold text-sm text-charcoal">${r.name}</p>
+                            <p class="text-[10px] text-muted uppercase tracking-widest">${r.date} &bull; Verified Buyer</p>
+                        </div>
+                        <div class="flex gap-1 text-terracotta">
+                            ${'&#9733;'.repeat(r.rating)}${'&#9734;'.repeat(5 - r.rating)}
+                        </div>
+                    </div>
+                    <h5 class="font-bold text-sm mb-2 text-charcoal">${r.title}</h5>
+                    <p class="text-sm text-muted leading-relaxed">${r.body}</p>
+                </div>
+            `).join('');
+        }
+
+        function updateQty(c) { qty = Math.max(1, qty + c); document.getElementById('qty-display').textContent = qty; }
+
+        function updateWishlistUI() {
+            const wishlist = JSON.parse(localStorage.getItem('southery_wishlist') || '[]');
+            const isSaved = wishlist.some(w => w.id === currentId);
+            const icons = [document.getElementById('wishlist-btn-icon'), document.getElementById('product-image-heart-icon')];
+            icons.forEach(icon => {
+                if (!icon) return;
+                if (isSaved) {
+                    icon.classList.add('text-rose-500', 'fill-current');
+                    icon.setAttribute('fill', 'currentColor');
+                } else {
+                    icon.classList.remove('text-rose-500', 'fill-current');
+                    icon.setAttribute('fill', 'none');
+                    icon.classList.add('text-gray-400');
+                }
+            });
+        }
+
+        function openSizeGuide() {
+            const modal = document.getElementById('size-guide-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    const content = document.getElementById('size-guide-content');
+                    if (content) {
+                        content.classList.remove('scale-95', 'opacity-0');
+                        content.classList.add('scale-100', 'opacity-100');
+                    }
+                }, 10);
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeSizeGuide() {
+            const modal = document.getElementById('size-guide-modal');
+            const content = document.getElementById('size-guide-content');
+            if (modal && content) {
+                content.classList.remove('scale-100', 'opacity-100');
+                content.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+        }
+
+        function buyNow() {
+            if (typeof addToCart === 'function') {
+                if (!currentUser) {
+                    addToCart(currentId, qty); // This will open the modal smoothly
+                    return;
+                }
+                addToCart(currentId, qty);
+                window.location.href = 'checkout.html';
+            }
+        }
+
+        function orderOnWhatsApp() {
+            const product = (typeof products !== 'undefined') ? products.find(p => p.id === currentId) : null;
+            if (!product) return;
+            // UPDATE THIS: Replace with your actual WhatsApp Business Number
+            const phoneNumber = "919000000000";
+            const message = `Hi Southery Sentie! 🌸 I am interested in your ${product.name} (₹${product.price.toLocaleString()}). Could you please share more details? \n\nProduct Link: ${window.location.href}`;
+            window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function renderRelatedProducts(currentProduct) {
+            const container = document.getElementById('related-products');
+            if (!container || typeof products === 'undefined') return;
+            let related = products.filter(p => p.id !== currentProduct.id && (p.category === currentProduct.category || p.collection === currentProduct.collection));
+            if (related.length < 4) {
+                const others = products.filter(p => !related.includes(p) && p.id !== currentProduct.id);
+                related = [...related, ...others].slice(0, 4);
+            } else {
+                related = related.slice(0, 4);
+            }
+            container.innerHTML = related.map(p => {
+                const discount = p.comparePrice ? Math.round((1 - p.price / p.comparePrice) * 100) : 0;
+                return `
+            <div class="group cursor-pointer" onclick="window.location.href='product.html?id=${p.id}'">
+                <div class="relative aspect-square bg-cream rounded-2xl overflow-hidden mb-4">
+                    <img loading="lazy" src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    ${discount > 0 ? `<span class="absolute top-4 left-4 bg-terracotta text-white text-[10px] font-bold px-2 py-1 rounded-full">-${discount}%</span>` : ''}
+                </div>
+                <h4 class="font-bold text-sm mb-1">${p.name}</h4>
+                <p class="text-terracotta font-bold text-sm">&#8377;${p.price.toLocaleString()}</p>
+            </div>`;
+            }).join('');
+        }
+
+        function shareProduct(platform) {
+            const url = window.location.href;
+            const title = document.getElementById('product-title')?.textContent || 'Check out Southery Sentie';
+            if (platform === 'whatsapp') {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(title + ': ' + url)}`, '_blank');
+            } else if (platform === 'copy') {
+                navigator.clipboard.writeText(url).then(() => {
+                    if (typeof showToast === 'function') showToast("Link copied to clipboard!");
+                    else alert("Link copied to clipboard!");
+                });
+            }
+        }
+
+        let currentRating = 5;
+
+        function openReviewModal() {
+            const modal = document.getElementById('review-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    const content = document.getElementById('review-modal-content');
+                    if (content) {
+                        content.classList.remove('scale-95', 'opacity-0');
+                        content.classList.add('scale-100', 'opacity-100');
+                    }
+                }, 10);
+                document.body.style.overflow = 'hidden';
+                setRating(5);
+            }
+        }
+
+        function closeReviewModal() {
+            const modal = document.getElementById('review-modal');
+            const content = document.getElementById('review-modal-content');
+            if (modal && content) {
+                content.classList.remove('scale-100', 'opacity-100');
+                content.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+        }
+
+        function setRating(val) {
+            currentRating = val;
+            const stars = document.querySelectorAll('#star-rating .star');
+            stars.forEach((star, index) => {
+                if (index < val) {
+                    star.classList.remove('text-gray-200');
+                    star.classList.add('text-[#D4B483]');
+                } else {
+                    star.classList.add('text-gray-200');
+                    star.classList.remove('text-[#D4B483]');
+                }
+            });
+        }
+
+        async function handleReviewSubmit(e) {
+            e.preventDefault();
+            closeReviewModal();
+            if (typeof showCustomAlert === 'function') {
+                await showCustomAlert('Review Received', 'Thank you! Your feedback has been submitted successfully.', 'success');
+            } else {
+                alert('Thank you! Your feedback has been submitted successfully.');
+            }
+            e.target.reset();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>

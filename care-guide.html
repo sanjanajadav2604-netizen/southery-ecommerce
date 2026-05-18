@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jewelry Care Guide - Southery Sentie</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="description"
+        content="Learn how to care for your Southery Sentie handmade and anti-tarnish jewelry. Tips to keep your pieces shining for years.">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/tailwind.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .care-card {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 2rem;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+        }
+
+        .care-card:hover {
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+            transform: translateY(-4px);
+        }
+
+        .do-item {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-badge {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body class="bg-cream font-body">
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        &#10024; Free shipping on all orders over &#8377;4,999 + Extra 10% off on your first purchase! Use code: FIRST10
+    </div>
+
+    <!-- Navigation -->
+    <nav
+        class="site-header sticky top-0 z-40 flex items-center px-4 lg:px-12 h-20 bg-cream/95 backdrop-blur-md border-b border-black/5">
+        <div class="max-w-7xl w-full mx-auto flex items-center justify-between">
+            <div class="flex items-center z-10 transition-transform duration-300 hover:scale-[1.02]">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div
+                        class="w-10 h-10 rounded-full bg-terracotta flex items-center justify-center text-white font-display text-lg shadow-lg group-hover:rotate-[15deg] transition-all">
+                        S</div>
+                    <div class="flex items-baseline">
+                        <span
+                            class="font-display italic font-bold text-[36px] lg:text-[40px] text-terracotta leading-none">Southery</span>
+                        <span
+                            class="font-display font-semibold text-[32px] lg:text-[36px] text-terracotta leading-none ml-1">Sentie</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="absolute left-1/2 transform -translate-x-1/2 hidden md:flex items-center gap-1">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="shop.html" class="nav-link">Shop</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+
+            <div class="hidden md:flex items-center gap-4 z-10">
+                <button onclick="toggleSearch()" aria-label="Search" class="header-icon-btn"><svg class="w-5 h-5"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg></button>
+                <button onclick="toggleWishlist()" aria-label="Wishlist" class="header-icon-btn"><svg class="w-5 h-5"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg><span id="d-wish-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleCart()" aria-label="Cart" class="header-icon-btn"><svg class="w-5 h-5"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg><span id="d-cart-count" class="icon-badge hidden">0</span></button>
+                <div id="auth-section" class="flex items-center">
+                    <div id="auth-default" onclick="openAuthModal()"
+                        class="flex items-center gap-2 px-3 py-2 rounded-full cursor-pointer bg-white/50 border border-transparent hover:bg-white hover:border-terracotta/20 hover:shadow-md active:scale-95 transition-all">
+                        <div
+                            class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white shadow-sm">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg></div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-charcoal">Sign In</span>
+                    </div>
+                    <div id="auth-logged-in" class="hidden items-center gap-3 cursor-pointer group"
+                        onclick="window.location.href='account.html'">
+                        <div
+                            class="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full group-hover:bg-white transition-colors">
+                            <div
+                                class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white text-xs font-bold ring-2 ring-terracotta/10">
+                                <span id="user-avatar-initial">U</span></div>
+                            <span class="text-sm font-semibold text-charcoal" id="user-name-display">User</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex md:hidden items-center gap-1 z-10">
+                <button onclick="toggleSearch()" aria-label="Search"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg></button>
+                <button onclick="toggleWishlist()" aria-label="Wishlist"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg><span id="m-top-wish-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleCart()" aria-label="Cart"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg><span id="m-top-cart-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleMobileMenu()" aria-label="Mobile Menu"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal"><svg class="w-6 h-6" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg></button>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <!-- Main Content -->
+    <main class="py-12 md:py-20 md:py-32">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+
+            <!-- Hero -->
+            <div class="text-center mb-20">
+                <p class="text-sm font-bold uppercase tracking-widest text-[#D4B483] mb-4">Care & Maintenance</p>
+                <h1 class="font-display text-5xl md:text-6xl font-bold text-charcoal mb-6">Jewelry Care Guide</h1>
+                <p class="text-muted max-w-xl mx-auto leading-relaxed">Every piece from Southery Sentie is crafted to
+                    last. With the right care, your jewelry will stay as beautiful as the day you received it.</p>
+            </div>
+
+            <!-- Quick Rules -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
+                <div class="care-card text-center">
+                    <div class="text-3xl mb-3">💧</div>
+                    <p class="font-bold text-sm text-charcoal mb-1">Avoid Water</p>
+                    <p class="text-xs text-muted">Remove before swimming, bathing, or washing hands</p>
+                </div>
+                <div class="care-card text-center">
+                    <div class="text-3xl mb-3">🧴</div>
+                    <p class="font-bold text-sm text-charcoal mb-1">No Perfume</p>
+                    <p class="text-xs text-muted">Apply perfume & lotion before putting on jewelry</p>
+                </div>
+                <div class="care-card text-center">
+                    <div class="text-3xl mb-3">📦</div>
+                    <p class="font-bold text-sm text-charcoal mb-1">Store Safely</p>
+                    <p class="text-xs text-muted">Keep in the pouch provided, away from sunlight</p>
+                </div>
+                <div class="care-card text-center">
+                    <div class="text-3xl mb-3">🧪</div>
+                    <p class="font-bold text-sm text-charcoal mb-1">No Chemicals</p>
+                    <p class="text-xs text-muted">Keep away from cleaning products & harsh chemicals</p>
+                </div>
+            </div>
+
+            <!-- Anti-Tarnish Care -->
+            <div class="care-card mb-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-sage/20 flex items-center justify-center text-2xl">🛡️</div>
+                    <div>
+                        <h2 class="font-display text-3xl font-bold text-charcoal">Anti-Tarnish Jewelry Care</h2>
+                        <p class="text-xs text-muted uppercase tracking-widest font-semibold mt-1">PVD Coated — Built to
+                            Last</p>
+                    </div>
+                </div>
+                <p class="text-sm text-muted leading-relaxed mb-6">Our Anti-Tarnish pieces use an advanced PVD (Physical
+                    Vapour Deposition) coating process that bonds a gold layer onto a stainless steel base. This makes
+                    them far more durable than regular gold-plated jewelry — but they still need basic care.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-bold text-sm text-charcoal mb-3 flex items-center gap-2"><span
+                                class="text-green-600">✅</span> Do This</h3>
+                        <div class="space-y-0">
+                            <div class="do-item"><span class="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                                <p class="text-sm text-muted">Wipe gently with a soft dry cloth after each wear</p>
+                            </div>
+                            <div class="do-item"><span class="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                                <p class="text-sm text-muted">Store each piece separately in its pouch</p>
+                            </div>
+                            <div class="do-item"><span class="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                                <p class="text-sm text-muted">Put jewelry on last — after makeup and perfume</p>
+                            </div>
+                            <div class="do-item"><span class="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                                <p class="text-sm text-muted">Clean with a soft damp cloth if needed, then dry
+                                    immediately</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-charcoal mb-3 flex items-center gap-2"><span
+                                class="text-red-500">❌</span> Avoid This</h3>
+                        <div class="space-y-0">
+                            <div class="do-item"><span class="text-red-400 mt-0.5 flex-shrink-0">✖</span>
+                                <p class="text-sm text-muted">Wearing in the shower, pool, or sea</p>
+                            </div>
+                            <div class="do-item"><span class="text-red-400 mt-0.5 flex-shrink-0">✖</span>
+                                <p class="text-sm text-muted">Contact with perfume, deodorant, or body lotion directly
+                                </p>
+                            </div>
+                            <div class="do-item"><span class="text-red-400 mt-0.5 flex-shrink-0">✖</span>
+                                <p class="text-sm text-muted">Using abrasive cloths or chemical cleaners</p>
+                            </div>
+                            <div class="do-item"><span class="text-red-400 mt-0.5 flex-shrink-0">✖</span>
+                                <p class="text-sm text-muted">Storing in humid bathrooms or direct sunlight</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 bg-sage/10 rounded-2xl p-5 border border-sage/20">
+                    <p class="text-sm text-charcoal font-semibold mb-1">💡 Good to know</p>
+                    <p class="text-sm text-muted leading-relaxed">Anti-tarnish coating is not the same as "waterproof."
+                        While our pieces resist tarnishing much better than regular plated jewelry, prolonged water or
+                        chemical exposure will still degrade the coating over time. Basic care goes a long way.</p>
+                </div>
+            </div>
+
+            <!-- Handmade Care -->
+            <div class="care-card mb-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-terracotta/10 flex items-center justify-center text-2xl">🤲
+                    </div>
+                    <div>
+                        <h2 class="font-display text-3xl font-bold text-charcoal">Handmade Jewelry Care</h2>
+                        <p class="text-xs text-muted uppercase tracking-widest font-semibold mt-1">Crafted by Hand —
+                            Unique by Nature</p>
+                    </div>
+                </div>
+                <p class="text-sm text-muted leading-relaxed mb-6">Each handmade piece is one-of-a-kind. Slight
+                    variations in color, texture, or shape are natural — they are marks of authentic craftsmanship, not
+                    defects. Handmade pieces often use threads, beads, stones, and mixed materials that need extra care.
+                </p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-bold text-sm text-charcoal mb-3 flex items-center gap-2"><span
+                                class="text-green-600">✅</span> Do This</h3>
+                        <div class="space-y-0">
+                            <div class="do-item"><span class="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                                <p class="text-sm text-muted">Store flat in the box or soft pouch to protect shape</p>
+                            </div>
+                            <div class="do-item"><span class="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                                <p class="text-sm text-muted">Handle gently — avoid pulling on delicate threads or wires
+                                </p>
+                            </div>
+                            <div class="do-item"><span class="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                                <p class="text-sm text-muted">Keep away from sharp surfaces that could scratch stones
+                                </p>
+                            </div>
+                            <div class="do-item"><span class="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                                <p class="text-sm text-muted">Dust lightly with a soft brush if needed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-charcoal mb-3 flex items-center gap-2"><span
+                                class="text-red-500">❌</span> Avoid This</h3>
+                        <div class="space-y-0">
+                            <div class="do-item"><span class="text-red-400 mt-0.5 flex-shrink-0">✖</span>
+                                <p class="text-sm text-muted">Washing or submerging in water</p>
+                            </div>
+                            <div class="do-item"><span class="text-red-400 mt-0.5 flex-shrink-0">✖</span>
+                                <p class="text-sm text-muted">Wearing during heavy physical activity or sports</p>
+                            </div>
+                            <div class="do-item"><span class="text-red-400 mt-0.5 flex-shrink-0">✖</span>
+                                <p class="text-sm text-muted">Tangling necklaces with other pieces</p>
+                                <div class="do-item"><span class="text-red-400 mt-0.5 flex-shrink-0">✖</span>
+                                    <p class="text-sm text-muted">Exposing beaded or threaded pieces to direct sunlight
+                                        for
+                                        long</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cleaning Step by Step -->
+                <div class="care-card mb-8">
+                    <h2 class="font-display text-3xl font-bold text-charcoal mb-2">How to Clean Your Jewelry</h2>
+                    <p class="text-sm text-muted mb-8">A simple 3-step cleaning routine that works for both collections.
+                    </p>
+                    <div class="space-y-5">
+                        <div class="flex gap-4 items-start">
+                            <div class="step-badge bg-terracotta/10 text-terracotta">1</div>
+                            <div>
+                                <p class="font-bold text-sm text-charcoal mb-1">Dry wipe after every wear</p>
+                                <p class="text-sm text-muted leading-relaxed">Use a clean, soft microfibre cloth to
+                                    gently
+                                    wipe off sweat, oils, and dust after each use. This alone prevents most tarnishing.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="step-badge bg-terracotta/10 text-terracotta">2</div>
+                            <div>
+                                <p class="font-bold text-sm text-charcoal mb-1">Light damp clean (monthly)</p>
+                                <p class="text-sm text-muted leading-relaxed">Dampen a soft cloth slightly with plain
+                                    water.
+                                    Wipe the jewelry gently. Immediately dry with another cloth — never leave moisture
+                                    on
+                                    the surface.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="step-badge bg-terracotta/10 text-terracotta">3</div>
+                            <div>
+                                <p class="font-bold text-sm text-charcoal mb-1">Store properly after cleaning</p>
+                                <p class="text-sm text-muted leading-relaxed">Place back in the Southery Sentie pouch or
+                                    box. Keep pieces separate so they don't scratch each other. Store in a cool, dry
+                                    place.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 bg-red-50 rounded-2xl p-5 border border-red-100">
+                        <p class="text-sm font-bold text-red-700 mb-1">⚠️ Never use these on your jewelry</p>
+                        <p class="text-sm text-red-600 leading-relaxed">Toothpaste, baking soda, lemon juice, vinegar,
+                            ultrasonic cleaners, or any commercial jewelry cleaner. These can strip the coating on
+                            anti-tarnish pieces and damage handmade materials.</p>
+                    </div>
+                </div>
+
+                <!-- Storage Tips -->
+                <div class="care-card mb-16">
+                    <h2 class="font-display text-3xl font-bold text-charcoal mb-6">Storage Tips</h2>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-cream rounded-2xl p-5">
+                            <p class="text-2xl mb-3">👍</p>
+                            <p class="font-bold text-sm text-charcoal mb-2">Use the pouch</p>
+                            <p class="text-xs text-muted leading-relaxed">Every Southery Sentie order comes with a
+                                protective pouch. Always store your piece in it when not wearing.</p>
+                        </div>
+                        <div class="bg-cream rounded-2xl p-5">
+                            <p class="text-2xl mb-3">💿</p>
+                            <p class="font-bold text-sm text-charcoal mb-2">Store separately</p>
+                            <p class="text-xs text-muted leading-relaxed">Don't let pieces touch each other in storage —
+                                they scratch. Use individual pouches or small zip-lock bags.</p>
+                        </div>
+                        <div class="bg-cream rounded-2xl p-5">
+                            <p class="text-2xl mb-3">🚿</p>
+                            <p class="font-bold text-sm text-charcoal mb-2">Not in the bathroom</p>
+                            <p class="text-xs text-muted leading-relaxed">Bathroom humidity accelerates tarnishing.
+                                Store in
+                                a bedroom drawer or jewelry box instead.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="text-center bg-white rounded-3xl p-10 border border-gray-100 shadow-sm">
+                    <h3 class="font-display text-3xl font-bold mb-4 text-charcoal">Have a care question?</h3>
+                    <p class="text-muted mb-8">Our team is happy to help you keep your jewelry looking its best.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="contact.html"
+                            class="inline-flex items-center justify-center px-8 py-3 rounded-full bg-terracotta text-white font-bold text-sm tracking-wide hover:shadow-[0_8px_20px_rgba(196,92,38,0.3)] hover:-translate-y-0.5 transition-all">Contact
+                            Us</a>
+                        <a href="shop.html"
+                            class="inline-flex items-center justify-center px-8 py-3 rounded-full border border-charcoal/20 text-charcoal font-bold text-sm tracking-wide hover:bg-white transition-all">Shop
+                            Collection</a>
+                    </div>
+                </div>
+            </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#1c1917] text-white pt-12 pb-16 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto w-full px-4">
+            <div class="mb-16">
+                <div
+                    class="bg-white/5 border border-white/10 rounded-[32px] md:rounded-[40px] p-6 xs:p-10 md:p-20 flex flex-col md:flex-row items-center justify-between gap-16 relative overflow-hidden group">
+                    <div
+                        class="absolute top-0 right-0 w-64 h-64 bg-terracotta/10 rounded-full blur-[100px] -mr-32 -mt-32">
+                    </div>
+                    <div class="relative z-10 max-w-lg">
+                        <h3
+                            class="font-display text-2xl xs:text-3xl md:text-5xl font-bold mb-4 md:mb-6 text-white text-center md:text-left">
+                            Join the <span class="text-terracotta italic font-medium">Sentie</span> Inner Circle</h3>
+                        <p class="text-gray-400 text-sm md:text-base leading-relaxed text-center md:text-left">Subscribe
+                            to receive early access to new collections, style inspiration, and exclusive offers.</p>
+                    </div>
+                    <form class="relative z-10 w-full md:w-auto flex flex-col sm:flex-row gap-6"
+                        onsubmit="handleNewsletter(event)">
+                        <input type="email" placeholder="Email Address" required
+                            class="bg-white/10 border border-white/20 px-8 py-5 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-terracotta transition-all w-full min-w-0">
+                        <button type="submit"
+                            class="px-12 py-5 bg-terracotta text-white rounded-full font-bold hover:scale-105 active:scale-95 transition-all shadow-xl shadow-terracotta/20">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-20 border-b border-white/[0.05] pb-16 lg:pb-24">
+                <div class="col-span-1 md:col-span-1">
+                    <a href="index.html" class="flex items-center gap-2 mb-8">
+                        <div
+                            class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white font-display text-sm">
+                            S</div>
+                        <span class="font-display text-lg font-semibold">Southery Sentie</span>
+                    </a>
+                    <p class="text-[13px] text-gray-500 leading-relaxed mb-8">Crafting timeless elegance for the modern
+                        soul. Sustainable, handcrafted, and designed to last generations.</p>
+                    <div class="flex gap-4">
+                        <a href="https://instagram.com/southerysentie" target="_blank"
+                            class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-terracotta hover:text-white transition-all"><svg
+                                class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.258-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg></a>
+                        <a href="https://x.com/southerysentie" target="_blank"
+                            class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-terracotta hover:text-white transition-all"><svg
+                                class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.632 5.905-5.632Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+                            </svg></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-xs uppercase tracking-wider text-white mb-4">Adornments</h4>
+                    <div class="flex flex-col gap-5">
+                        <a href="shop.html?category=necklace"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Necklaces</a>
+                        <a href="shop.html?category=earring"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Earrings</a>
+                        <a href="shop.html?category=ring"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Rings</a>
+                        <a href="shop.html?category=bracelet"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Bracelets</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-xs uppercase tracking-wider text-white mb-4">Care & Support</h4>
+                    <div class="flex flex-col gap-5">
+                        <a href="order-tracking.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Track
+                            Order</a>
+                        <a href="shipping.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Shipping &
+                            Returns</a>
+                        <a href="care-guide.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Jewelry
+                            Care Guide</a>
+                        <a href="faq.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">FAQ</a>
+                        <a href="contact.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Contact
+                            Boutique</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-xs uppercase tracking-wider text-white mb-4">Our Story</h4>
+                    <div class="flex flex-col gap-5">
+                        <a href="about.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">The
+                            Legacy</a>
+                        <a href="privacy.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Privacy
+                            Policy</a>
+                        <a href="terms.html"
+                            class="text-[13px] text-gray-400 hover:text-white transition-colors font-medium">Terms of
+                            Service</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-[10px] text-gray-600 uppercase tracking-widest font-bold">&copy; <span id="yr"></span>
+                    Southery Sentie. Handcrafted with love.</p>
+                <div class="flex items-center gap-6 grayscale opacity-30">
+                    <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
+                        class="h-4">
+                    <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+                        class="h-6">
+                    <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                        class="h-4">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/products.js"></script>
+    <script src="js/layout.js"></script>
+
+</body>
+
+</html>
