@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000'; // Change to Render URL when deployed
+const API_URL = 'https://southery-backend.vercel.app'; // Production Vercel Backend URL
 
 async function apiCall(endpoint, method = 'GET', body = null) {
     const token = localStorage.getItem('southery_token');
