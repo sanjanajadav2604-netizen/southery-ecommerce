@@ -233,7 +233,7 @@ const sidebarHTML = `
                             <label class="text-[9px] uppercase tracking-widest font-bold text-muted ml-1">Password</label>
                             <div class="relative">
                                 <input type="password" id="login-password" class="w-full px-5 py-3.5 bg-cream/30 border border-gray-100 rounded-2xl focus:outline-none focus:border-terracotta/50 transition-all text-sm pr-12" placeholder="••••••••" required>
-                                <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors" tabindex="-1">
+                                <button type="button" onclick="togglePasswordVisibility(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors" tabindex="-1">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                 </button>
                             </div>
@@ -270,7 +270,7 @@ const sidebarHTML = `
                             <label class="text-[9px] uppercase tracking-widest font-bold text-muted ml-1">Password</label>
                             <div class="relative">
                                 <input type="password" id="signup-password" class="w-full px-5 py-3.5 bg-cream/30 border border-gray-100 rounded-2xl focus:outline-none focus:border-terracotta/50 transition-all text-sm pr-12" placeholder="Minimum 8 characters" required>
-                                <button type="button" onclick="togglePasswordVisibility('signup-password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors" tabindex="-1">
+                                <button type="button" onclick="togglePasswordVisibility(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors" tabindex="-1">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                 </button>
                             </div>
@@ -919,8 +919,8 @@ function switchAuthTab(tab) {
 
 async function handleLogin(event) {
     event.preventDefault();
-    const email = document.getElementById('login-email')?.value?.trim();
-    const password = document.getElementById('login-password')?.value;
+    const email = event.target.querySelector('input[type="email"]')?.value?.trim();
+    const password = event.target.querySelector('input[type="password"]')?.value;
     const btn = event.target.querySelector('button[type="submit"]');
     if (!email || !password) return showToast('Please enter your email and password.', 'error');
     const originalText = btn?.textContent;
@@ -943,9 +943,9 @@ async function handleLogin(event) {
 
 async function handleSignup(event) {
     event.preventDefault();
-    const name = document.getElementById('signup-name')?.value?.trim();
-    const email = document.getElementById('signup-email')?.value?.trim();
-    const password = document.getElementById('signup-password')?.value;
+    const name = event.target.querySelector('input[type="text"]')?.value?.trim();
+    const email = event.target.querySelector('input[type="email"]')?.value?.trim();
+    const password = event.target.querySelector('input[type="password"]')?.value;
     const btn = event.target.querySelector('button[type="submit"]');
     if (!name || !email || !password) return showToast('Please fill in all fields.', 'error');
     const originalText = btn?.textContent;
@@ -1350,8 +1350,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Password Visibility Toggle Function
-window.togglePasswordVisibility = function(inputId) {
-    const input = document.getElementById(inputId);
+window.togglePasswordVisibility = function(btnElement) {
+    const input = btnElement.parentElement.querySelector('input');
     if (!input) return;
     
     if (input.type === 'password') {
