@@ -1430,3 +1430,9 @@ section:first-of-type {
         padding: 1.5rem !important;
     }
 }
+
+/* Hide browser default password reveal and clear button */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
