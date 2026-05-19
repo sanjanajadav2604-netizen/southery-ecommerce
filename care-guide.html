@@ -91,6 +91,56 @@
                             d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
                         </path>
                     </svg><span id="d-wish-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleCart()" aria-label="Cart" class="header-icon-btn"><svg class="w-5 h-5"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg><span id="d-cart-count" class="icon-badge hidden">0</span></button>
+                <div id="auth-section" class="flex items-center">
+                    <div id="auth-default" onclick="openAuthModal()"
+                        class="flex items-center gap-2 px-3 py-2 rounded-full cursor-pointer bg-white/50 border border-transparent hover:bg-white hover:border-terracotta/20 hover:shadow-md active:scale-95 transition-all">
+                        <div
+                            class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white shadow-sm">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg></div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-charcoal">Sign In</span>
+                    </div>
+                    <div id="auth-logged-in" class="hidden items-center gap-3 cursor-pointer group"
+                        onclick="window.location.href='account.html'">
+                        <div
+                            class="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full group-hover:bg-white transition-colors">
+                            <div
+                                class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white text-xs font-bold ring-2 ring-terracotta/10">
+                                <span id="user-avatar-initial">U</span></div>
+                            <span class="text-sm font-semibold text-charcoal" id="user-name-display">User</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex lg:hidden items-center gap-1 z-10">
+                <button onclick="toggleSearch()" aria-label="Search"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg></button>
+                <button onclick="toggleWishlist()" aria-label="Wishlist"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg><span id="m-top-wish-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleCart()" aria-label="Cart"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg><span id="m-top-cart-count" class="icon-badge hidden">0</span></button>
                 <button onclick="toggleMobileMenu()" aria-label="Mobile Menu"
                     class="w-10 h-10 flex items-center justify-center text-charcoal"><svg class="w-6 h-6" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
@@ -468,4 +518,3 @@
 </body>
 
 </html>
-
