@@ -231,7 +231,12 @@ const sidebarHTML = `
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-[9px] uppercase tracking-widest font-bold text-muted ml-1">Password</label>
-                            <input type="password" id="login-password" class="w-full px-5 py-3.5 bg-cream/30 border border-gray-100 rounded-2xl focus:outline-none focus:border-terracotta/50 transition-all text-sm" placeholder="••••••••" required>
+                            <div class="relative">
+                                <input type="password" id="login-password" class="w-full px-5 py-3.5 bg-cream/30 border border-gray-100 rounded-2xl focus:outline-none focus:border-terracotta/50 transition-all text-sm pr-12" placeholder="••••••••" required>
+                                <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors" tabindex="-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                </button>
+                            </div>
                         </div>
                         <div class="flex justify-end pt-1">
                             <button type="button" onclick="showCustomAlert('Recovery Sent', 'A password reset link has been sent to your email.', 'success')" class="text-[9px] uppercase tracking-widest font-bold text-terracotta hover:underline">Forgot Password?</button>
@@ -263,7 +268,12 @@ const sidebarHTML = `
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-[9px] uppercase tracking-widest font-bold text-muted ml-1">Password</label>
-                            <input type="password" id="signup-password" class="w-full px-5 py-3.5 bg-cream/30 border border-gray-100 rounded-2xl focus:outline-none focus:border-terracotta/50 transition-all text-sm" placeholder="Minimum 8 characters" required>
+                            <div class="relative">
+                                <input type="password" id="signup-password" class="w-full px-5 py-3.5 bg-cream/30 border border-gray-100 rounded-2xl focus:outline-none focus:border-terracotta/50 transition-all text-sm pr-12" placeholder="Minimum 8 characters" required>
+                                <button type="button" onclick="togglePasswordVisibility('signup-password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors" tabindex="-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                </button>
+                            </div>
                         </div>
                         <button type="submit" class="btn-dynamic btn-base w-full py-4 text-xs uppercase tracking-widest shadow-xl shadow-terracotta/10 mt-2">Sign Up</button>
                     </form>
@@ -1338,3 +1348,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const yrEl = document.getElementById('yr');
     if (yrEl) yrEl.textContent = new Date().getFullYear();
 });
+
+// Password Visibility Toggle Function
+window.togglePasswordVisibility = function(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+    } else {
+        input.type = 'password';
+    }
+};
