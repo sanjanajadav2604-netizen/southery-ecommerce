@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "jetro": {
+      "command": "C:\\Users\\Staff Pc\\.jetro\\runtime\\node-win32-x64.exe",
+      "args": [
+        "C:\\Users\\Staff Pc\\.jetro\\mcp-server\\index.js"
+      ],
+      "env": {
+        "JET_WORKSPACE": "c:\\Users\\Staff Pc\\Desktop\\southery-website",
+        "JET_API_URL": "https://api.jetro.ai",
+        "PATH": "C:\\Users\\Staff Pc\\.jetro\\runtime;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files\\nodejs\\;C:\\Users\\Staff Pc\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Staff Pc\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;C:\\Users\\Staff Pc\\AppData\\Local\\Programs\\Antigravity\\bin;C:\\Users\\Staff Pc\\AppData\\Roaming\\npm;C:\\Users\\Staff Pc\\AppData\\Local\\Programs\\Git\\cmd"
+      }
+    }
+  }
+}
