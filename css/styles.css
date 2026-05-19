@@ -1083,50 +1083,6 @@ html {
     animation: fadeIn 0.5s ease forwards;
 }
 
-/* Custom Luxury Cursor */
-.custom-cursor {
-    width: 6px;
-    height: 6px;
-    background: var(--accent);
-    border-radius: 50%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: 10000;
-    transition: transform 0.1s var(--ease-out-expo), width 0.3s, height 0.3s, opacity 0.3s;
-    mix-blend-mode: difference;
-}
-
-.custom-cursor-follower {
-    width: 35px;
-    height: 35px;
-    border: 1px solid var(--accent);
-    border-radius: 50%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.15s var(--ease-smooth), width 0.3s, height 0.3s, border 0.3s, background 0.3s;
-    opacity: 0.5;
-}
-
-.custom-cursor-follower.active {
-    width: 65px;
-    height: 65px;
-    background: rgba(196, 92, 38, 0.1);
-    border-color: transparent;
-    opacity: 1;
-}
-
-@media (max-width: 1024px) {
-
-    .custom-cursor,
-    .custom-cursor-follower {
-        display: none !important;
-    }
-}
 
 /* --- Search Overlay Fixes --- */
 .search-wrapper {

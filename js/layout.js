@@ -310,9 +310,6 @@ const sidebarHTML = `
         </div>
     </div>
 
-    <!-- Luxury Cursor -->
-    <div class="custom-cursor"></div>
-    <div class="custom-cursor-follower"></div>
 
     <!-- Global Toast Container (Top Layer) -->
     <div id="toast-container" class="fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col gap-3 pointer-events-none" style="z-index: 2147483647 !important;"></div>
@@ -1205,36 +1202,6 @@ function newsletterSuccess(form, email, btn) {
  * Premium Luxury Cursor & Scroll Interactions
  */
 function initPremiumInteractions() {
-    // 1. Custom Cursor
-    const cursor = document.querySelector('.custom-cursor');
-    const follower = document.querySelector('.custom-cursor-follower');
-
-    if (cursor && follower && window.innerWidth > 1024) {
-        let mouseX = 0, mouseY = 0;
-        let posX = 0, posY = 0;
-
-        document.addEventListener('mousemove', e => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
-        });
-
-        const animateFollower = () => {
-            posX += (mouseX - posX) / 9;
-            posY += (mouseY - posY) / 9;
-            follower.style.transform = `translate3d(${posX}px, ${posY}px, 0)`;
-            requestAnimationFrame(animateFollower);
-        };
-        animateFollower();
-
-        // Hover states
-        const interactiveEls = document.querySelectorAll('a, button, .cursor-pointer, .product-card, .cat-scroll-card');
-        interactiveEls.forEach(el => {
-            el.addEventListener('mouseenter', () => follower.classList.add('active'));
-            el.addEventListener('mouseleave', () => follower.classList.remove('active'));
-        });
-    }
-
     // 2. Reveal on Scroll (Intersection Observer)
     const revealCallback = (entries, observer) => {
         entries.forEach(entry => {
