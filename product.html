@@ -73,7 +73,8 @@
                                 stroke-width="2.5">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
-                            </svg></div>
+                            </svg>
+                        </div>
                         <span class="text-[11px] font-bold uppercase tracking-wider text-charcoal">Sign In</span>
                     </div>
                     <div id="auth-logged-in" class="hidden items-center gap-3 cursor-pointer group"
@@ -82,7 +83,8 @@
                             class="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full group-hover:bg-white transition-colors">
                             <div
                                 class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white text-xs font-bold ring-2 ring-terracotta/10">
-                                <span id="user-avatar-initial">U</span></div>
+                                <span id="user-avatar-initial">U</span>
+                            </div>
                             <span class="text-sm font-semibold text-charcoal" id="user-name-display">User</span>
                         </div>
                     </div>
@@ -103,6 +105,12 @@
                             d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
                         </path>
                     </svg><span id="m-top-wish-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleCart()" aria-label="Cart"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg><span id="m-top-cart-count" class="icon-badge hidden">0</span></button>
                 <button onclick="toggleMobileMenu()" aria-label="Mobile Menu"
                     class="w-10 h-10 flex items-center justify-center text-charcoal"><svg class="w-6 h-6" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
@@ -133,6 +141,17 @@
                         <a href="shop.html" class="ml-1 hover:text-terracotta transition md:ml-2">Shop</a>
                     </div>
                 </li>
+                <li id="breadcrumb-category-li" class="hidden">
+                    <div class="flex items-center">
+                        <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 9 4-4-4-4" />
+                        </svg>
+                        <a id="breadcrumb-category" href="shop.html"
+                            class="ml-1 hover:text-terracotta transition md:ml-2 capitalize">Category</a>
+                    </div>
+                </li>
                 <li aria-current="page">
                     <div class="flex items-center">
                         <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -150,10 +169,29 @@
         <div id="product-container"
             class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start opacity-0 transition-opacity duration-500">
             <!-- Left: Gallery -->
-            <div class="md:col-span-6 lg:col-span-5 space-y-4 w-full mx-auto">
+            <div class="md:col-span-6 lg:col-span-5 space-y-4 w-full mx-auto relative">
                 <div class="relative group overflow-hidden rounded-[32px] bg-white border border-gray-100">
-                    <img loading="lazy" id="product-image" src="" alt="Product"
-                        class="w-full aspect-square object-cover rounded-[32px] transition-transform duration-700 hover:scale-105">
+                    <div id="zoom-container" class="relative cursor-zoom-in overflow-hidden rounded-[32px]"
+                        onmousemove="handleZoom(event)" onmouseleave="resetZoom()">
+                        <img loading="lazy" id="product-image" src="" alt="Product"
+                            class="w-full aspect-square object-cover rounded-[32px] transition-opacity duration-300">
+                        <div id="zoom-lens"
+                            class="absolute hidden w-32 h-32 border-2 border-terracotta/50 pointer-events-none rounded-full z-10">
+                        </div>
+                        <div
+                            class="absolute bottom-4 right-4 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full backdrop-blur-sm items-center gap-1 opacity-0 group-hover:opacity-100 transition hidden lg:flex pointer-events-none">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            Hover to zoom
+                        </div>
+                    </div>
+                    <div id="zoom-preview"
+                        class="hidden lg:block absolute left-[calc(100%+16px)] top-0 w-72 h-72 bg-white border border-gray-100 overflow-hidden pointer-events-none opacity-0 transition-opacity rounded-2xl shadow-xl z-30">
+                        <img id="zoom-image" src="" alt="" class="absolute max-w-none"
+                            style="transform-origin: top left;">
+                    </div>
                     <!-- Heart Icon Overlay -->
                     <button onclick="toggleWishlistItem(currentId); updateWishlistUI();"
                         class="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm border border-gray-100 flex items-center justify-center shadow-sm hover:bg-white hover:scale-110 active:scale-95 transition-all z-20">
@@ -165,7 +203,7 @@
                         </svg>
                     </button>
                 </div>
-                <div id="product-gallery" class="grid grid-cols-4 gap-4">
+                <div id="product-gallery" class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                     <!-- Thumbnails will be injected here -->
                 </div>
             </div>
@@ -258,6 +296,37 @@
                         <button onclick="buyNow()"
                             class="btn-base bg-charcoal text-white hover:bg-black flex-1 py-3 text-[11px] xs:text-xs uppercase tracking-widest font-bold">Buy
                             Now</button>
+                    </div>
+
+                    <div
+                        class="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-6 border-t mt-2 text-xs text-muted">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-sage shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                </path>
+                            </svg>
+                            <span>Secure Payment</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-sage shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                </path>
+                            </svg>
+                            <span>Easy Returns</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-sage shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7">
+                                </path>
+                            </svg>
+                            <span>Authenticated</span>
+                        </div>
                     </div>
 
                     <!-- WhatsApp Business Integration -->
@@ -815,6 +884,14 @@
 
             const bCrumb = document.getElementById('breadcrumb-product');
             if (bCrumb) bCrumb.textContent = product.name;
+            const catLi = document.getElementById('breadcrumb-category-li');
+            const catLink = document.getElementById('breadcrumb-category');
+            if (catLi && catLink && product.category) {
+                const catLabel = product.category.charAt(0).toUpperCase() + product.category.slice(1) + 's';
+                catLink.textContent = catLabel;
+                catLink.href = `shop.html?category=${product.category}`;
+                catLi.classList.remove('hidden');
+            }
             const pTitle = document.getElementById('product-title');
             if (pTitle) pTitle.textContent = product.name;
             const pCat = document.getElementById('product-category');
@@ -861,39 +938,89 @@
             renderReviews();
         }
 
+        function getProductImages(product) {
+            if (product.images && product.images.length > 1) return product.images;
+            const base = product.image;
+            return [
+                base,
+                base + (base.includes('?') ? '&' : '?') + 'fit=crop&crop=center',
+                base + (base.includes('?') ? '&' : '?') + 'fit=crop&crop=top',
+                base + (base.includes('?') ? '&' : '?') + 'fit=crop&crop=bottom'
+            ];
+        }
+
         function renderGallery(product) {
             const galleryContainer = document.getElementById('product-gallery');
             if (!galleryContainer) return;
 
-            const imgs = product.images || [product.image];
+            const imgs = getProductImages(product);
+            window._productImages = imgs;
             galleryContainer.innerHTML = imgs.map((img, idx) => `
-                <div class="aspect-square bg-white rounded-2xl overflow-hidden border cursor-pointer transition-all duration-300 ${idx === 0 ? 'border-terracotta shadow-md' : 'border-gray-100 opacity-60 hover:opacity-100'}" 
-                     onclick="switchMainImage(this, '${img}')">
-                    <img loading="lazy" src="${img}" class="w-full h-full object-cover">
-                </div>
+                <button type="button" class="thumbnail-btn ${idx === 0 ? 'active' : ''}" onclick="changeImage(${idx})">
+                    <img loading="lazy" src="${img}" alt="View ${idx + 1}" class="w-20 h-20 object-cover rounded-xl">
+                </button>
             `).join('');
+        }
+
+        function changeImage(index) {
+            const src = (window._productImages || [])[index];
+            if (!src) return;
+            switchMainImage(null, src);
+            document.querySelectorAll('.thumbnail-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
         }
 
         function switchMainImage(thumb, src) {
             const mainImg = document.getElementById('product-image');
+            const zoomImg = document.getElementById('zoom-image');
             if (mainImg) {
                 mainImg.style.opacity = '0';
                 setTimeout(() => {
                     mainImg.src = src;
                     mainImg.style.opacity = '1';
+                    if (zoomImg) zoomImg.src = src;
                 }, 200);
             }
+            resetZoom();
+        }
 
-            // Update active state of thumbnails
-            const gallery = document.getElementById('product-gallery');
-            if (gallery) {
-                gallery.querySelectorAll('div').forEach(div => {
-                    div.classList.remove('border-terracotta', 'shadow-md', 'opacity-100');
-                    div.classList.add('border-gray-100', 'opacity-60');
-                });
-                thumb.classList.add('border-terracotta', 'shadow-md', 'opacity-100');
-                thumb.classList.remove('border-gray-100', 'opacity-60');
-            }
+        function handleZoom(e) {
+            if (window.innerWidth < 1024) return;
+            const container = document.getElementById('zoom-container');
+            const mainImg = document.getElementById('product-image');
+            const lens = document.getElementById('zoom-lens');
+            const preview = document.getElementById('zoom-preview');
+            const zoomImg = document.getElementById('zoom-image');
+            if (!container || !mainImg || !lens || !preview || !zoomImg) return;
+
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const lensSize = 128;
+            const half = lensSize / 2;
+
+            lens.style.left = Math.max(0, Math.min(x - half, rect.width - lensSize)) + 'px';
+            lens.style.top = Math.max(0, Math.min(y - half, rect.height - lensSize)) + 'px';
+            lens.classList.remove('hidden');
+
+            preview.style.opacity = '1';
+            zoomImg.src = mainImg.src;
+
+            const zoomLevel = 2.5;
+            const px = (x / rect.width) * 100;
+            const py = (y / rect.height) * 100;
+            zoomImg.style.width = rect.width * zoomLevel + 'px';
+            zoomImg.style.height = rect.height * zoomLevel + 'px';
+            zoomImg.style.left = -(x * zoomLevel - preview.offsetWidth / 2) + 'px';
+            zoomImg.style.top = -(y * zoomLevel - preview.offsetHeight / 2) + 'px';
+        }
+
+        function resetZoom() {
+            const lens = document.getElementById('zoom-lens');
+            const preview = document.getElementById('zoom-preview');
+            if (lens) lens.classList.add('hidden');
+            if (preview) preview.style.opacity = '0';
         }
 
         function renderReviews() {

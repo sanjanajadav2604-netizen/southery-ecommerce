@@ -214,7 +214,8 @@
                                 stroke-width="2.5">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
-                            </svg></div>
+                            </svg>
+                        </div>
                         <span class="text-[11px] font-bold uppercase tracking-wider text-charcoal">Sign In</span>
                     </div>
                     <div id="auth-logged-in" class="hidden items-center gap-3 cursor-pointer group"
@@ -223,7 +224,8 @@
                             class="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full group-hover:bg-white transition-colors">
                             <div
                                 class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white text-xs font-bold ring-2 ring-terracotta/10">
-                                <span id="user-avatar-initial">U</span></div>
+                                <span id="user-avatar-initial">U</span>
+                            </div>
                             <span class="text-sm font-semibold text-charcoal" id="user-name-display">User</span>
                         </div>
                     </div>
@@ -244,6 +246,12 @@
                             d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
                         </path>
                     </svg><span id="m-top-wish-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleCart()" aria-label="Cart"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg><span id="m-top-cart-count" class="icon-badge hidden">0</span></button>
                 <button onclick="toggleMobileMenu()" aria-label="Mobile Menu"
                     class="w-10 h-10 flex items-center justify-center text-charcoal"><svg class="w-6 h-6" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
@@ -293,62 +301,111 @@
                     onclick="event.stopPropagation()">
                     <div class="flex justify-between items-center mb-10">
                         <h3 class="serif text-2xl font-bold tracking-tight">Refine By</h3>
-                        <button onclick="toggleMobileFilters()" class="lg:hidden text-3xl p-2 -mr-2 text-gray-500 hover:text-charcoal transition-colors">&times;</button>
+                        <button onclick="toggleMobileFilters()"
+                            class="lg:hidden text-3xl p-2 -mr-2 text-gray-500 hover:text-charcoal transition-colors">&times;</button>
                     </div>
 
-                    <!-- Collection Filter -->
-                    <div class="mb-6 mt-6 lg:mt-6">
-                        <h4 class="font-semibold text-sm mb-3">Collection</h4>
-                        <div class="space-y-2">
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="checkbox" name="collection" class="filter-checkbox" value="all" checked
-                                    onchange="handleCollectionUI('all'); applyFilters()">
-                                <span class="text-sm group-hover:text-charcoal transition-colors">All Products</span>
-                            </label>
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="checkbox" name="collection" class="filter-checkbox filter-checkbox-green"
-                                    value="handmade" onchange="handleCollectionUI('handmade'); applyFilters()">
-                                <span class="text-sm group-hover:text-[#8BA18E] transition-colors">Handmade</span>
-                            </label>
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="checkbox" name="collection" class="filter-checkbox" value="anti-tarnish"
-                                    onchange="handleCollectionUI('anti-tarnish'); applyFilters()">
-                                <span class="text-sm group-hover:text-charcoal transition-colors">Anti-Tarnish</span>
-                            </label>
+                    <!-- Mobile: simplified filters -->
+                    <div class="lg:hidden mb-6 space-y-6">
+                        <div>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-muted mb-3">Category</h4>
+                            <div class="flex flex-wrap gap-2" id="mobile-cat-pills">
+                                <button type="button" class="filter-pill filter-pill-cat active" data-cat=""
+                                    onclick="filterByCategoryPill('')">All</button>
+                                <button type="button" class="filter-pill filter-pill-cat" data-cat="necklace"
+                                    onclick="filterByCategoryPill('necklace')">Necklaces</button>
+                                <button type="button" class="filter-pill filter-pill-cat" data-cat="earring"
+                                    onclick="filterByCategoryPill('earring')">Earrings</button>
+                                <button type="button" class="filter-pill filter-pill-cat" data-cat="ring"
+                                    onclick="filterByCategoryPill('ring')">Rings</button>
+                                <button type="button" class="filter-pill filter-pill-cat" data-cat="bracelet"
+                                    onclick="filterByCategoryPill('bracelet')">Bracelets</button>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-muted mb-3">Price Range</h4>
+                            <div class="flex flex-wrap gap-2" id="mobile-price-pills">
+                                <button type="button" class="filter-pill filter-pill-price active" data-max="50000"
+                                    onclick="filterByPricePill(0, 50000)">All Prices</button>
+                                <button type="button" class="filter-pill filter-pill-price" data-max="2000"
+                                    onclick="filterByPricePill(0, 2000)">Under &#8377;2K</button>
+                                <button type="button" class="filter-pill filter-pill-price" data-max="5000"
+                                    onclick="filterByPricePill(2000, 5000)">&#8377;2K - &#8377;5K</button>
+                                <button type="button" class="filter-pill filter-pill-price" data-max="999999"
+                                    onclick="filterByPricePill(5000, 999999)">&#8377;5K+</button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="toggleAdvancedFilters()"
+                            class="w-full text-left text-sm font-semibold text-terracotta flex items-center justify-between py-2 border-t border-gray-100">
+                            <span>More Filters</span>
+                            <svg id="advanced-arrow" class="w-4 h-4 transition-transform" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div id="advanced-filters" class="hidden lg:block">
+                        <!-- Collection Filter -->
+                        <div class="mb-6 mt-6 lg:mt-6">
+                            <h4 class="font-semibold text-sm mb-3">Collection</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" name="collection" class="filter-checkbox" value="all" checked
+                                        onchange="handleCollectionUI('all'); applyFilters()">
+                                    <span class="text-sm group-hover:text-charcoal transition-colors">All
+                                        Products</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" name="collection"
+                                        class="filter-checkbox filter-checkbox-green" value="handmade"
+                                        onchange="handleCollectionUI('handmade'); applyFilters()">
+                                    <span class="text-sm group-hover:text-[#8BA18E] transition-colors">Handmade</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" name="collection" class="filter-checkbox"
+                                        value="anti-tarnish"
+                                        onchange="handleCollectionUI('anti-tarnish'); applyFilters()">
+                                    <span
+                                        class="text-sm group-hover:text-charcoal transition-colors">Anti-Tarnish</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-sm mb-3">Category</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox"
+                                        name="category" class="filter-checkbox" value="necklace"
+                                        onchange="applyFilters()"><span class="text-sm">Necklaces</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox"
+                                        name="category" class="filter-checkbox" value="earring"
+                                        onchange="applyFilters()"><span class="text-sm">Earrings</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox"
+                                        name="category" class="filter-checkbox" value="bracelet"
+                                        onchange="applyFilters()"><span class="text-sm">Bracelets</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox"
+                                        name="category" class="filter-checkbox" value="ring"
+                                        onchange="applyFilters()"><span class="text-sm">Rings</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox"
+                                        name="category" class="filter-checkbox" value="anklet"
+                                        onchange="applyFilters()"><span class="text-sm">Anklets</span></label>
+                            </div>
+                        </div>
+
+                        <!-- Price Filter -->
+                        <div>
+                            <h4 class="font-semibold text-sm mb-3">Price Range</h4>
+                            <input type="range" min="0" max="50000" value="50000" step="100" id="price-range"
+                                oninput="updatePriceLabel(this.value); applyFilters()" class="w-full">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span id="min-price-label">₹0</span>
+                                <span id="max-price" class="text-terracotta font-bold">Up to ₹50,000</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mb-6">
-                        <h4 class="font-semibold text-sm mb-3">Category</h4>
-                        <div class="space-y-2">
-                            <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" name="category"
-                                    class="filter-checkbox" value="necklace" onchange="applyFilters()"><span
-                                    class="text-sm">Necklaces</span></label>
-                            <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" name="category"
-                                    class="filter-checkbox" value="earring" onchange="applyFilters()"><span
-                                    class="text-sm">Earrings</span></label>
-                            <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" name="category"
-                                    class="filter-checkbox" value="bracelet" onchange="applyFilters()"><span
-                                    class="text-sm">Bracelets</span></label>
-                            <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" name="category"
-                                    class="filter-checkbox" value="ring" onchange="applyFilters()"><span
-                                    class="text-sm">Rings</span></label>
-                            <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" name="category"
-                                    class="filter-checkbox" value="anklet" onchange="applyFilters()"><span
-                                    class="text-sm">Anklets</span></label>
-                        </div>
-                    </div>
-
-                    <!-- Price Filter -->
-                    <div>
-                        <h4 class="font-semibold text-sm mb-3">Price Range</h4>
-                        <input type="range" min="0" max="50000" value="50000" step="100" id="price-range"
-                            oninput="updatePriceLabel(this.value); applyFilters()" class="w-full">
-                        <div class="flex justify-between text-xs text-gray-500 mt-1">
-                            <span id="min-price-label">₹0</span>
-                            <span id="max-price" class="text-terracotta font-bold">Up to ₹50,000</span>
-                        </div>
-                    </div>
                     <button onclick="clearFilters()"
                         class="w-full mt-6 py-2 border rounded-full text-xs font-semibold hover:bg-gray-100">Clear
                         All</button>
@@ -356,24 +413,37 @@
                     <button onclick="toggleMobileFilters()"
                         class="lg:hidden w-full mt-4 py-4 bg-terracotta text-white rounded-xl text-sm font-bold uppercase tracking-widest">Show
                         Results</button>
-                        
+
                     <!-- Sidebar Trust Badges -->
                     <div class="mt-8 pt-8 border-t border-black/5 hidden lg:block">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-8 h-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div
+                                class="w-8 h-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
                             </div>
                             <p class="text-xs text-charcoal font-medium">100% Secure Checkout</p>
                         </div>
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <div
+                                class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
                             </div>
                             <p class="text-xs text-charcoal font-medium">Free Shipping > ₹4,999</p>
                         </div>
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <div
+                                class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
                             </div>
                             <p class="text-xs text-charcoal font-medium">Authentic Handcrafted</p>
                         </div>
@@ -406,6 +476,7 @@
                             <select id="sort-select" onchange="applyFilters()"
                                 class="border rounded-lg px-4 py-2 text-sm bg-white shadow-sm">
                                 <option value="default">Sort by: Featured</option>
+                                <option value="newest">New Arrivals</option>
                                 <option value="price-asc">Price: Low to High</option>
                                 <option value="price-desc">Price: High to Low</option>
                             </select>
@@ -596,12 +667,75 @@
 
     <script src="js/products.js"></script>
     <script src="js/layout.js"></script>
+
+    <!-- Mobile Scroll-Aware Filter FAB (Bottom Right) -->
+    <button id="mobile-filter-fab" type="button" onclick="toggleMobileFilters()"
+        class="lg:hidden fixed flex items-center justify-center w-12 h-12 bg-terracotta text-white rounded-full shadow-[0_4px_20px_rgba(196,92,38,0.5)] active:scale-95 transition-all duration-300 z-[9999] opacity-0 pointer-events-none translate-y-4"
+        style="bottom: 80px; right: 16px;">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+            </path>
+        </svg>
+    </button>
+
     <script>
+        // Scroll aware mobile FAB
+        window.addEventListener('scroll', () => {
+            const fab = document.getElementById('mobile-filter-fab');
+            if (fab) {
+                // Show FAB after scrolling approx 5-6 products down (roughly 1200px)
+                if (window.scrollY > 1200) {
+                    fab.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+                    fab.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                } else {
+                    fab.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+                    fab.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                }
+            }
+        });
         function toggleMobileFilters(e) {
             const sidebar = document.getElementById('filter-sidebar');
             if (e && e.target !== e.currentTarget) return;
             const isOpen = sidebar.classList.toggle('open');
             document.body.classList.toggle('sidebar-open', isOpen);
+        }
+
+        let _mobilePriceMin = 0;
+        let _mobilePriceMax = 50000;
+
+        function toggleAdvancedFilters() {
+            const panel = document.getElementById('advanced-filters');
+            const arrow = document.getElementById('advanced-arrow');
+            if (!panel) return;
+            const isHidden = panel.classList.contains('hidden');
+            panel.classList.toggle('hidden', !isHidden);
+            panel.classList.toggle('lg:block', isHidden);
+            if (arrow) arrow.style.transform = isHidden ? 'rotate(180deg)' : '';
+        }
+
+        function filterByCategoryPill(cat) {
+            document.querySelectorAll('input[name="category"]').forEach(cb => {
+                cb.checked = cat ? cb.value === cat : false;
+            });
+            document.querySelectorAll('.filter-pill-cat').forEach(p => {
+                p.classList.toggle('active', p.dataset.cat === cat);
+            });
+            applyFilters(false);
+        }
+
+        function filterByPricePill(min, max) {
+            _mobilePriceMin = min;
+            _mobilePriceMax = max;
+            const slider = document.getElementById('price-range');
+            if (slider) {
+                slider.value = max >= 999999 ? slider.max : max;
+                updatePriceLabel(slider.value);
+            }
+            document.querySelectorAll('.filter-pill-price').forEach(p => {
+                p.classList.toggle('active', parseInt(p.dataset.max) === max);
+            });
+            applyFilters(false);
         }
 
         function handleCollectionUI(val) {
@@ -658,6 +792,22 @@
         }
 
         function clearFilters() {
+            _mobilePriceMin = 0;
+            _mobilePriceMax = 50000;
+            document.querySelectorAll('.filter-pill-cat').forEach(p => {
+                p.classList.toggle('active', p.dataset.cat === '');
+            });
+            document.querySelectorAll('.filter-pill-price').forEach(p => {
+                p.classList.toggle('active', p.dataset.max === '50000');
+            });
+            const adv = document.getElementById('advanced-filters');
+            if (adv && window.innerWidth < 1024) {
+                adv.classList.add('hidden');
+                adv.classList.remove('lg:block');
+            }
+            const arrow = document.getElementById('advanced-arrow');
+            if (arrow) arrow.style.transform = '';
+
             // Reset collections
             document.querySelectorAll('input[name="collection"]').forEach(cb => {
                 cb.checked = cb.value === 'all';
@@ -720,10 +870,16 @@
             const gridTitle = document.getElementById('grid-title');
             if (gridTitle) gridTitle.textContent = titleText;
 
+            const useMobilePrice = window.innerWidth < 1024 && document.querySelector('.filter-pill-price.active');
+            const priceMin = useMobilePrice ? _mobilePriceMin : 0;
+            const priceMax = useMobilePrice ? _mobilePriceMax : price;
+
             let filtered = products.filter(p => {
                 const matchColl = colls.length === 0 || colls.includes('all') || colls.includes(p.collection);
                 const matchCat = cats.length === 0 || cats.includes(p.category);
-                const matchPrice = p.price <= price;
+                const matchPrice = useMobilePrice
+                    ? (p.price >= priceMin && p.price <= priceMax)
+                    : (p.price <= price);
                 const matchSearch = !searchQuery ||
                     p.name.toLowerCase().includes(searchQuery) ||
                     p.category.toLowerCase().includes(searchQuery) ||
@@ -733,6 +889,7 @@
 
             if (sort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
             else if (sort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
+            else if (sort === 'newest') filtered.sort((a, b) => b.id - a.id);
 
             if (shouldScroll) {
                 const shopSection = document.querySelector('.atelier-container.py-16');

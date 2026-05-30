@@ -12,15 +12,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <script>
-        // Soft Auth Guard - Only redirect if we're sure there's no session at all
-        // This prevents kicking out users in private mode before layout.js can re-sync
-        const hasUser = !!localStorage.getItem('southery_user');
-        const hasToken = !!localStorage.getItem('southery_token');
-        if (!hasUser && !hasToken) {
-            window.location.href = 'account.html?redirect=checkout.html';
-        }
-    </script>
     <link rel="stylesheet" href="css/tailwind.css">
     <link rel="stylesheet" href="css/styles.css">
 
@@ -305,55 +296,61 @@
                     </svg><span id="d-wish-count" class="icon-badge hidden">0</span></button>
                 <button onclick="toggleCart()" aria-label="Cart" class="header-icon-btn"><svg class="w-5 h-5"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="2" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg><span id="d-cart-count" class="icon-badge hidden">0</span></button>
                 <div id="auth-section" class="flex items-center">
                     <div id="auth-default" onclick="openAuthModal()"
-                        class="flex items-center gap-2 px-3 py-1.5 lg:py-2 rounded-full cursor-pointer bg-white/50 border border-transparent hover:bg-white hover:border-terracotta/20 hover:shadow-md active:scale-95 transition-all duration-300">
+                        class="flex items-center gap-2 px-3 py-2 rounded-full cursor-pointer bg-white/50 border border-transparent hover:bg-white hover:border-terracotta/20 hover:shadow-md active:scale-95 transition-all">
                         <div
-                            class="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-terracotta flex items-center justify-center text-white shadow-sm">
+                            class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white shadow-sm">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2.5">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                <circle cx="12" cy="7" r="4" />
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
                             </svg>
                         </div>
-                        <span
-                            class="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider text-charcoal hidden lg:block">Sign
-                            In</span>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-charcoal">Sign In</span>
                     </div>
                     <div id="auth-logged-in" class="hidden items-center gap-3 cursor-pointer group"
                         onclick="window.location.href='account.html'">
                         <div
-                            class="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full group-hover:bg-white transition-all">
+                            class="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full group-hover:bg-white transition-colors">
                             <div
-                                class="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-terracotta flex items-center justify-center text-white text-[10px] font-bold shadow-sm">
+                                class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white text-xs font-bold ring-2 ring-terracotta/10">
                                 <span id="user-avatar-initial">U</span>
                             </div>
-                            <span class="text-[11px] font-bold text-charcoal uppercase tracking-wider hidden lg:block"
-                                id="user-name-display">User</span>
+                            <span class="text-sm font-semibold text-charcoal" id="user-name-display">User</span>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="flex lg:hidden items-center gap-1 z-10">
-                <button onclick="toggleSearch()" aria-label="Search" class="header-icon-btn"><svg class="w-6 h-6"
+                <button onclick="toggleSearch()" aria-label="Search"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-width="2" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg></button>
-                <button onclick="toggleWishlist()" aria-label="Wishlist" class="header-icon-btn"><svg class="w-6 h-6"
+                <button onclick="toggleWishlist()" aria-label="Wishlist"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                            stroke-width="2" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
                     </svg><span id="m-top-wish-count" class="icon-badge hidden">0</span></button>
-                <button onclick="toggleCart()" aria-label="Cart" class="header-icon-btn"><svg class="w-6 h-6"
+                <button onclick="toggleCart()" aria-label="Cart"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="2" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg><span id="m-top-cart-count" class="icon-badge hidden">0</span></button>
-                <button onclick="toggleMobileMenu()" aria-label="Mobile Menu" class="header-icon-btn"><svg
-                        class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M4 6h16M4 12h16M4 18h16" stroke-width="2" />
+                <button onclick="toggleMobileMenu()" aria-label="Mobile Menu"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal"><svg class="w-6 h-6" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg></button>
             </div>
         </div>
@@ -407,6 +404,22 @@
                                         oninput="this.value=this.value.replace(/[^0-9]/g,'');" required>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input type="checkbox" id="create-account"
+                                    class="w-5 h-5 rounded border-gray-300 text-terracotta focus:ring-terracotta mt-0.5">
+                                <div>
+                                    <span
+                                        class="text-sm font-semibold text-charcoal group-hover:text-terracotta transition">
+                                        Create an account for faster future checkouts
+                                    </span>
+                                    <p class="text-xs text-muted mt-1">
+                                        Optional — save your details for order history and quicker checkout next time.
+                                    </p>
+                                </div>
+                            </label>
                         </div>
 
                         <!-- Summary of Terms notice -->
@@ -845,13 +858,14 @@
         }
 
         function prefillUser() {
-            if (window.currentUser) {
-                if (document.getElementById('email')) document.getElementById('email').value = currentUser.email || '';
-                if (currentUser.name) {
-                    const names = currentUser.name.split(' ');
-                    if (document.getElementById('fname')) document.getElementById('fname').value = names[0] || '';
-                    if (document.getElementById('lname')) document.getElementById('lname').value = names.slice(1).join(' ') || '';
-                }
+            const user = window.currentUser || JSON.parse(localStorage.getItem('southery_user') || 'null');
+            if (!user) return;
+            if (document.getElementById('email')) document.getElementById('email').value = user.email || '';
+            if (document.getElementById('phone') && user.phone) document.getElementById('phone').value = user.phone;
+            if (user.name) {
+                const names = user.name.split(' ');
+                if (document.getElementById('fname')) document.getElementById('fname').value = names[0] || '';
+                if (document.getElementById('lname')) document.getElementById('lname').value = names.slice(1).join(' ') || '';
             }
         }
 
@@ -880,45 +894,6 @@
             localStorage.setItem('southery_orders', JSON.stringify(currentOrders));
         }
 
-        async function createBackendOrder(orderId, method, paymentResult = null) {
-            try {
-                if (!window.currentUser) return;
-
-                const subtotal = parseInt(document.getElementById('subtotal').textContent.replace('₹', '').replace(/,/g, '')) || 0;
-                const tax = parseInt(document.getElementById('tax').textContent.replace('₹', '').replace(/,/g, '')) || 0;
-
-                const orderData = {
-                    orderItems: cart.map(item => {
-                        const p = products.find(prod => prod.id == item.id);
-                        return {
-                            name: p.name,
-                            quantity: item.qty,
-                            image: p.image,
-                            price: p.price,
-                            product: p.mongoId || "64b7f8e9c1d2e3f4a5b6c7d8" // Fallback to a valid ID pattern
-                        };
-                    }),
-                    shippingAddress: {
-                        address: document.getElementById('address').value,
-                        city: document.getElementById('city').value,
-                        postalCode: document.getElementById('pincode').value,
-                        country: 'India',
-                        phone: document.getElementById('phone').value
-                    },
-                    paymentMethod: method === 'cod' ? 'COD' : 'Razorpay',
-                    itemsPrice: subtotal,
-                    shippingPrice: 0,
-                    totalPrice: checkoutTotal,
-                    paymentResult: paymentResult
-                };
-
-                await apiCall('/api/orders', 'POST', orderData);
-                console.log("Order saved to MongoDB successfully");
-            } catch (err) {
-                console.error("Failed to save order to backend:", err);
-                // Fallback already happens via saveOrderToLocal
-            }
-        }
 
         function updateCheckoutQty(id, delta) {
             const index = cart.findIndex(item => item.id == id);
@@ -1055,14 +1030,115 @@
         }
 
         function checkAuth() {
-            const user = localStorage.getItem('southery_user');
-            const token = localStorage.getItem('southery_token');
-            if (!user && !token) {
-                window.location.href = 'account.html?redirect=checkout.html';
+            // Guest checkout enabled — pre-fill form when logged in
+            prefillUser();
+        }
+
+        function getCheckoutCustomer() {
+            const fname = document.getElementById('fname').value.trim();
+            const lname = document.getElementById('lname').value.trim();
+            return {
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                fname,
+                lname,
+                fullName: `${fname} ${lname}`.trim(),
+                address: document.getElementById('address').value.trim(),
+                city: document.getElementById('city').value.trim(),
+                state: document.getElementById('state').value,
+                pincode: document.getElementById('pincode').value.trim(),
+                notes: document.getElementById('notes')?.value?.trim() || '',
+                createAccount: !!document.getElementById('create-account')?.checked,
+            };
+        }
+
+        function buildOrderPayload(orderId, method, paymentResult = null) {
+            const c = getCheckoutCustomer();
+            const subtotal = parseInt(document.getElementById('subtotal').textContent.replace(/[₹,]/g, '')) || 0;
+            const tax = parseInt(document.getElementById('tax').textContent.replace(/[₹,]/g, '')) || 0;
+
+            return {
+                orderId: orderId.replace(/^#/, ''),
+                guestEmail: c.email,
+                guestPhone: c.phone,
+                guestName: c.fullName,
+                createAccount: c.createAccount && !localStorage.getItem('southery_token'),
+                orderItems: cart.map(item => {
+                    const p = products.find(prod => prod.id == item.id);
+                    if (!p) return null;
+                    return {
+                        name: p.name,
+                        quantity: item.qty,
+                        image: p.image,
+                        price: p.price,
+                        product: p.mongoId || String(p.id),
+                    };
+                }).filter(Boolean),
+                shippingAddress: {
+                    address: c.address,
+                    city: c.city,
+                    state: c.state,
+                    postalCode: c.pincode,
+                    country: 'India',
+                    phone: c.phone,
+                },
+                paymentMethod: method === 'cod' ? 'COD' : 'Razorpay',
+                itemsPrice: subtotal,
+                shippingPrice: 0,
+                totalPrice: checkoutTotal,
+                paymentResult,
+                notes: c.notes,
+            };
+        }
+
+        async function submitOrderToServer(orderId, method, paymentResult = null) {
+            const payload = buildOrderPayload(orderId, method, paymentResult);
+            try {
+                const data = await apiCall('/api/orders', 'POST', payload);
+                if (data.token && data.user) {
+                    localStorage.setItem('southery_token', data.token);
+                    localStorage.setItem('southery_user', JSON.stringify(data.user));
+                    window.currentUser = data.user;
+                }
+                return { ok: true, data };
+            } catch (err) {
+                console.error('Server order save failed:', err);
+                return { ok: false, error: err.message };
             }
         }
 
+        function redirectAfterOrder(orderId, method, paymentId, serverResult) {
+            const c = getCheckoutCustomer();
+            const params = new URLSearchParams({
+                order: orderId.replace(/^#/, ''),
+                method,
+                email: c.email,
+            });
+            if (paymentId) params.set('payment_id', paymentId);
+            if (c.createAccount) params.set('account', serverResult?.data?.accountCreated ? 'created' : 'requested');
+            if (serverResult?.ok) params.set('saved', 'server');
+            window.location.href = 'done.html?' + params.toString();
+        }
+
         function showCheckoutError(msg, fieldId) {
+            document.querySelectorAll('.inline-error-msg').forEach(el => el.remove());
+            if (fieldId) {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.focus();
+                    field.classList.add('border-red-400', 'bg-red-50/30');
+                    field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const errorText = document.createElement('p');
+                    errorText.className = 'inline-error-msg text-xs font-bold text-red-500 mt-1';
+                    errorText.textContent = msg.includes(':') ? msg.split(':').slice(1).join(':').trim() : msg;
+                    field.parentElement.appendChild(errorText);
+                    field.addEventListener('input', () => {
+                        field.classList.remove('border-red-400', 'bg-red-50/30');
+                        if (errorText.parentNode) errorText.remove();
+                    }, { once: true });
+                    return;
+                }
+            }
             document.querySelectorAll('.checkout-error-banner').forEach(el => el.remove());
             const banner = document.createElement('div');
             banner.className = 'checkout-error-banner fixed top-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-4 bg-white border-l-4 border-red-500 px-6 py-4 rounded-2xl shadow-2xl max-w-sm w-[90vw] transition-all duration-500 opacity-0 -translate-y-4';
@@ -1080,15 +1156,6 @@
             document.body.appendChild(banner);
             setTimeout(() => { banner.classList.remove('opacity-0', '-translate-y-4'); }, 10);
             setTimeout(() => { banner.classList.add('opacity-0', '-translate-y-4'); setTimeout(() => banner.remove(), 500); }, 5000);
-            if (fieldId) {
-                const field = document.getElementById(fieldId);
-                if (field) {
-                    field.focus();
-                    field.classList.add('border-red-400', 'bg-red-50/30');
-                    field.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    field.addEventListener('input', () => field.classList.remove('border-red-400', 'bg-red-50/30'), { once: true });
-                }
-            }
         }
 
         async function handleSubmit() {
@@ -1151,7 +1218,7 @@
                 const data = await response.json();
 
                 if (!data || data.length === 0 || data[0].Status === "Error") {
-                    showCheckoutError('Invalid Pincode: The entered pincode does not exist. Please check again.', 'pincode');
+                    showCheckoutError("Invalid Pincode: Sorry, we don't deliver to this pincode yet.", 'pincode');
                     btn.disabled = false;
                     btn.classList.remove('opacity-70', 'cursor-not-allowed');
                     btn.innerHTML = originalBtnHtml;
@@ -1165,9 +1232,16 @@
                     setTimeout(async () => {
                         const orderId = 'SS-' + Math.floor(100000 + Math.random() * 900000);
                         saveOrderToLocal(orderId, 'cod');
-                        await createBackendOrder(orderId, 'cod');
-                        localStorage.removeItem('southery_cart');
-                        window.location.href = 'done.html?order=' + orderId + '&method=cod';
+                        const serverResult = await submitOrderToServer(orderId, 'cod');
+                        if (serverResult && serverResult.ok) {
+                            localStorage.removeItem('southery_cart');
+                            redirectAfterOrder(orderId, 'cod', null, serverResult);
+                        } else {
+                            showCheckoutError('Order could not be confirmed. Please try again or contact support.', null);
+                            btn.disabled = false;
+                            btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                            btn.innerHTML = originalBtnHtml;
+                        }
                     }, 1200);
 
                 } else if (selectedPayment === 'stripe') {
@@ -1202,16 +1276,23 @@
                         name: 'Southery Sentie',
                         description: 'Handcrafted Jewelry Order',
                         handler: async function (response) {
-                            showToast('Payment Successful! 🎉 Order Confirmed.');
+                            showToast('Payment Successful! Order Confirmed.');
                             const orderRef = 'SS-' + response.razorpay_payment_id.slice(-6).toUpperCase();
                             saveOrderToLocal(orderRef, 'online');
-                            await createBackendOrder(orderRef, 'online', {
+                            const serverResult = await submitOrderToServer(orderRef, 'online', {
                                 id: response.razorpay_payment_id,
                                 status: 'paid',
                                 update_time: new Date().toISOString()
                             });
-                            localStorage.removeItem('southery_cart');
-                            window.location.href = 'done.html?order=' + orderRef + '&method=online&payment_id=' + response.razorpay_payment_id;
+                            if (serverResult && serverResult.ok) {
+                                localStorage.removeItem('southery_cart');
+                                redirectAfterOrder(orderRef, 'online', response.razorpay_payment_id, serverResult);
+                            } else {
+                                showCheckoutError('Order could not be confirmed on our server, but payment was captured. Please contact support.', null);
+                                btn.disabled = false;
+                                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                                btn.innerHTML = originalBtnHtml;
+                            }
                         },
                         prefill: {
                             name: fname + ' ' + lname,
@@ -1242,16 +1323,25 @@
                 console.error("Pincode validation failed:", err);
                 const selectedPayment = document.querySelector('input[name="payment"]:checked')?.value || 'cod';
                 if (selectedPayment === 'cod') {
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         const orderId = 'SS-' + Math.floor(100000 + Math.random() * 900000);
-                        localStorage.removeItem('southery_cart');
-                        window.location.href = 'done.html?order=' + orderId + '&method=cod';
+                        saveOrderToLocal(orderId, 'cod');
+                        const serverResult = await submitOrderToServer(orderId, 'cod');
+                        if (serverResult && serverResult.ok) {
+                            localStorage.removeItem('southery_cart');
+                            redirectAfterOrder(orderId, 'cod', null, serverResult);
+                        } else {
+                            showCheckoutError('Order could not be confirmed. Please try again or contact support.', null);
+                            btn.disabled = false;
+                            btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                            btn.innerHTML = originalBtnHtml;
+                        }
                     }, 1000);
                 } else {
                     btn.disabled = false;
                     btn.classList.remove('opacity-70', 'cursor-not-allowed');
                     btn.innerHTML = originalBtnHtml;
-                    showCheckoutError('Network Error: Could not validate pincode. Please check your connection.', 'pincode');
+                    showCheckoutError('Pincode Error: Unable to verify pincode. Please try again.', 'pincode');
                 }
             }
         }
@@ -1275,14 +1365,13 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            if (typeof checkAuth === 'function') checkAuth();
             await fetchSecureConfig();
 
             const sessionUser = localStorage.getItem('southery_user');
             if (sessionUser) {
                 window.currentUser = JSON.parse(sessionUser);
-                prefillUser();
             }
+            prefillUser();
             renderSummary();
         });
     </script>

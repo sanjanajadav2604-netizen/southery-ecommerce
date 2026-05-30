@@ -1250,16 +1250,76 @@ section:first-of-type {
     }
 }
 
-/* MOBILE VIEW ONLY: Hide the redundant bag icon in the top header */
+/* MOBILE VIEW: Hide redundant Wishlist in bottom nav (cart stays in header) */
 @media (max-width: 768px) {
-    nav .flex.md\:hidden button[onclick="toggleCart()"] {
-        display: none !important;
-    }
-
-    /* Hide redundant Wishlist icon in the bottom navigation bar */
     .mobile-bottom-nav button[onclick="toggleWishlist()"] {
         display: none !important;
     }
+}
+
+/* Filter pills (shop mobile) */
+.filter-pill {
+    padding: 8px 16px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    background: white;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.filter-pill.active,
+.filter-pill:hover {
+    background: #C45C26;
+    border-color: #C45C26;
+    color: white;
+}
+
+/* Product gallery thumbnails */
+.thumbnail-btn {
+    opacity: 0.6;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.thumbnail-btn.active,
+.thumbnail-btn:hover {
+    opacity: 1;
+    border-color: #C45C26;
+    transform: scale(1.05);
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Product image zoom */
+#zoom-container {
+    touch-action: pan-y;
+}
+
+#zoom-lens {
+    background: rgba(196, 92, 38, 0.08);
+}
+
+#zoom-preview {
+    z-index: 20;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+    border-radius: 16px;
+}
+
+.icon-badge {
+    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 /* --- STRICTOR MOBILE VIEW: Product Page Tightening --- */
@@ -1435,4 +1495,50 @@ section:first-of-type {
 input::-ms-reveal,
 input::-ms-clear {
     display: none;
+}
+
+/* ============================================
+   Utility: Scrollbar Hide (for mobile tab nav)
+   ============================================ */
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* IE / Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;             /* Chrome / Safari */
+}
+
+/* ============================================
+   Account Page – Mobile Polish
+   ============================================ */
+@media (max-width: 640px) {
+
+    /* Make the order cards more compact on phones */
+    #orders-container .bg-white {
+        padding: 1rem;
+    }
+    .order-img-container {
+        width: 70px !important;
+        height: 90px !important;
+    }
+
+    /* Tab nav pill indicator lines */
+    .tab-btn.border-terracotta {
+        background: #f8f6f3;
+    }
+
+    /* Address cards – tighter padding on very small screens */
+    #address-list .bg-white {
+        padding: 1rem;
+    }
+
+    /* Profile settings form – stack grid to single column */
+    #tab-settings .grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+
+    /* Auth card image – slightly taller on small phones so text is readable */
+    #auth-container img.object-cover {
+        object-position: center 20%;
+    }
 }

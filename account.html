@@ -178,7 +178,7 @@
                         <div class="space-y-1.5">
                             <label class="text-[9px] uppercase tracking-widest font-bold text-muted ml-1">Email</label>
                             <input type="email" id="login-email" class="input-field-premium py-3"
-                                placeholder="sanjana@gmail.com" required>
+                                placeholder="Enter your email" required>
                         </div>
                         <div class="space-y-1.5">
                             <div class="flex justify-between px-1">
@@ -187,7 +187,7 @@
                             </div>
                             <div class="relative">
                                 <input type="password" id="login-password" class="input-field-premium py-3 pr-12"
-                                    placeholder="••••••••" required>
+                                    placeholder="Enter your password" required>
                                 <button type="button" onclick="togglePasswordVisibility(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors" tabindex="-1">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                 </button>
@@ -246,19 +246,19 @@
                             <label class="text-[9px] uppercase tracking-widest font-bold text-muted ml-2">Full
                                 Name</label>
                             <input type="text" id="signup-name" class="input-field-premium py-3"
-                                placeholder="Sanjana Jadav" required>
+                                placeholder="Enter your full name" required>
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-[9px] uppercase tracking-widest font-bold text-muted ml-2">Email</label>
                             <input type="email" id="signup-email" class="input-field-premium py-3"
-                                placeholder="sanjana@gmail.com" required>
+                                placeholder="Enter your email address" required>
                         </div>
                         <div class="space-y-1.5">
                             <label
                                 class="text-[9px] uppercase tracking-widest font-bold text-muted ml-2">Password</label>
                             <div class="relative">
                                 <input type="password" id="signup-password" class="input-field-premium py-3 pr-12"
-                                    placeholder="Minimum 8 characters" required>
+                                    placeholder="Enter password (min. 8 characters)" required>
                                 <button type="button" onclick="togglePasswordVisibility(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors" tabindex="-1">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                 </button>
@@ -325,17 +325,17 @@
                 <!-- Navigation Menu -->
                 <nav
                     class="bg-white rounded-2xl p-3 shadow-[0_2px_8px_rgba(0,0,0,0.06)] flex flex-col sm:grid sm:grid-cols-3 lg:flex lg:flex-col gap-2">
-                    <button onclick="switchTab('orders', this)"
+                    <button id="tab-btn-orders" onclick="switchTab('orders', this)"
                         class="tab-btn w-full text-center lg:text-left px-4 py-4 flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-2 lg:gap-4 text-charcoal rounded-xl transition-all border-b-[3px] lg:border-b-0 lg:border-l-[3px] border-terracotta bg-[#f8f6f3]">
                         <span class="text-[20px]">📦</span>
                         <span class="text-[12px] lg:text-[14px] font-semibold whitespace-nowrap">Order History</span>
                     </button>
-                    <button onclick="switchTab('addresses', this)"
+                    <button id="tab-btn-addresses" onclick="switchTab('addresses', this)"
                         class="tab-btn w-full text-center lg:text-left px-4 py-4 flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-2 lg:gap-4 text-charcoal rounded-xl transition-all border-b-[3px] lg:border-b-0 lg:border-l-[3px] border-transparent hover:bg-[#f8f6f3]">
                         <span class="text-[20px]">📍</span>
                         <span class="text-[12px] lg:text-[14px] font-semibold whitespace-nowrap">Saved Addresses</span>
                     </button>
-                    <button onclick="switchTab('settings', this)"
+                    <button id="tab-btn-settings" onclick="switchTab('settings', this)"
                         class="tab-btn w-full text-center lg:text-left px-4 py-4 flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-2 lg:gap-4 text-charcoal rounded-xl transition-all border-b-[3px] lg:border-b-0 lg:border-l-[3px] border-transparent hover:bg-[#f8f6f3]">
                         <span class="text-[20px]">⚙️</span>
                         <span class="text-[12px] lg:text-[14px] font-semibold whitespace-nowrap">Profile Settings</span>
@@ -712,6 +712,17 @@
 
                 // Load real orders
                 renderUserOrders();
+                // Load real addresses
+                loadAddresses();
+
+                // Switch to active hash tab or default to orders
+                const hash = window.location.hash.replace('#', '');
+                const validTabs = ['orders', 'addresses', 'settings'];
+                if (validTabs.includes(hash)) {
+                    switchTab(hash);
+                } else {
+                    switchTab('orders');
+                }
             } else {
                 authView.classList.remove('hidden');
                 dashboardView.classList.add('hidden');
@@ -807,12 +818,19 @@
         }
 
         function switchTab(tabId, btn) {
+            if (!btn) {
+                btn = document.getElementById(`tab-btn-${tabId}`);
+            }
+            if (!btn) return;
+
+            // Set URL hash
+            window.location.hash = tabId;
+
             // Reset all tab buttons
             document.querySelectorAll('.tab-btn').forEach(b => {
                 b.classList.remove('border-terracotta', 'bg-[#f8f6f3]');
-                // Re-add hidden border for non-active state depending on screen size
-                if (window.innerWidth >= 1024) b.classList.add('border-transparent');
-                b.classList.remove('border-b-[3px]');
+                b.classList.add('border-transparent');
+                b.classList.remove('border-b-[3px]', 'border-l-[3px]');
             });
 
             // Set active tab button style
@@ -820,6 +838,7 @@
                 btn.classList.remove('border-transparent');
                 btn.classList.add('border-l-[3px]', 'border-terracotta', 'bg-[#f8f6f3]');
             } else {
+                btn.classList.remove('border-transparent');
                 btn.classList.add('border-b-[3px]', 'border-terracotta', 'bg-[#f8f6f3]');
             }
 
@@ -879,12 +898,71 @@
             }
         }
 
-        let addressBeingEdited = null;
+        // Global variables for addresses
+        let userAddresses = [];
+        let addressIdBeingEdited = null;
+
+        function getAddressesKey() {
+            return currentUser ? `southery_addresses_${currentUser.email}` : 'southery_addresses_guest';
+        }
+
+        function loadAddresses() {
+            const key = getAddressesKey();
+            const stored = localStorage.getItem(key);
+            if (stored) {
+                userAddresses = JSON.parse(stored);
+            } else {
+                // Default address
+                userAddresses = [
+                    {
+                        id: "addr_default",
+                        name: "Residence",
+                        line1: "12A Crystal Towers, Marine Drive",
+                        line2: "South Mumbai, Maharashtra 400021",
+                        isPrimary: true
+                    }
+                ];
+                localStorage.setItem(key, JSON.stringify(userAddresses));
+            }
+            renderAddresses();
+        }
+
+        function renderAddresses() {
+            const list = document.getElementById('address-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            userAddresses.forEach(addr => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-black/[0.02] mb-5 animate-fade-in";
+                card.setAttribute('data-id', addr.id);
+                card.innerHTML = `
+                    <div class="flex flex-col sm:flex-row justify-between items-center sm:items-start mb-6 gap-4 border-b border-black/[0.04] pb-6">
+                        <div class="text-center sm:text-left">
+                            ${addr.isPrimary ? 
+                                `<span class="bg-[#d4af6a]/20 text-terracotta px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-[2px] inline-block mb-3">Primary</span>` : 
+                                `<span class="bg-gray-100 text-muted px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-[2px] inline-block mb-3">Additional</span>`
+                            }
+                            <h4 class="text-[20px] font-display font-bold text-charcoal">${addr.name}</h4>
+                        </div>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button class="flex-1 sm:flex-none border border-terracotta/20 text-terracotta py-2 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-[#f8f6f3]" onclick="editAddress('${addr.id}')">Edit</button>
+                            <button class="flex-1 sm:flex-none border border-red-500/20 text-red-500 py-2 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-red-50" onclick="confirmRelinquish('${addr.id}')">Delete</button>
+                        </div>
+                    </div>
+                    <div class="text-center sm:text-left">
+                        <p class="text-[14px] text-charcoal mb-1 leading-[1.6] font-medium address-line-1">${addr.line1}</p>
+                        <p class="text-[14px] text-charcoal m-0 font-medium address-line-2">${addr.line2}</p>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
 
         function closeAddressForm() {
             const formContainer = document.getElementById('new-address-form');
             formContainer.classList.add('hidden');
-            addressBeingEdited = null;
+            addressIdBeingEdited = null;
         }
 
         function addNewAddress() {
@@ -893,7 +971,7 @@
             const formEl = document.getElementById('new-addr-form-el');
 
             formEl.reset();
-            addressBeingEdited = null;
+            addressIdBeingEdited = null;
             if (formTitle) formTitle.innerText = "Add a New Address";
 
             formContainer.classList.remove('hidden');
@@ -911,81 +989,71 @@
                 return;
             }
 
-            if (addressBeingEdited) {
+            if (addressIdBeingEdited) {
                 // Modifying existing card
-                const nameEl = addressBeingEdited.querySelector('h4');
-                const line1El = addressBeingEdited.querySelector('.address-line-1');
-                const line2El = addressBeingEdited.querySelector('.address-line-2');
-
-                if (nameEl) nameEl.innerText = name;
-                if (line1El) line1El.innerText = line1;
-                if (line2El) line2El.innerHTML = line2;
-
-                showToast('Address elegantly updated.', 'success');
+                const addr = userAddresses.find(a => a.id === addressIdBeingEdited);
+                if (addr) {
+                    addr.name = name;
+                    addr.line1 = line1;
+                    addr.line2 = line2;
+                    localStorage.setItem(getAddressesKey(), JSON.stringify(userAddresses));
+                    showToast('Address elegantly updated.', 'success');
+                }
             } else {
                 // Creating new card
-                const list = document.getElementById('address-list');
-                const newCard = document.createElement('div');
-                newCard.className = "bg-white rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-black/[0.02] mb-5 animate-fade-in";
-                newCard.innerHTML = `
-                    <div class="flex flex-col sm:flex-row justify-between items-center sm:items-start mb-6 gap-4 border-b border-black/[0.04] pb-6">
-                        <div class="text-center sm:text-left">
-                            <span class="bg-gray-100 text-muted px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-[2px] inline-block mb-3">Additional</span>
-                            <h4 class="text-[20px] font-display font-bold text-charcoal">${name}</h4>
-                        </div>
-                        <div class="flex gap-2 w-full sm:w-auto">
-                            <button class="flex-1 sm:flex-none border border-terracotta/20 text-terracotta py-2 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-[#f8f6f3]" onclick="editAddress(this)">Edit</button>
-                            <button class="flex-1 sm:flex-none border border-red-500/20 text-red-500 py-2 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-red-50" onclick="confirmRelinquish(this)">Delete</button>
-                        </div>
-                    </div>
-                    <div class="text-center sm:text-left">
-                        <p class="text-[14px] text-charcoal mb-1 leading-[1.6] font-medium address-line-1">${line1}</p>
-                        <p class="text-[14px] text-charcoal m-0 font-medium address-line-2">${line2}</p>
-                    </div>
-                `;
-                list.prepend(newCard);
+                const newAddr = {
+                    id: "addr_" + Date.now(),
+                    name: name,
+                    line1: line1,
+                    line2: line2,
+                    isPrimary: userAddresses.length === 0
+                };
+                userAddresses.unshift(newAddr);
+                localStorage.setItem(getAddressesKey(), JSON.stringify(userAddresses));
                 showToast('New atelier registry appended.', 'success');
             }
 
+            renderAddresses();
             document.getElementById('new-addr-form-el').reset();
             closeAddressForm();
         }
 
-        function editAddress(btn) {
-            const card = btn.closest('.bg-white');
-            if (!card) return;
+        function editAddress(id) {
+            const addr = userAddresses.find(a => a.id === id);
+            if (!addr) return;
 
-            const nameEl = card.querySelector('h4');
-            const line1El = card.querySelector('.address-line-1');
-            const line2El = card.querySelector('.address-line-2');
+            const formContainer = document.getElementById('new-address-form');
+            const formTitle = formContainer.querySelector('h4');
 
-            if (nameEl && line1El && line2El) {
-                const formContainer = document.getElementById('new-address-form');
-                const formTitle = formContainer.querySelector('h4');
+            document.getElementById('new-addr-name').value = addr.name;
+            document.getElementById('new-addr-line1').value = addr.line1;
+            document.getElementById('new-addr-line2').value = addr.line2;
 
-                document.getElementById('new-addr-name').value = nameEl.innerText.trim();
-                document.getElementById('new-addr-line1').value = line1El.innerText.trim();
-                document.getElementById('new-addr-line2').value = line2El.innerText.replace('\n', '').trim();
+            addressIdBeingEdited = id;
+            if (formTitle) formTitle.innerText = "Edit Current Address";
 
-                addressBeingEdited = card;
-                if (formTitle) formTitle.innerText = "Edit Current Address";
-
-                formContainer.classList.remove('hidden');
-                formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            formContainer.classList.remove('hidden');
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        async function confirmRelinquish(btn) {
+        async function confirmRelinquish(id) {
             const confirmed = await showCustomConfirm('Delete Registry?', 'Are you sure you want to permanently erase this saved address?');
             if (confirmed) {
-                // Find parent card and trigger disappearing animation
-                const card = btn.closest('.bg-white');
+                const card = document.querySelector(`[data-id="${id}"]`);
                 if (card) {
                     card.style.opacity = '0';
                     card.style.transform = 'scale(0.95)';
                     card.style.transition = 'all 0.3s ease';
-                    // Delay actual DOM destruction to allow transition to run
-                    setTimeout(() => card.remove(), 300);
+                    
+                    setTimeout(() => {
+                        userAddresses = userAddresses.filter(a => a.id !== id);
+                        localStorage.setItem(getAddressesKey(), JSON.stringify(userAddresses));
+                        renderAddresses();
+                    }, 300);
+                } else {
+                    userAddresses = userAddresses.filter(a => a.id !== id);
+                    localStorage.setItem(getAddressesKey(), JSON.stringify(userAddresses));
+                    renderAddresses();
                 }
                 showToast('Entry permanently deleted.');
             }

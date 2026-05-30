@@ -51,8 +51,7 @@ southery-website/
 ├── wishlist.html           # Wishlist Page
 ├── account.html            # Customer Account & Auth
 ├── order-tracking.html     # Order Tracking
-├── order-success.html      # Order Confirmation
-├── done.html               # Payment Success
+├── done.html               # Payment & Order Confirmation Success
 ├── about.html              # About Us
 ├── contact.html            # Contact Page
 ├── faq.html                # FAQ
@@ -124,7 +123,7 @@ southery-website/
 | `wishlist.html` | Saved/liked products |
 | `account.html` | Customer login, signup, and account dashboard |
 | `order-tracking.html` | Live order status tracker with timeline |
-| `order-success.html` | Order confirmation page |
+| `done.html` | Order success & confirmation page |
 | `about.html` | Brand story |
 | `contact.html` | Contact form and boutique info |
 | `faq.html` | Frequently asked questions with search and filters |

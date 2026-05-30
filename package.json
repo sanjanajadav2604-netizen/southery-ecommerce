@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Southery Sentie — Premium Handcrafted Jewelry E-Commerce Website",
   "scripts": {
+    "dev": "node local-server.js",
+    "start": "node local-server.js",
+    "dev:api": "npx vercel dev",
+    "build": "npm run build:css",
     "build:css": "npx tailwindcss -i ./src/input.css -o ./css/tailwind.css --minify",
     "watch:css": "npx tailwindcss -i ./src/input.css -o ./css/tailwind.css --watch"
   },
@@ -14,6 +18,11 @@
   "author": "Southery Sentie",
   "license": "ISC",
   "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.12.0"
+  },
   "devDependencies": {
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.12",

@@ -105,6 +105,12 @@
                             d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
                         </path>
                     </svg><span id="m-top-wish-count" class="icon-badge hidden">0</span></button>
+                <button onclick="toggleCart()" aria-label="Cart"
+                    class="w-10 h-10 flex items-center justify-center text-charcoal relative"><svg class="w-6 h-6"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg><span id="m-top-cart-count" class="icon-badge hidden">0</span></button>
                 <button onclick="toggleMobileMenu()" aria-label="Mobile Menu"
                     class="w-10 h-10 flex items-center justify-center text-charcoal"><svg class="w-6 h-6" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
@@ -377,26 +383,22 @@
     <script src="js/products.js"></script>
     <script src="js/layout.js"></script>
     <script>
-        async function fetchTrackingData(orderId) {
-            const now = new Date();
-            const formatDate = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve({
-                        orderId: orderId.toUpperCase(),
-                        statusLabel: 'On the way to you',
-                        estimatedDelivery: formatDate(new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000)),
-                        progress: 60,
-                        history: [
-                            { date: formatDate(now), time: '02:45 PM', status: 'Arrived at Sorting Facility', location: 'New Delhi Hub' },
-                            { date: formatDate(now), time: '09:30 AM', status: 'On the way to you', location: 'Regional Hub' },
-                            { date: formatDate(new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000)), time: '04:15 PM', status: 'Shipped from Warehouse', location: 'Mumbai Main' },
-                            { date: formatDate(new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000)), time: '11:45 AM', status: 'Order Processed', location: 'Southery Boutique' }
-                        ]
-                    });
-                }, 1000);
-            });
+        async function fetchTrackingData(orderId, email) {
+            try {
+                const data = await apiCall('/api/orders/track', 'POST', {
+                    orderId: orderId.replace(/^#/, ''),
+                    email: email.trim(),
+                });
+                return {
+                    orderId: data.orderId,
+                    statusLabel: data.statusLabel || data.status,
+                    estimatedDelivery: data.estimatedDelivery,
+                    progress: data.progress || 40,
+                    history: data.history || [],
+                };
+            } catch (err) {
+                throw err;
+            }
         }
 
         document.getElementById('tracking-form').addEventListener('submit', async function (e) {
@@ -414,7 +416,15 @@
             btn.disabled = true;
             btn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Verifying Identity...</span>';
 
-            const data = await fetchTrackingData(orderIdInput);
+            let data;
+            try {
+                data = await fetchTrackingData(orderIdInput, emailInput);
+            } catch (err) {
+                btn.disabled = false;
+                btn.textContent = 'Verify & Track Journey';
+                showToast(err.message || 'Order not found. Check your order ID and email.');
+                return;
+            }
 
             btn.disabled = false;
             btn.textContent = 'Verify & Track Journey';
@@ -456,9 +466,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const order = params.get('order');
+            const email = params.get('email');
             if (order && order !== 'success') {
                 document.getElementById('order-id').value = order;
-                document.getElementById('tracking-form').dispatchEvent(new Event('submit'));
+                if (email) document.getElementById('track-email').value = email;
+                if (email) document.getElementById('tracking-form').requestSubmit();
             }
         });
     </script>

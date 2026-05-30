@@ -1,4 +1,15 @@
-const API_URL = 'https://southery-backend.vercel.app'; // Production Vercel Backend URL
+function getApiBase() {
+    if (typeof window === 'undefined') return 'https://southery-backend.vercel.app';
+    const override = localStorage.getItem('southery_api_base');
+    if (override) return override.replace(/\/$/, '');
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') {
+        return 'https://southery-backend.vercel.app';
+    }
+    return 'https://southery-backend.vercel.app';
+}
+
+const API_URL = getApiBase();
 
 async function apiCall(endpoint, method = 'GET', body = null) {
     const token = localStorage.getItem('southery_token');
@@ -10,11 +21,18 @@ async function apiCall(endpoint, method = 'GET', body = null) {
         },
         ...(body && { body: JSON.stringify(body) })
     };
-    const response = await fetch(`${API_URL}${endpoint}`, options);
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || 'Something went wrong');
+    const base = getApiBase();
+    const url = `${base}${endpoint}`;
+    const response = await fetch(url, options);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        const err = new Error(data.message || 'Something went wrong');
+        err.status = response.status;
+        throw err;
+    }
     return data;
 }
+
 
 /**
  * Unified Layout & Sidebar System for Southery Sentie
@@ -324,7 +342,7 @@ const sidebarHTML = `
             <span class="text-[9px] font-bold uppercase tracking-tighter mt-1">Home</span>
         </a>
         <a href="shop.html" class="flex flex-col items-center text-charcoal/60 hover:text-terracotta transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
             <span class="text-[9px] font-bold uppercase tracking-tighter mt-1">Shop</span>
         </a>
         <button onclick="toggleCart()" class="flex flex-col items-center text-charcoal/60 hover:text-terracotta transition-colors">
@@ -789,7 +807,9 @@ window.addToCartFromWishlist = function (id) {
     else window.cart.push({ id, qty: 1 });
     localStorage.setItem('southery_cart', JSON.stringify(window.cart));
     updateAllCounts();
-    showToast("Added to bag!");
+    const product = (typeof products !== 'undefined') ? products.find(p => p.id === id) : null;
+    showToast('Added to bag!', 'success', product ? product.name : '');
+    animateCartBadges();
 };
 
 window.updateCartQty = function (id, change) {
@@ -803,19 +823,25 @@ window.updateCartQty = function (id, change) {
 };
 
 window.addToCart = function (id, qty = 1) {
-    if (!currentUser) {
-        showToast('Please sign in to add items to your bag.', 'info');
-        openAuthModal('login');
-        return;
-    }
     const item = window.cart.find(c => c.id === id);
     if (item) item.qty += qty;
     else window.cart.push({ id, qty });
     localStorage.setItem('southery_cart', JSON.stringify(window.cart));
     updateAllCounts();
     renderCart();
-    showToast("Added to bag!");
+
+    const product = (typeof products !== 'undefined') ? products.find(p => p.id === id) : null;
+    const productName = product ? product.name : 'Item';
+    showToast('Added to bag!', 'success', productName);
+    animateCartBadges();
 };
+
+function animateCartBadges() {
+    document.querySelectorAll('[id$="-cart-count"]').forEach(badge => {
+        badge.style.transform = 'scale(1.3)';
+        setTimeout(() => { badge.style.transform = 'scale(1)'; }, 300);
+    });
+}
 
 function updateAllCounts() {
     const cartCount = window.cart.reduce((a, b) => a + (b.qty || 0), 0);
@@ -987,23 +1013,37 @@ function handleMobileAuthClick() {
 }
 
 // Utility functions
-function showToast(message, type = 'success') {
+function showToast(message, type = 'success', subtitle = '') {
     const container = document.getElementById('toast-container');
     if (!container) return;
     const t = document.createElement('div');
-    t.className = 'toast flex items-center gap-3 px-6 py-4 bg-charcoal text-white rounded-2xl shadow-2xl transition-all duration-500 translate-y-8 opacity-0';
+    const isError = type === 'error';
+    const isInfo = type === 'info' || type === 'alert';
+    const isCartAdd = type === 'success' && subtitle && message.toLowerCase().includes('bag');
+    t.className = isCartAdd
+        ? 'toast flex items-center gap-3 px-6 py-4 text-white rounded-2xl shadow-2xl transition-all duration-500 translate-y-8 opacity-0'
+        : 'toast flex items-center gap-3 px-6 py-4 bg-charcoal text-white rounded-2xl shadow-2xl transition-all duration-500 translate-y-8 opacity-0';
+    if (isCartAdd) {
+        t.style.background = 'linear-gradient(135deg, #8BA18E 0%, #6B8F71 100%)';
+        t.style.boxShadow = '0 8px 24px rgba(139, 161, 142, 0.4)';
+    }
     t.style.zIndex = '2147483647';
     t.style.position = 'relative';
-    const isError = type === 'error';
-    const iconBg = isError ? 'bg-red-500' : 'bg-sage';
+    const iconBg = isError ? 'bg-red-500' : (isInfo ? 'bg-amber-500' : 'bg-sage');
     const iconSvg = isError
         ? '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>'
         : '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>';
+    const subtitleHtml = subtitle
+        ? `<span class="text-xs opacity-90 block mt-0.5 truncate max-w-[220px]">${subtitle}</span>`
+        : '';
     t.innerHTML = `
-        <div class="w-6 h-6 rounded-full ${iconBg} flex items-center justify-center flex-shrink-0">
+        <div class="w-6 h-6 rounded-full ${iconBg} flex items-center justify-center flex-shrink-0" style="${isCartAdd ? 'background: rgba(255,255,255,0.25)' : ''}">
             ${iconSvg}
         </div>
-        <span class="text-sm font-medium pr-2">${message}</span>
+        <div class="min-w-0">
+            <span class="text-sm font-semibold pr-2 block">${message}</span>
+            ${subtitleHtml}
+        </div>
     `;
     container.appendChild(t);
     setTimeout(() => t.classList.remove('translate-y-8', 'opacity-0'), 10);
@@ -1334,8 +1374,24 @@ async function loadUserFromServer() {
         updateAuthUI();
         dispatchAuthChange();
     } catch (error) {
-        console.warn('Session invalid or expired:', error.message);
-        // Token expired or invalid — clear session completely
+        console.warn('Session check failed:', error.message);
+        
+        // Only log out if it is a definitive authentication failure (401 or 403).
+        // If it is a server error (5xx) or a network/offline error, do NOT log the user out. Keep local state.
+        const isAuthError = error.status === 401 || error.status === 403;
+        if (!isAuthError) {
+            console.log('Network/Server error or Offline detected. Falling back to local user state.');
+            try {
+                currentUser = JSON.parse(localStorage.getItem('southery_user'));
+            } catch (e) {
+                currentUser = null;
+            }
+            updateAuthUI();
+            dispatchAuthChange();
+            return;
+        }
+
+        // Token expired or invalid (e.g. 401 Unauthorized) — clear session completely
         localStorage.removeItem('southery_token');
         localStorage.removeItem('southery_user');
         currentUser = null;
@@ -1343,10 +1399,10 @@ async function loadUserFromServer() {
         dispatchAuthChange();
     }
 }
+
 document.addEventListener('DOMContentLoaded', () => {
+    initLayout();
     loadUserFromServer();
-    const yrEl = document.getElementById('yr');
-    if (yrEl) yrEl.textContent = new Date().getFullYear();
 });
 
 // Password Visibility Toggle Function
