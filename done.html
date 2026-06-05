@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,7 +10,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="css/tailwind.css">
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         .font-display {
             font-family: 'Cormorant Garamond', serif;
@@ -161,12 +161,12 @@
     <!-- Footer -->
     <footer class="pb-16 text-center">
         <p class="font-display italic text-2xl text-terracotta/40">Southery Sentie</p>
-        <p class="text-[9px] font-bold uppercase tracking-[0.4em] text-muted/30 mt-3">&copy; Handmade Heritage</p>
+        <p class="text-[9px] font-bold uppercase tracking-[0.4em] text-muted/30 mt-3">&copy; Southery Sentie</p>
     </footer>
 
     <script src="js/layout.js"></script>
     <script>
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
             document.title = "Order Confirmed — Southery Sentie";
             const params = new URLSearchParams(window.location.search);
 
@@ -213,12 +213,6 @@
                 document.getElementById('order-subtitle').textContent =
                     'Thank you! Your Cash on Delivery order is confirmed. We emailed your confirmation' +
                     (email ? ` to ${email}` : '') + '. Our team may call to verify delivery details.';
-            } else if (method === 'stripe') {
-                methodEl.textContent = 'International Card';
-                if (email) {
-                    document.getElementById('order-subtitle').textContent =
-                        `Thank you! Order confirmed. A confirmation email was sent to ${email}.`;
-                }
             } else {
                 methodEl.textContent = 'Secured via Razorpay';
                 if (email) {
@@ -237,26 +231,58 @@
             if (account === 'created') {
                 document.getElementById('account-created-banner').classList.remove('hidden');
             } else if (!localStorage.getItem('southery_token') && email) {
-                const cta = document.getElementById('create-account-cta');
-                cta.classList.remove('hidden');
-                document.getElementById('one-click-account-btn').addEventListener('click', async () => {
+                const accountParam = params.get('account');
+                if (accountParam === 'requested') {
                     try {
                         const data = await apiCall('/api/auth/checkout-register', 'POST', {
                             email,
-                            name: email.split('@')[0],
+                            name: (params.get('name') || email.split('@')[0]),
                             orderId,
                         });
                         if (data.token) {
                             localStorage.setItem('southery_token', data.token);
                             localStorage.setItem('southery_user', JSON.stringify(data.user));
+                            window.currentUser = data.user;
+                            document.getElementById('account-created-banner').classList.remove('hidden');
                         }
-                        document.getElementById('account-created-banner').classList.remove('hidden');
-                        cta.classList.add('hidden');
-                        if (typeof showToast === 'function') showToast(data.message, 'success');
                     } catch (e) {
-                        if (typeof showToast === 'function') showToast(e.message || 'Could not create account.', 'error');
+                        const cta = document.getElementById('create-account-cta');
+                        cta.classList.remove('hidden');
+                        document.getElementById('one-click-account-btn').addEventListener('click', async () => {
+                            try {
+                                const data = await apiCall('/api/auth/checkout-register', 'POST', {
+                                    email, name: email.split('@')[0], orderId,
+                                });
+                                if (data.token) {
+                                    localStorage.setItem('southery_token', data.token);
+                                    localStorage.setItem('southery_user', JSON.stringify(data.user));
+                                    cta.classList.add('hidden');
+                                    document.getElementById('account-created-banner').classList.remove('hidden');
+                                }
+                            } catch (err) {
+                                if (typeof showToast === 'function') showToast(err.message || 'Could not create account.', 'error');
+                            }
+                        });
                     }
-                });
+                } else {
+                    const cta = document.getElementById('create-account-cta');
+                    cta.classList.remove('hidden');
+                    document.getElementById('one-click-account-btn').addEventListener('click', async () => {
+                        try {
+                            const data = await apiCall('/api/auth/checkout-register', 'POST', {
+                                email, name: email.split('@')[0], orderId,
+                            });
+                            if (data.token) {
+                                localStorage.setItem('southery_token', data.token);
+                                localStorage.setItem('southery_user', JSON.stringify(data.user));
+                                cta.classList.add('hidden');
+                                document.getElementById('account-created-banner').classList.remove('hidden');
+                            }
+                        } catch (err) {
+                            if (typeof showToast === 'function') showToast(err.message || 'Could not create account.', 'error');
+                        }
+                    });
+                }
             }
         });
     </script>

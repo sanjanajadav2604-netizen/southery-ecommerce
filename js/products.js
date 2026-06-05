@@ -24,3 +24,4 @@ const products = [
     { id: 23, name: 'Minimalist Snake Chain', price: 2999, comparePrice: 3999, description: 'Sleek snake chain bracelet.', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80', collection: 'anti-tarnish', category: 'bracelet', stock: 48 },
     { id: 24, name: 'Paperclip Link Bracelet', price: 4499, comparePrice: 5999, description: 'Modern paperclip link design.', image: 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=800&q=80', collection: 'anti-tarnish', category: 'bracelet', stock: 30 }
 ];
+window._productCache = products;

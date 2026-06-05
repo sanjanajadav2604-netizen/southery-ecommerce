@@ -3,8 +3,15 @@ function getApiBase() {
     const override = localStorage.getItem('southery_api_base');
     if (override) return override.replace(/\/$/, '');
     const host = window.location.hostname;
-    if (host === 'localhost' || host === '127.0.0.1') {
-        return 'https://southery-backend.vercel.app';
+    const isLocal = host === 'localhost' ||
+        host === '127.0.0.1' ||
+        host === '[::1]' ||
+        host.endsWith('.local') ||
+        /^192\.168\./.test(host) ||
+        /^10\./.test(host) ||
+        /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host);
+    if (isLocal) {
+        return 'http://localhost:5000';
     }
     return 'https://southery-backend.vercel.app';
 }
@@ -23,14 +30,24 @@ async function apiCall(endpoint, method = 'GET', body = null) {
     };
     const base = getApiBase();
     const url = `${base}${endpoint}`;
-    const response = await fetch(url, options);
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) {
-        const err = new Error(data.message || 'Something went wrong');
-        err.status = response.status;
-        throw err;
+
+    console.log(`[API Request] ${method} ${url}`, body);
+
+    try {
+        const response = await fetch(url, options);
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            const err = new Error(data.message || `API Error: ${response.status} ${response.statusText}`);
+            err.status = response.status;
+            throw err;
+        }
+        return data;
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error(`Cannot reach the server at ${url}. \nPossible causes:\n• Backend not running (start it with npm run dev on port 5000)\n• CORS: your origin may not be in allowedOrigins on the backend\n• You are on HTTP but the API is HTTPS (mixed content blocked)\nCheck the browser DevTools Network tab for more details.`);
+        }
+        throw error;
     }
-    return data;
 }
 
 
@@ -44,6 +61,10 @@ window.cart = [];
 window.wishlist = [];
 window.currentUser = null;
 window.recentSearches = [];
+// ADD THESE:
+window._productCache = null;
+window.getProducts = function () { return window._productCache || (typeof products !== 'undefined' ? products : []); };
+
 
 try {
     window.cart = JSON.parse(localStorage.getItem('southery_cart')) || [];
@@ -257,20 +278,17 @@ const sidebarHTML = `
                             </div>
                         </div>
                         <div class="flex justify-end pt-1">
-                            <button type="button" onclick="showCustomAlert('Recovery Sent', 'A password reset link has been sent to your email.', 'success')" class="text-[9px] uppercase tracking-widest font-bold text-terracotta hover:underline">Forgot Password?</button>
+                            <button type="button" id="forgot-pw-btn" class="text-[9px] uppercase tracking-widest font-bold text-terracotta hover:underline">Forgot Password?</button>
+                        </div>
+                        <div id="forgot-pw-form" class="hidden space-y-3 pt-2 pb-2 border-t border-gray-100 mt-2">
+                            <label class="text-[9px] uppercase tracking-widest font-bold text-muted ml-1">Enter your email to reset password</label>
+                            <input type="email" id="forgot-pw-email" class="w-full px-5 py-3.5 bg-cream/30 border border-gray-100 rounded-2xl focus:outline-none focus:border-terracotta/50 transition-all text-sm" placeholder="your@email.com">
+                            <button type="button" id="forgot-pw-submit" class="w-full py-3 bg-terracotta/10 text-terracotta rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-terracotta hover:text-white transition-all">Send Reset Link</button>
+                            <p id="forgot-pw-msg" class="text-[10px] text-muted text-center hidden"></p>
                         </div>
                         <button type="submit" class="btn-dynamic btn-base w-full py-4 text-xs uppercase tracking-widest shadow-xl shadow-terracotta/10 mt-2">Sign In</button>
                     </form>
 
-                    <div class="relative my-6 flex items-center justify-center">
-                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-100"></div></div>
-                        <span class="relative px-4 bg-white text-[9px] uppercase tracking-widest font-bold text-muted">Or continue with</span>
-                    </div>
-
-                    <button type="button" class="w-full py-3.5 border border-gray-100 rounded-2xl flex items-center justify-center gap-3 hover:bg-gray-50 transition-all text-xs font-bold text-charcoal shadow-sm">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                        Google
-                    </button>
                 </div>
 
                 <!-- Signup Form -->
@@ -296,15 +314,6 @@ const sidebarHTML = `
                         <button type="submit" class="btn-dynamic btn-base w-full py-4 text-xs uppercase tracking-widest shadow-xl shadow-terracotta/10 mt-2">Sign Up</button>
                     </form>
 
-                    <div class="relative my-6 flex items-center justify-center">
-                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-100"></div></div>
-                        <span class="relative px-3 bg-white text-[9px] uppercase tracking-widest font-bold text-muted">Or continue with</span>
-                    </div>
-
-                    <button type="button" class="w-full py-3.5 border border-gray-100 rounded-2xl flex items-center justify-center gap-3 hover:bg-gray-50 transition-all text-xs font-bold text-charcoal shadow-sm">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                        Google
-                    </button>
                     
                     <p class="text-[9px] text-center text-muted mt-6 px-4">By creating an account, you agree to our Terms of Service and Privacy Policy.</p>
                 </div>
@@ -385,7 +394,14 @@ function initLayout() {
     }
     const mobileAuthBtn = document.getElementById('mobile-auth-btn');
     if (mobileAuthBtn) {
-        mobileAuthBtn.onclick = (e) => { e.preventDefault(); openAuthModal('login'); };
+        mobileAuthBtn.onclick = (e) => {
+            e.preventDefault();
+            if (window.currentUser || localStorage.getItem('southery_token')) {
+                window.location.href = 'account.html';
+            } else {
+                openAuthModal('login');
+            }
+        };
     }
 
     // Data Load
@@ -407,6 +423,9 @@ function initLayout() {
     // Site-wide Year Logic
     const yr = document.getElementById("yr");
     if (yr) yr.textContent = new Date().getFullYear();
+
+    // Initialize Forgot Password Listeners
+    initForgotPasswordListeners();
 }
 
 // UI Functions - Sidebars
@@ -585,7 +604,7 @@ function handleSearch(query) {
             <div class="flex gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-all cursor-pointer group" 
                  onclick="saveSearchQuery('${query.replace(/'/g, "\\'")}'); window.location.href='product.html?id=${p.id}'">
                 <div class="w-16 h-16 rounded-xl overflow-hidden bg-cream flex-shrink-0">
-                    <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="font-bold text-sm text-charcoal truncate mb-1">${p.name}</p>
@@ -612,11 +631,7 @@ function saveSearchQuery(q) {
     localStorage.setItem('recent_searches', JSON.stringify(recentSearches));
 }
 
-function searchNow(q) {
-    if (!q || q.trim().length === 0) return;
-    saveSearchQuery(q);
-    window.location.href = `shop.html?search=${encodeURIComponent(q.trim())}`;
-}
+
 
 function renderRecentSearches() {
     const container = document.getElementById('recent-searches');
@@ -710,13 +725,12 @@ function renderCart() {
     let total = 0;
 
     items.innerHTML = window.cart.map(c => {
-        const p = (typeof products !== 'undefined') ? products.find(x => x.id === c.id) : null;
-        if (!p) return '';
+        const p = window.getProducts().find(x => String(x.id) === String(c.id)); if (!p) return '';
         total += p.price * c.qty;
         return `
             <div class="flex gap-4 p-3 xs:p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:border-terracotta/20 transition-all group">
                 <div class="w-20 h-24 rounded-xl overflow-hidden bg-cream flex-shrink-0">
-                    <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                 </div>
                 <div class="flex-1 flex flex-col">
                     <div class="flex justify-between items-start mb-1">
@@ -752,8 +766,7 @@ function renderWishlist() {
 
     empty.classList.add('hidden');
     items.innerHTML = window.wishlist.map(w => {
-        const p = (typeof products !== 'undefined') ? products.find(x => x.id === w.id) : null;
-        if (!p) return '';
+        const p = window.getProducts().find(x => String(x.id) === String(w.id)); if (!p) return '';
         return `
             <div class="flex gap-4 p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:border-rose-200 transition-all group cursor-pointer" onclick="window.location.href='product.html?id=${p.id}'">
                 <div class="w-16 h-20 rounded-xl overflow-hidden bg-cream flex-shrink-0">
@@ -792,13 +805,24 @@ window.updateCartQty = function (id, change) {
 
 window.toggleWishlistItem = function (id) {
     const index = window.wishlist.findIndex(w => w.id === id);
+    const isAdding = index === -1;
     if (index > -1) window.wishlist.splice(index, 1);
     else window.wishlist.push({ id });
     localStorage.setItem('southery_wishlist', JSON.stringify(window.wishlist));
     updateAllCounts();
     renderWishlist();
     if (typeof updateWishlistUI === 'function') updateWishlistUI();
-    showToast(index > -1 ? "Removed from wishlist" : "Saved to wishlist");
+    const token = localStorage.getItem('southery_token');
+    if (token) {
+        if (isAdding) {
+            apiCall('/api/wishlist/add', 'POST', { productId: String(id) })
+                .catch(e => console.warn('Wishlist sync failed:', e.message));
+        } else {
+            apiCall('/api/wishlist/remove/' + id, 'DELETE')
+                .catch(e => console.warn('Wishlist sync failed:', e.message));
+        }
+    }
+    showToast(isAdding ? "Saved to wishlist" : "Removed from wishlist");
 };
 
 window.addToCartFromWishlist = function (id) {
@@ -807,7 +831,7 @@ window.addToCartFromWishlist = function (id) {
     else window.cart.push({ id, qty: 1 });
     localStorage.setItem('southery_cart', JSON.stringify(window.cart));
     updateAllCounts();
-    const product = (typeof products !== 'undefined') ? products.find(p => p.id === id) : null;
+    const product = window.getProducts().find(p => p.id === id);
     showToast('Added to bag!', 'success', product ? product.name : '');
     animateCartBadges();
 };
@@ -829,8 +853,12 @@ window.addToCart = function (id, qty = 1) {
     localStorage.setItem('southery_cart', JSON.stringify(window.cart));
     updateAllCounts();
     renderCart();
-
-    const product = (typeof products !== 'undefined') ? products.find(p => p.id === id) : null;
+    const token = localStorage.getItem('southery_token');
+    if (token) {
+        apiCall('/api/cart/add', 'POST', { productId: String(id), quantity: qty })
+            .catch(e => console.warn('Cart sync failed:', e.message));
+    }
+    const product = window.getProducts().find(p => p.id === id);
     const productName = product ? product.name : 'Item';
     showToast('Added to bag!', 'success', productName);
     animateCartBadges();
@@ -856,6 +884,7 @@ function updateAllCounts() {
             count > 0 ? el.classList.remove('hidden') : el.classList.add('hidden');
         }
     });
+    window.dispatchEvent(new Event('cartUpdated'));
 }
 
 function updateAuthUI() {
@@ -943,6 +972,49 @@ function switchAuthTab(tab) {
     }
 }
 
+// Fetch cart and wishlist from server API and update in-memory state + badges
+async function fetchUserCartAndWishlist() {
+    // Load local data as fallback FIRST
+    const localCart = JSON.parse(localStorage.getItem('southery_cart') || '[]');
+    const localWish = JSON.parse(localStorage.getItem('southery_wishlist') || '[]');
+
+    try {
+        const cartData = await apiCall('/api/cart');
+        const serverCart = (cartData.cart || []).map(item => ({ id: item.productId, qty: item.quantity }));
+        // Merge: server is source of truth, but keep local items server doesn't know about
+        const mergedCart = [...serverCart];
+        localCart.forEach(localItem => {
+            const exists = mergedCart.find(s => String(s.id) === String(localItem.id));
+            if (!exists) mergedCart.push(localItem);
+        });
+        window.cart = mergedCart;
+        localStorage.setItem('southery_cart', JSON.stringify(window.cart));
+    } catch (e) {
+        console.warn('Failed to fetch cart from API, using local data:', e.message);
+        window.cart = localCart; // ← Keep local data on failure
+    }
+
+    try {
+        const wishData = await apiCall('/api/wishlist');
+        const serverWish = (wishData.wishlist || []).map(item => ({ id: item.productId }));
+        // Merge: server is source of truth, but keep local items server doesn't know about
+        const mergedWish = [...serverWish];
+        localWish.forEach(localItem => {
+            const exists = mergedWish.find(s => String(s.id) === String(localItem.id));
+            if (!exists) mergedWish.push(localItem);
+        });
+        window.wishlist = mergedWish;
+        localStorage.setItem('southery_wishlist', JSON.stringify(window.wishlist));
+    } catch (e) {
+        console.warn('Failed to fetch wishlist from API, using local data:', e.message);
+        window.wishlist = localWish; // ← Keep local data on failure
+    }
+
+    updateAllCounts();
+    renderCart();
+    renderWishlist();
+}
+
 async function handleLogin(event) {
     event.preventDefault();
     const email = event.target.querySelector('input[type="email"]')?.value?.trim();
@@ -955,7 +1027,11 @@ async function handleLogin(event) {
         const data = await apiCall('/api/auth/login', 'POST', { email, password });
         localStorage.setItem('southery_token', data.token);
         localStorage.setItem('southery_user', JSON.stringify(data.user));
+        localStorage.removeItem('southery_orders');
+        localStorage.removeItem('southery_cart');
+        localStorage.removeItem('southery_wishlist');
         currentUser = data.user;
+        await fetchUserCartAndWishlist(); // fetch fresh and update badges
         updateAuthUI();
         closeAuthModal();
         showToast(data.message, 'success');
@@ -980,6 +1056,12 @@ async function handleSignup(event) {
         const data = await apiCall('/api/auth/signup', 'POST', { name, email, password });
         localStorage.setItem('southery_token', data.token);
         localStorage.setItem('southery_user', JSON.stringify(data.user));
+        localStorage.removeItem('southery_orders');
+        localStorage.removeItem('southery_cart');
+        localStorage.removeItem('southery_wishlist');
+        window.cart = [];
+        window.wishlist = [];
+        updateAllCounts();
         currentUser = data.user;
         updateAuthUI();
         closeAuthModal();
@@ -993,9 +1075,11 @@ async function handleSignup(event) {
 }
 
 function logout() {
-    localStorage.removeItem('southery_token');
-    localStorage.removeItem('southery_user');
+    localStorage.clear();
     currentUser = null;
+    window.cart = [];
+    window.wishlist = [];
+    updateAllCounts();
     updateAuthUI();
     showToast('You have been signed out.', 'success');
     dispatchAuthChange();
@@ -1008,8 +1092,74 @@ function logout() {
 // Keep handleLogout as an alias for backward compatibility
 function handleLogout() { logout(); }
 
+function initForgotPasswordListeners() {
+    // Array of ID prefixes for both the global modal and the account page
+    const prefixes = ['forgot-pw', 'account-forgot-pw'];
+
+    prefixes.forEach(prefix => {
+        const forgotBtn = document.getElementById(`${prefix}-btn`);
+        const forgotForm = document.getElementById(`${prefix}-form`);
+        const forgotSubmit = document.getElementById(`${prefix}-submit`);
+
+        if (forgotBtn && forgotForm) {
+            forgotBtn.addEventListener('click', () => {
+                forgotForm.classList.toggle('hidden');
+                const emailField = document.getElementById(`${prefix}-email`);
+                if (emailField && !forgotForm.classList.contains('hidden')) {
+                    const loginEmail = document.getElementById('login-email');
+                    if (loginEmail && loginEmail.value) emailField.value = loginEmail.value;
+                    emailField.focus();
+                }
+            });
+        }
+
+        if (forgotSubmit) {
+            forgotSubmit.addEventListener('click', async () => {
+                const emailField = document.getElementById(`${prefix}-email`);
+                const msgEl = document.getElementById(`${prefix}-msg`);
+                const email = emailField ? emailField.value.trim() : '';
+
+                if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    msgEl.textContent = 'Please enter a valid email address.';
+                    msgEl.className = 'text-[10px] text-red-500 text-center font-bold';
+                    msgEl.classList.remove('hidden');
+                    return;
+                }
+
+                forgotSubmit.disabled = true;
+                forgotSubmit.textContent = 'Sending...';
+
+                try {
+                    await apiCall('/api/auth/forgot-password', 'POST', { email });
+                    msgEl.textContent = 'If an account exists with this email, a reset link has been sent.';
+                    msgEl.className = 'text-[10px] text-sage text-center font-bold';
+                    msgEl.classList.remove('hidden');
+                } catch (err) {
+                    // If it's a network reachability error, surface it clearly
+                    if (err.message && err.message.includes('Cannot reach the server')) {
+                        msgEl.textContent = err.message;
+                        msgEl.className = 'text-[10px] text-red-500 text-center font-bold';
+                    } else {
+                        // Always show generic success message to avoid revealing email existence for API/server validations
+                        msgEl.textContent = 'If an account exists with this email, a reset link has been sent.';
+                        msgEl.className = 'text-[10px] text-sage text-center font-bold';
+                    }
+                    msgEl.classList.remove('hidden');
+                } finally {
+                    forgotSubmit.disabled = false;
+                    forgotSubmit.textContent = 'Send Reset Link';
+                }
+            });
+        }
+    });
+}
+
 function handleMobileAuthClick() {
-    window.location.href = 'account.html';
+    if (window.currentUser || localStorage.getItem('southery_token')) {
+        window.location.href = 'account.html';
+    } else {
+        openAuthModal('login');
+    }
 }
 
 // Utility functions
@@ -1174,8 +1324,7 @@ document.addEventListener('keydown', (e) => {
 
 
 // Run Init
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLayout);
-else initLayout();
+// Layout initialization is handled via DOMContentLoaded listener below
 
 // ============================================================
 // NEWSLETTER HANDLER — Site-wide via capture phase
@@ -1301,7 +1450,7 @@ function initPremiumInteractions() {
 
 async function fetchUserOrders() {
     try {
-        return await apiCall('/api/orders');
+        return await apiCall('/api/orders/myorders');
     } catch (error) {
         console.error('Failed to fetch orders:', error);
         return [];
@@ -1369,25 +1518,29 @@ async function loadUserFromServer() {
 
     try {
         const data = await apiCall('/api/auth/me');
-        currentUser = data.user;
-        localStorage.setItem('southery_user', JSON.stringify(currentUser));
+        window.currentUser = data.user;
+        localStorage.setItem('southery_user', JSON.stringify(window.currentUser));
         updateAuthUI();
         dispatchAuthChange();
+        // Fetch fresh cart & wishlist counts from API on every page load
+        await fetchUserCartAndWishlist();
     } catch (error) {
         console.warn('Session check failed:', error.message);
-        
+
         // Only log out if it is a definitive authentication failure (401 or 403).
         // If it is a server error (5xx) or a network/offline error, do NOT log the user out. Keep local state.
         const isAuthError = error.status === 401 || error.status === 403;
         if (!isAuthError) {
             console.log('Network/Server error or Offline detected. Falling back to local user state.');
             try {
-                currentUser = JSON.parse(localStorage.getItem('southery_user'));
+                window.currentUser = JSON.parse(localStorage.getItem('southery_user'));
             } catch (e) {
-                currentUser = null;
+                window.currentUser = null;
             }
             updateAuthUI();
             dispatchAuthChange();
+            // Fetch cached items or try to reload user cart & wishlist anyways
+            await fetchUserCartAndWishlist();
             return;
         }
 
@@ -1401,15 +1554,21 @@ async function loadUserFromServer() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const appVersion = '2.0.0';
+    if (localStorage.getItem('southery_app_version') !== appVersion) {
+        // Only clear orders on migration, NOT cart/wishlist
+        localStorage.removeItem('southery_orders');
+        localStorage.setItem('southery_app_version', appVersion);
+    }
     initLayout();
     loadUserFromServer();
 });
 
 // Password Visibility Toggle Function
-window.togglePasswordVisibility = function(btnElement) {
+window.togglePasswordVisibility = function (btnElement) {
     const input = btnElement.parentElement.querySelector('input');
     if (!input) return;
-    
+
     if (input.type === 'password') {
         input.type = 'text';
     } else {

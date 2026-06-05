@@ -27,6 +27,7 @@
     <!-- Global Logic -->
     <script src="js/products.js"></script>
     <script src="js/layout.js"></script>
+    <script src="js/account.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
@@ -90,7 +91,8 @@
                                 stroke-width="2.5">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
-                            </svg></div>
+                            </svg>
+                        </div>
                         <span class="text-[11px] font-bold uppercase tracking-wider text-charcoal">Sign In</span>
                     </div>
                     <div id="auth-logged-in" class="hidden items-center gap-3 cursor-pointer group"
@@ -99,7 +101,8 @@
                             class="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full group-hover:bg-white transition-colors">
                             <div
                                 class="w-8 h-8 rounded-full bg-terracotta flex items-center justify-center text-white text-xs font-bold ring-2 ring-terracotta/10">
-                                <span id="user-avatar-initial">U</span></div>
+                                <span id="user-avatar-initial">U</span>
+                            </div>
                             <span class="text-sm font-semibold text-charcoal" id="user-name-display-top">Member</span>
                         </div>
                     </div>
@@ -188,15 +191,32 @@
                             <div class="relative">
                                 <input type="password" id="login-password" class="input-field-premium py-3 pr-12"
                                     placeholder="Enter your password" required>
-                                <button type="button" onclick="togglePasswordVisibility(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors" tabindex="-1">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                <button type="button" onclick="togglePasswordVisibility(this)"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors"
+                                    tabindex="-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
                                 </button>
                             </div>
                             <div class="flex justify-end">
-                                <button type="button"
-                                    onclick="showCustomAlert('Recovery Sent', 'A password reset link has been sent to your email.', 'success')"
+                                <button type="button" id="account-forgot-pw-btn"
                                     class="text-[9px] font-bold text-terracotta uppercase tracking-widest hover:opacity-70 transition-opacity">Forgot
                                     Password?</button>
+                            </div>
+                            <div id="account-forgot-pw-form"
+                                class="hidden space-y-3 pt-2 pb-2 border-t border-gray-100 mt-2">
+                                <label class="text-[9px] uppercase tracking-widest font-bold text-muted ml-1">Enter your
+                                    email to reset password</label>
+                                <input type="email" id="account-forgot-pw-email" class="input-field-premium py-3"
+                                    placeholder="your@email.com">
+                                <button type="button" id="account-forgot-pw-submit"
+                                    class="w-full py-3 bg-terracotta/10 text-terracotta rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-terracotta hover:text-white transition-all">Send
+                                    Reset Link</button>
+                                <p id="account-forgot-pw-msg" class="text-[10px] text-muted text-center hidden"></p>
                             </div>
                         </div>
                         <button type="submit" class="btn-premium-terracotta w-full py-4 mt-2 text-xs">Sign In</button>
@@ -259,8 +279,15 @@
                             <div class="relative">
                                 <input type="password" id="signup-password" class="input-field-premium py-3 pr-12"
                                     placeholder="Enter password (min. 8 characters)" required>
-                                <button type="button" onclick="togglePasswordVisibility(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors" tabindex="-1">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                <button type="button" onclick="togglePasswordVisibility(this)"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-terracotta transition-colors"
+                                    tabindex="-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
                                 </button>
                             </div>
                         </div>
@@ -332,12 +359,12 @@
                     </button>
                     <button id="tab-btn-addresses" onclick="switchTab('addresses', this)"
                         class="tab-btn w-full text-center lg:text-left px-4 py-4 flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-2 lg:gap-4 text-charcoal rounded-xl transition-all border-b-[3px] lg:border-b-0 lg:border-l-[3px] border-transparent hover:bg-[#f8f6f3]">
-                        <span class="text-[20px]">📍</span>
+                        <span class="text-[20px]">ðŸ“</span>
                         <span class="text-[12px] lg:text-[14px] font-semibold whitespace-nowrap">Saved Addresses</span>
                     </button>
                     <button id="tab-btn-settings" onclick="switchTab('settings', this)"
                         class="tab-btn w-full text-center lg:text-left px-4 py-4 flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-2 lg:gap-4 text-charcoal rounded-xl transition-all border-b-[3px] lg:border-b-0 lg:border-l-[3px] border-transparent hover:bg-[#f8f6f3]">
-                        <span class="text-[20px]">⚙️</span>
+                        <span class="text-[20px]">⚙ï¸</span>
                         <span class="text-[12px] lg:text-[14px] font-semibold whitespace-nowrap">Profile Settings</span>
                     </button>
                 </nav>
@@ -655,8 +682,6 @@
                         class="h-4">
                     <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
                         class="h-6">
-                    <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                        class="h-4">
 
                 </div>
             </div>
@@ -731,32 +756,17 @@
         }
 
         async function fetchUserOrders() {
+            const token = localStorage.getItem('southery_token');
+            if (!token) {
+                return [];
+            }
+
             try {
-                // Try fetching from real API first
-                let liveOrders = [];
-                if (window.apiCall) {
-                    try {
-                        const response = await apiCall('/api/orders/myorders');
-                        liveOrders = response.data || [];
-                    } catch (e) { console.warn("Live API orders fetch failed, falling back to local."); }
-                }
-
-                // Fetch from local storage (for demo mode)
-                const localOrders = JSON.parse(localStorage.getItem('southery_orders')) || [];
-
-                // Merge them, prioritizing live orders if they have the same ID
-                const allOrders = [...liveOrders];
-                localOrders.forEach(lo => {
-                    if (!allOrders.find(o => o.orderId === lo.orderId || o._id === lo._id)) {
-                        allOrders.push(lo);
-                    }
-                });
-
-                // Sort by date (newest first)
-                return allOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+                const response = await apiCall('/api/orders/myorders');
+                return (response.data || []).sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
             } catch (err) {
                 console.error("Order fetch error:", err);
-                return JSON.parse(localStorage.getItem('southery_orders')) || [];
+                return [];
             }
         }
 
@@ -770,7 +780,7 @@
             if (!orders || orders.length === 0) {
                 container.innerHTML = `
                     <div class="bg-white rounded-2xl p-12 text-center shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-dashed border-gray-200">
-                        <div class="text-4xl mb-4">🛍️</div>
+                        <div class="text-4xl mb-4">ðŸ›ï¸</div>
                         <h4 class="font-display text-xl font-bold text-charcoal mb-2">No orders found</h4>
                         <p class="text-sm text-muted mb-6">Your collection is waiting for its first masterpiece.</p>
                         <a href="shop.html" class="inline-block bg-terracotta text-white px-8 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-charcoal transition-all">Explore Shop</a>
@@ -939,10 +949,10 @@
                 card.innerHTML = `
                     <div class="flex flex-col sm:flex-row justify-between items-center sm:items-start mb-6 gap-4 border-b border-black/[0.04] pb-6">
                         <div class="text-center sm:text-left">
-                            ${addr.isPrimary ? 
-                                `<span class="bg-[#d4af6a]/20 text-terracotta px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-[2px] inline-block mb-3">Primary</span>` : 
-                                `<span class="bg-gray-100 text-muted px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-[2px] inline-block mb-3">Additional</span>`
-                            }
+                            ${addr.isPrimary ?
+                        `<span class="bg-[#d4af6a]/20 text-terracotta px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-[2px] inline-block mb-3">Primary</span>` :
+                        `<span class="bg-gray-100 text-muted px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-[2px] inline-block mb-3">Additional</span>`
+                    }
                             <h4 class="text-[20px] font-display font-bold text-charcoal">${addr.name}</h4>
                         </div>
                         <div class="flex gap-2 w-full sm:w-auto">
@@ -1044,7 +1054,7 @@
                     card.style.opacity = '0';
                     card.style.transform = 'scale(0.95)';
                     card.style.transition = 'all 0.3s ease';
-                    
+
                     setTimeout(() => {
                         userAddresses = userAddresses.filter(a => a.id !== id);
                         localStorage.setItem(getAddressesKey(), JSON.stringify(userAddresses));
