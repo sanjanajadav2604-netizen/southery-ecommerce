@@ -916,27 +916,19 @@
             return currentUser ? `southery_addresses_${currentUser.email}` : 'southery_addresses_guest';
         }
 
-        function loadAddresses() {
-            const key = getAddressesKey();
-            const stored = localStorage.getItem(key);
-            if (stored) {
-                userAddresses = JSON.parse(stored);
-            } else {
-                // Default address
-                userAddresses = [
-                    {
-                        id: "addr_default",
-                        name: "Residence",
-                        line1: "12A Crystal Towers, Marine Drive",
-                        line2: "South Mumbai, Maharashtra 400021",
-                        isPrimary: true
-                    }
-                ];
-                localStorage.setItem(key, JSON.stringify(userAddresses));
+        async function loadAddresses() {
+            try {
+                const token = localStorage.getItem('southery_token');
+                const res = await fetch('https://southery-backend.vercel.app/api/auth/addresses', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                userAddresses = data.addresses || [];
+                renderAddresses();
+            } catch (err) {
+                console.error('Failed to load addresses:', err);
             }
-            renderAddresses();
         }
-
         function renderAddresses() {
             const list = document.getElementById('address-list');
             if (!list) return;
@@ -945,7 +937,7 @@
             userAddresses.forEach(addr => {
                 const card = document.createElement('div');
                 card.className = "bg-white rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-black/[0.02] mb-5 animate-fade-in";
-                card.setAttribute('data-id', addr.id);
+                card.setAttribute('data-id', addr._id || addr.id);
                 card.innerHTML = `
                     <div class="flex flex-col sm:flex-row justify-between items-center sm:items-start mb-6 gap-4 border-b border-black/[0.04] pb-6">
                         <div class="text-center sm:text-left">
@@ -953,16 +945,16 @@
                         `<span class="bg-[#d4af6a]/20 text-terracotta px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-[2px] inline-block mb-3">Primary</span>` :
                         `<span class="bg-gray-100 text-muted px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-[2px] inline-block mb-3">Additional</span>`
                     }
-                            <h4 class="text-[20px] font-display font-bold text-charcoal">${addr.name}</h4>
+                            <h4 class="text-[20px] font-display font-bold text-charcoal">${addr.label || addr.name}</h4>
                         </div>
                         <div class="flex gap-2 w-full sm:w-auto">
-                            <button class="flex-1 sm:flex-none border border-terracotta/20 text-terracotta py-2 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-[#f8f6f3]" onclick="editAddress('${addr.id}')">Edit</button>
-                            <button class="flex-1 sm:flex-none border border-red-500/20 text-red-500 py-2 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-red-50" onclick="confirmRelinquish('${addr.id}')">Delete</button>
+                            <button class="flex-1 sm:flex-none border border-terracotta/20 text-terracotta py-2 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-[#f8f6f3]" onclick="editAddress('${addr._id || addr.id}')">Edit</button>
+                            <button class="flex-1 sm:flex-none border border-red-500/20 text-red-500 py-2 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-red-50" onclick="confirmRelinquish('${addr._id || addr.id}')">Delete</button>
                         </div>
                     </div>
                     <div class="text-center sm:text-left">
                         <p class="text-[14px] text-charcoal mb-1 leading-[1.6] font-medium address-line-1">${addr.line1}</p>
-                        <p class="text-[14px] text-charcoal m-0 font-medium address-line-2">${addr.line2}</p>
+                        <p class="text-[14px] text-charcoal m-0 font-medium address-line-2">${addr.line2 || ''}</p>
                     </div>
                 `;
                 list.appendChild(card);
@@ -988,58 +980,49 @@
             formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function saveNewAddress(e) {
+        async function saveNewAddress(e) {
             e.preventDefault();
+            const token = localStorage.getItem('southery_token');
             const name = document.getElementById('new-addr-name').value.trim();
             const line1 = document.getElementById('new-addr-line1').value.trim();
             const line2 = document.getElementById('new-addr-line2').value.trim();
 
-            if (!name || !line1) {
-                showToast('Required geographic lines missing.', 'error');
-                return;
-            }
+            if (!name || !line1) { showToast('Required geographic lines missing.', 'error'); return; }
 
-            if (addressIdBeingEdited) {
-                // Modifying existing card
-                const addr = userAddresses.find(a => a.id === addressIdBeingEdited);
-                if (addr) {
-                    addr.name = name;
-                    addr.line1 = line1;
-                    addr.line2 = line2;
-                    localStorage.setItem(getAddressesKey(), JSON.stringify(userAddresses));
-                    showToast('Address elegantly updated.', 'success');
-                }
-            } else {
-                // Creating new card
-                const newAddr = {
-                    id: "addr_" + Date.now(),
-                    name: name,
-                    line1: line1,
-                    line2: line2,
-                    isPrimary: userAddresses.length === 0
-                };
-                userAddresses.unshift(newAddr);
-                localStorage.setItem(getAddressesKey(), JSON.stringify(userAddresses));
-                showToast('New atelier registry appended.', 'success');
-            }
+            const payload = { label: name, line1, line2, isPrimary: userAddresses.length === 0 };
+            const method = addressIdBeingEdited ? 'PUT' : 'POST';
+            const url = addressIdBeingEdited
+                ? `https://southery-backend.vercel.app/api/auth/addresses/${addressIdBeingEdited}`
+                : 'https://southery-backend.vercel.app/api/auth/addresses';
 
-            renderAddresses();
-            document.getElementById('new-addr-form-el').reset();
-            closeAddressForm();
+            try {
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                userAddresses = data.addresses || [];
+                renderAddresses();
+                closeAddressForm();
+                showToast(addressIdBeingEdited ? 'Address updated.' : 'Address added.', 'success');
+            } catch (err) {
+                showToast('Failed to save address.', 'error');
+            }
         }
 
         function editAddress(id) {
-            const addr = userAddresses.find(a => a.id === id);
+            const addr = userAddresses.find(a => (a._id || a.id) === id);
             if (!addr) return;
 
             const formContainer = document.getElementById('new-address-form');
             const formTitle = formContainer.querySelector('h4');
 
-            document.getElementById('new-addr-name').value = addr.name;
+            document.getElementById('new-addr-name').value = addr.label || addr.name;
             document.getElementById('new-addr-line1').value = addr.line1;
-            document.getElementById('new-addr-line2').value = addr.line2;
+            document.getElementById('new-addr-line2').value = addr.line2 || '';
 
-            addressIdBeingEdited = id;
+            addressIdBeingEdited = addr._id || addr.id;
             if (formTitle) formTitle.innerText = "Edit Current Address";
 
             formContainer.classList.remove('hidden');
@@ -1048,24 +1031,19 @@
 
         async function confirmRelinquish(id) {
             const confirmed = await showCustomConfirm('Delete Registry?', 'Are you sure you want to permanently erase this saved address?');
-            if (confirmed) {
-                const card = document.querySelector(`[data-id="${id}"]`);
-                if (card) {
-                    card.style.opacity = '0';
-                    card.style.transform = 'scale(0.95)';
-                    card.style.transition = 'all 0.3s ease';
-
-                    setTimeout(() => {
-                        userAddresses = userAddresses.filter(a => a.id !== id);
-                        localStorage.setItem(getAddressesKey(), JSON.stringify(userAddresses));
-                        renderAddresses();
-                    }, 300);
-                } else {
-                    userAddresses = userAddresses.filter(a => a.id !== id);
-                    localStorage.setItem(getAddressesKey(), JSON.stringify(userAddresses));
-                    renderAddresses();
-                }
+            if (!confirmed) return;
+            try {
+                const token = localStorage.getItem('southery_token');
+                const res = await fetch(`https://southery-backend.vercel.app/api/auth/addresses/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                userAddresses = data.addresses || [];
+                renderAddresses();
                 showToast('Entry permanently deleted.');
+            } catch (err) {
+                showToast('Failed to delete address.', 'error');
             }
         }
 
