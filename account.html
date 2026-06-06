@@ -738,8 +738,7 @@
                 // Load real orders
                 renderUserOrders();
                 // Load real addresses
-                loadAddresses();
-
+                await loadAddresses();
                 // Switch to active hash tab or default to orders
                 const hash = window.location.hash.replace('#', '');
                 const validTabs = ['orders', 'addresses', 'settings'];
@@ -932,7 +931,8 @@
         function renderAddresses() {
             const list = document.getElementById('address-list');
             if (!list) return;
-            list.innerHTML = '';
+    list.style.opacity = "0";
+    list.innerHTML = '';
 
             userAddresses.forEach(addr => {
                 const card = document.createElement('div');
@@ -958,8 +958,9 @@
                     </div>
                 `;
                 list.appendChild(card);
-            });
-        }
+        });
+        setTimeout(() => { list.style.opacity = "1"; list.style.transition = "opacity 0.25s ease"; }, 10);
+    }
 
         function closeAddressForm() {
             const formContainer = document.getElementById('new-address-form');
@@ -1208,3 +1209,4 @@
 </body>
 
 </html>
+
