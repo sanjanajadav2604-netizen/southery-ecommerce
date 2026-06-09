@@ -11,8 +11,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/tailwind.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <style>
         .auth-image {
             background-image: url('https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800&q=80');
@@ -931,8 +931,8 @@
         function renderAddresses() {
             const list = document.getElementById('address-list');
             if (!list) return;
-    list.style.opacity = "0";
-    list.innerHTML = '';
+            list.style.opacity = "0";
+            list.innerHTML = '';
 
             userAddresses.forEach(addr => {
                 const card = document.createElement('div');
@@ -958,9 +958,9 @@
                     </div>
                 `;
                 list.appendChild(card);
-        });
-        setTimeout(() => { list.style.opacity = "1"; list.style.transition = "opacity 0.25s ease"; }, 10);
-    }
+            });
+            setTimeout(() => { list.style.opacity = "1"; list.style.transition = "opacity 0.25s ease"; }, 10);
+        }
 
         function closeAddressForm() {
             const formContainer = document.getElementById('new-address-form');
@@ -1209,4 +1209,3 @@
 </body>
 
 </html>
-
