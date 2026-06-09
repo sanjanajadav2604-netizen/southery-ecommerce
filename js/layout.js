@@ -804,7 +804,7 @@ window.updateCartQty = function (id, change) {
 };
 
 window.toggleWishlistItem = function (id) {
-    const index = window.wishlist.findIndex(w => w.id === id);
+    const index = window.wishlist.findIndex(w => String(w.id) === String(id));
     const isAdding = index === -1;
     if (index > -1) window.wishlist.splice(index, 1);
     else window.wishlist.push({ id });
@@ -837,13 +837,25 @@ window.addToCartFromWishlist = function (id) {
 };
 
 window.updateCartQty = function (id, change) {
-    const index = window.cart.findIndex(c => c.id === id);
+    const index = window.cart.findIndex(c => String(c.id) === String(id));
     if (index === -1) return;
     window.cart[index].qty += change;
-    if (window.cart[index].qty <= 0) window.cart.splice(index, 1);
+    const removed = window.cart[index].qty <= 0;
+    if (removed) window.cart.splice(index, 1);
     localStorage.setItem('southery_cart', JSON.stringify(window.cart));
     updateAllCounts();
     renderCart();
+    if (typeof renderSummary === 'function') renderSummary();
+    const token = localStorage.getItem('southery_token');
+    if (token) {
+        if (removed) {
+            apiCall('/api/cart/remove/' + id, 'DELETE')
+                .catch(e => console.warn('Cart remove sync failed:', e.message));
+        } else {
+            apiCall('/api/cart/add', 'POST', { productId: String(id), quantity: window.cart.find(c => String(c.id) === String(id))?.qty || 1 })
+                .catch(e => console.warn('Cart update sync failed:', e.message));
+        }
+    }
 };
 
 window.addToCart = function (id, qty = 1) {
@@ -974,40 +986,38 @@ function switchAuthTab(tab) {
 
 // Fetch cart and wishlist from server API and update in-memory state + badges
 async function fetchUserCartAndWishlist() {
-    // Load local data as fallback FIRST
     const localCart = JSON.parse(localStorage.getItem('southery_cart') || '[]');
     const localWish = JSON.parse(localStorage.getItem('southery_wishlist') || '[]');
+    const token = localStorage.getItem('southery_token');
+
+    if (!token) {
+        window.cart = localCart;
+        window.wishlist = localWish;
+        updateAllCounts();
+        renderCart();
+        renderWishlist();
+        return;
+    }
 
     try {
         const cartData = await apiCall('/api/cart');
         const serverCart = (cartData.cart || []).map(item => ({ id: item.productId, qty: item.quantity }));
-        // Merge: server is source of truth, but keep local items server doesn't know about
-        const mergedCart = [...serverCart];
-        localCart.forEach(localItem => {
-            const exists = mergedCart.find(s => String(s.id) === String(localItem.id));
-            if (!exists) mergedCart.push(localItem);
-        });
-        window.cart = mergedCart;
+        // Server is source of truth when logged in — use server cart directly
+        window.cart = serverCart.length > 0 ? serverCart : localCart;
         localStorage.setItem('southery_cart', JSON.stringify(window.cart));
     } catch (e) {
         console.warn('Failed to fetch cart from API, using local data:', e.message);
-        window.cart = localCart; // ← Keep local data on failure
+        window.cart = localCart;
     }
 
     try {
         const wishData = await apiCall('/api/wishlist');
         const serverWish = (wishData.wishlist || []).map(item => ({ id: item.productId }));
-        // Merge: server is source of truth, but keep local items server doesn't know about
-        const mergedWish = [...serverWish];
-        localWish.forEach(localItem => {
-            const exists = mergedWish.find(s => String(s.id) === String(localItem.id));
-            if (!exists) mergedWish.push(localItem);
-        });
-        window.wishlist = mergedWish;
+        window.wishlist = serverWish.length > 0 ? serverWish : localWish;
         localStorage.setItem('southery_wishlist', JSON.stringify(window.wishlist));
     } catch (e) {
         console.warn('Failed to fetch wishlist from API, using local data:', e.message);
-        window.wishlist = localWish; // ← Keep local data on failure
+        window.wishlist = localWish;
     }
 
     updateAllCounts();
