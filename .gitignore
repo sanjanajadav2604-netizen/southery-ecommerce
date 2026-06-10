@@ -23,3 +23,8 @@ Thumbs.db
 scratch.*
 
 .vercel
+
+# Local config files
+.mcp.json
+.cursor/
+.jetro/
