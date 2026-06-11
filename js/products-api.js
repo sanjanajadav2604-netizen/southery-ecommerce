@@ -3,6 +3,8 @@
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   window.products = [];
+  window.wishlist = window.wishlist || [];
+  window.cart = window.cart || [];
 
   async function loadProducts() {
     // Try cache first
