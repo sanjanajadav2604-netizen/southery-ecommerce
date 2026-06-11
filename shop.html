@@ -1071,7 +1071,7 @@
             openDetailModal(currentDetailProduct.id);
         }
 
-        document.addEventListener('productsLoaded', function() {
+        function initShop() {
             const params = new URLSearchParams(window.location.search);
             const coll = params.get('collection');
             const cat = params.get('category');
@@ -1106,7 +1106,13 @@
 
             initPriceFilter();
             applyFilters(false);
-        });
+        }
+
+        if (window.products && window.products.length > 0) {
+            initShop();
+        } else {
+            document.addEventListener('productsLoaded', initShop);
+        }
     </script>
 </body>
 

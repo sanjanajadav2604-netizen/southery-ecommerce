@@ -954,9 +954,13 @@
     }
 
     // Initial render
-    document.addEventListener('productsLoaded', function() {
+    if (window.products && window.products.length > 0) {
       renderHomeProducts();
-    });
+    } else {
+      document.addEventListener('productsLoaded', function() {
+        renderHomeProducts();
+      });
+    }
 
     function updateWishlistUI() {
       const heartIcons = document.querySelectorAll('.card-icon-side:not(.second) svg');
