@@ -961,7 +961,7 @@
                 <span class="badge-pill ${badgeClass}">${collLabel}</span>
                 ${discount > 0 ? `<span class="badge-sale">-${discount}%</span>` : ''}
                 ${p.stock <= 5 ? `<span class="badge-stock animate-pulse">ONLY ${p.stock} LEFT</span>` : ''}
-                <button type="button" onclick="event.stopPropagation(); toggleWishlistItem(${p.id}); updateWishlistUI();" class="card-icon-side w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform">
+                <button type="button" onclick="event.stopPropagation(); toggleWishlistItem('${p.id}'); updateWishlistUI();" class="card-icon-side w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform">
                     <svg class="w-4 h-4 ${isWish ? 'text-rose-500 fill-current' : 'text-gray-600'}" fill="${isWish ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                 </button>
                 <button type="button" title="Quick View" onclick="event.stopPropagation(); openDetailModal('${p.id}')" class="card-icon-side second w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform">
@@ -1014,7 +1014,7 @@
             heartIcons.forEach(svg => {
                 const card = svg.closest('.product-card');
                 if (!card) return;
-                const id = parseInt(card.getAttribute('data-id'));
+                const id = card.getAttribute('data-id');
                 const isWish = wishlist.find(w => w.id === id);
                 if (isWish) {
                     svg.classList.add('text-rose-500', 'fill-current');
@@ -1030,7 +1030,7 @@
 
         let currentDetailProduct = null, currentDetailQty = 1;
         function openDetailModal(id) {
-            const p = products.find(x => x.id === id);
+            const p = products.find(x => String(x.id) === String(id));
             if (!p) return;
             currentDetailProduct = p;
             currentDetailQty = 1;
@@ -1083,8 +1083,10 @@
             }
 
             localStorage.setItem('southery_cart', JSON.stringify(window.cart));
-            updateCartCount();
-            showToast(`${product.name} added to cart!`);
+            updateAllCounts();
+            animateCartBadges();
+            renderCart();
+            showToast(`${product.name} added to cart! 🛍️`, 'success');
         }
         function addDetailToCart() { addToCart(currentDetailProduct.id, currentDetailQty); closeDetailModal(); }
         function buyNow() { addToCart(currentDetailProduct.id, currentDetailQty); setTimeout(() => { window.location.href = 'checkout.html'; }, 500); }
