@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -665,7 +665,7 @@
         </div>
     </div>
 
-    <script src="js/products.js"></script>
+    <script src="js/products-api.js"></script>
     <script src="js/layout.js"></script>
 
     <!-- Mobile Scroll-Aware Filter FAB (Bottom Right) -->
@@ -1071,7 +1071,7 @@
             openDetailModal(currentDetailProduct.id);
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('productsLoaded', function() {
             const params = new URLSearchParams(window.location.search);
             const coll = params.get('collection');
             const cat = params.get('category');

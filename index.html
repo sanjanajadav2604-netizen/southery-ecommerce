@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -954,9 +954,8 @@
     }
 
     // Initial render
-    document.addEventListener('DOMContentLoaded', () => {
-      // Wait a bit for js/products.js to load if it's not instant
-      setTimeout(renderHomeProducts, 100);
+    document.addEventListener('productsLoaded', function() {
+      renderHomeProducts();
     });
 
     function updateWishlistUI() {
@@ -1512,7 +1511,7 @@
     </div>
   </footer>
 
-  <script src="js/products.js"></script>
+  <script src="js/products-api.js"></script>
   <script src="js/layout.js"></script>
 </body>
 

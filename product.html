@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -821,7 +821,7 @@
             </div>
         </div>
     </footer>
-    <script src="js/products.js"></script>
+    <script src="js/products-api.js"></script>
     <script src="js/layout.js"></script>
     <script>
         let currentId = null;
@@ -867,9 +867,10 @@
 
         function init() {
             const params = new URLSearchParams(window.location.search);
-            currentId = parseInt(params.get('id'));
-            if (typeof products === 'undefined') return;
-            const product = products.find(p => p.id === currentId);
+            currentId = params.get('id');
+            const prods = window.getProducts();
+            if (!prods || prods.length === 0) return;
+            const product = prods.find(p => String(p.id) === String(currentId));
 
             if (!product) {
                 window.location.href = 'shop.html';
@@ -1052,7 +1053,7 @@
 
         function updateWishlistUI() {
             const wishlist = JSON.parse(localStorage.getItem('southery_wishlist') || '[]');
-            const isSaved = wishlist.some(w => w.id === currentId);
+            const isSaved = wishlist.some(w => String(w.id) === String(currentId));
             const icons = [document.getElementById('wishlist-btn-icon'), document.getElementById('product-image-heart-icon')];
             icons.forEach(icon => {
                 if (!icon) return;
@@ -1107,7 +1108,8 @@
         }
 
         function orderOnWhatsApp() {
-            const product = (typeof products !== 'undefined') ? products.find(p => p.id === currentId) : null;
+            const prods = window.getProducts();
+            const product = prods ? prods.find(p => String(p.id) === String(currentId)) : null;
             if (!product) return;
             // UPDATE THIS: Replace with your actual WhatsApp Business Number
             const phoneNumber = "919000000000";
@@ -1117,10 +1119,11 @@
 
         function renderRelatedProducts(currentProduct) {
             const container = document.getElementById('related-products');
-            if (!container || typeof products === 'undefined') return;
-            let related = products.filter(p => p.id !== currentProduct.id && (p.category === currentProduct.category || p.collection === currentProduct.collection));
+            const prods = window.getProducts();
+            if (!container || !prods || prods.length === 0) return;
+            let related = prods.filter(p => String(p.id) !== String(currentProduct.id) && (p.category === currentProduct.category || p.collection === currentProduct.collection));
             if (related.length < 4) {
-                const others = products.filter(p => !related.includes(p) && p.id !== currentProduct.id);
+                const others = prods.filter(p => !related.some(r => String(r.id) === String(p.id)) && String(p.id) !== String(currentProduct.id));
                 related = [...related, ...others].slice(0, 4);
             } else {
                 related = related.slice(0, 4);
