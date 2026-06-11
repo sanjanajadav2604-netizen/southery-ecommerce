@@ -1034,9 +1034,10 @@ async function fetchUserCartAndWishlist() {
 
 async function handleLogin(event) {
     event.preventDefault();
-    const email = event.target.querySelector('input[type="email"]')?.value?.trim();
-    const password = event.target.querySelector('input[type="password"]')?.value;
-    const btn = event.target.querySelector('button[type="submit"]');
+    const form = event.target;
+    const email = (form.querySelector('#login-email') || form.querySelector('input[type="email"]'))?.value?.trim();
+    const password = (form.querySelector('#login-password') || form.querySelector('input[type="password"]'))?.value;
+    const btn = form.querySelector('button[type="submit"]');
     if (!email || !password) return showToast('Please enter your email and password.', 'error');
     const originalText = btn?.textContent;
     if (btn) { btn.textContent = 'Signing In...'; btn.disabled = true; }
@@ -1062,10 +1063,11 @@ async function handleLogin(event) {
 
 async function handleSignup(event) {
     event.preventDefault();
-    const name = event.target.querySelector('input[type="text"]')?.value?.trim();
-    const email = event.target.querySelector('input[type="email"]')?.value?.trim();
-    const password = event.target.querySelector('input[type="password"]')?.value;
-    const btn = event.target.querySelector('button[type="submit"]');
+    const form = event.target;
+    const name = (form.querySelector('#signup-name') || form.querySelector('input[type="text"]'))?.value?.trim();
+    const email = (form.querySelector('#signup-email') || form.querySelector('input[type="email"]'))?.value?.trim();
+    const password = (form.querySelector('#signup-password') || form.querySelector('input[type="password"]'))?.value;
+    const btn = form.querySelector('button[type="submit"]');
     if (!name || !email || !password) return showToast('Please fill in all fields.', 'error');
     const originalText = btn?.textContent;
     if (btn) { btn.textContent = 'Creating Account...'; btn.disabled = true; }
