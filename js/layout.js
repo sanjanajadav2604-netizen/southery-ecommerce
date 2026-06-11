@@ -556,6 +556,12 @@ function fillSearch(q) {
     }
 }
 
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.appendChild(document.createTextNode(String(str)));
+  return div.innerHTML;
+}
+
 function handleSearch(query) {
     const results = document.getElementById('search-results');
     const initial = document.getElementById('search-initial');
@@ -572,6 +578,7 @@ function handleSearch(query) {
     initial.classList.add('hidden');
     results.classList.remove('hidden');
     const q = query.toLowerCase().trim();
+    const safeQuery = escapeHtml(query);
 
     // Use products from products.js if available
     if (typeof products === 'undefined') return;
@@ -593,7 +600,7 @@ function handleSearch(query) {
                     </svg>
                 </div>
                 <h3 class="font-display text-2xl text-charcoal mb-2">No treasures found</h3>
-                <p class="text-sm text-muted max-w-xs mx-auto mb-8">We couldn't find any results for <span class="text-terracotta font-bold">"${query}"</span>. Try adjusting your search or explore our collections.</p>
+                <p class="text-sm text-muted max-w-xs mx-auto mb-8">We couldn't find any results for <span class="text-terracotta font-bold">"${safeQuery}"</span>. Try adjusting your search or explore our collections.</p>
                 <button onclick="document.getElementById('search-input').value=''; handleSearch('');" 
                         class="px-8 py-3 rounded-full bg-charcoal text-white text-[10px] font-bold uppercase tracking-widest hover:bg-terracotta transition-all shadow-lg">Clear Search</button>
             </div>
