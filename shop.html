@@ -1089,7 +1089,7 @@
             showToast('Added to bag!', 'success', product.name);
         }
         function addDetailToCart() { addToCart(currentDetailProduct.id, currentDetailQty); closeDetailModal(); }
-        function buyNow() { addToCart(currentDetailProduct.id, currentDetailQty); setTimeout(() => { window.location.href = 'checkout.html'; }, 500); }
+        function buyNow() { addToCart(currentDetailProduct.id, currentDetailQty); window.location.href = 'checkout.html'; }
         function toggleDetailWishlist() {
             if (!currentDetailProduct) return;
             toggleWishlistItem(currentDetailProduct.id);

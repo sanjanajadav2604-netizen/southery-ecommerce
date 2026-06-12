@@ -25,9 +25,9 @@
         .quick-view-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(45, 49, 43, 0.4);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(28, 25, 23, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 99999;
             opacity: 0;
             pointer-events: none;
@@ -46,10 +46,10 @@
         .quick-view-card {
             background: white;
             width: 100%;
-            max-width: 650px;
+            max-width: 800px;
             border-radius: 32px;
             overflow: hidden;
-            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.25);
             transform: scale(0.9) translateY(40px);
             transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
             position: relative;
@@ -59,10 +59,78 @@
             transform: scale(1) translateY(0);
         }
 
+        #qv-body {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        @media (min-width: 641px) {
+            #qv-body {
+                flex-direction: row;
+                height: 540px;
+            }
+
+            .quick-view-left {
+                width: 45%;
+                height: 100%;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .quick-view-right {
+                width: 55%;
+                height: 100%;
+                overflow-y: auto;
+                padding: 40px;
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .quick-view-card {
+                max-width: 100%;
+                max-height: 85vh;
+                border-radius: 32px 32px 0 0;
+                transform: translateY(100%) scale(1);
+            }
+
+            .quick-view-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .quick-view-overlay.active .quick-view-card {
+                transform: translateY(0);
+            }
+
+            #qv-body {
+                flex-direction: column;
+            }
+
+            .quick-view-left {
+                width: 100%;
+                height: 240px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .quick-view-right {
+                width: 100%;
+                padding: 24px;
+            }
+        }
+
         .quick-view-image {
             width: 100%;
-            height: 350px;
+            height: 100%;
             object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .quick-view-image:hover {
+            transform: scale(1.06);
         }
 
         .qv-close-btn {
@@ -84,158 +152,165 @@
 
         .qv-close-btn:hover {
             transform: rotate(90deg);
-            background: var(--accent);
+            background: #C45C26;
             color: white;
         }
 
-        @media (max-width: 640px) {
-            .quick-view-card {
-                max-height: 85vh;
-                overflow-y: auto;
-                border-radius: 32px 32px 0 0;
-                transform: translateY(100%) scale(1);
+        .qv-ticket {
+            position: relative;
+            background: #faf7f4;
+            border: 1.5px dashed rgba(196, 92, 38, 0.25);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .qv-ticket-cutout-l,
+        .qv-ticket-cutout-r {
+            position: absolute;
+            top: 50%;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            transform: translateY(-50%);
+        }
+
+        .qv-ticket-cutout-l {
+            left: -8px;
+            border-right: 1.5px dashed rgba(196, 92, 38, 0.25);
+        }
+
+        .qv-ticket-cutout-r {
+            right: -8px;
+            border-left: 1.5px dashed rgba(196, 92, 38, 0.25);
+        }
+
+        .qty-control-btn {
+            width: 36px !important;
+            height: 36px !important;
+        }
+
+        /* Hide Global Bottom Nav on Checkout to reduce friction */
+        .mobile-bottom-nav {
+            display: none !important;
+        }
+
+        /* Hide Global Site Footer on Checkout for cleaner funnel */
+        footer {
+            display: none !important;
+        }
+
+        @keyframes slideUpFooter {
+            from {
+                transform: translateY(100%);
             }
 
-            .quick-view-overlay {
-                align-items: flex-end;
-                padding: 0;
-            }
-
-            .quick-view-overlay.active .quick-view-card {
+            to {
                 transform: translateY(0);
             }
+        }
 
-            .quick-view-image {
-                height: 280px;
+        /* Hide the main form button on mobile explicitly */
+        #main-checkout-btn {
+            display: block !important;
+        }
+
+        /* Push page content up slightly */
+        main {
+            padding-bottom: 60px !important;
+        }
+
+        /* Mobile Summary Toggle */
+        .mobile-summary-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            background: #FDF9F6;
+            border-bottom: 1px solid rgba(196, 92, 38, 0.1);
+            position: fixed;
+            top: 80px;
+            /* Below nav */
+            left: 0;
+            right: 0;
+            z-index: 30;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #mobile-summary-content {
+            display: none;
+            background: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            position: fixed;
+            top: 125px;
+            left: 0;
+            right: 0;
+            z-index: 29;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .custom-scrollbar {
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            overscroll-behavior-y: contain;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #C45C26;
+            border-radius: 10px;
+        }
+
+        #mobile-summary-content.active {
+            display: block !important;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        #m-summary-items {
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        /* Custom scrollbar for premium look */
+        #m-summary-items::-webkit-scrollbar,
+        #mobile-final-items::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        #m-summary-items::-webkit-scrollbar-thumb,
+        #mobile-final-items::-webkit-scrollbar-thumb {
+            background: rgba(196, 92, 38, 0.2);
+            border-radius: 10px;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
             }
 
-            .qv-content {
-                padding: 24px !important;
-            }
-
-            .qty-control-btn {
-                width: 36px !important;
-                height: 36px !important;
-            }
-
-            /* Hide Global Bottom Nav on Checkout to reduce friction */
-            .mobile-bottom-nav {
-                display: none !important;
-            }
-
-            /* Hide Global Site Footer on Checkout for cleaner funnel */
-            footer {
-                display: none !important;
-            }
-
-            @keyframes slideUpFooter {
-                from {
-                    transform: translateY(100%);
-                }
-
-                to {
-                    transform: translateY(0);
-                }
-            }
-
-            /* Hide the main form button on mobile explicitly */
-            #main-checkout-btn {
-                display: block !important;
-            }
-
-            /* Push page content up slightly */
-            main {
-                padding-bottom: 60px !important;
-            }
-
-            /* Mobile Summary Toggle */
-            .mobile-summary-bar {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 14px 20px;
-                background: #FDF9F6;
-                border-bottom: 1px solid rgba(196, 92, 38, 0.1);
-                position: fixed;
-                top: 80px;
-                /* Below nav */
-                left: 0;
-                right: 0;
-                z-index: 30;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            #mobile-summary-content {
-                display: none;
-                background: white;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-                padding: 20px;
-                position: fixed;
-                top: 125px;
-                left: 0;
-                right: 0;
-                z-index: 29;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-                max-height: 70vh;
-                overflow-y: auto;
-            }
-
-            .custom-scrollbar {
-                -webkit-overflow-scrolling: touch;
-                touch-action: pan-y;
-                overscroll-behavior-y: contain;
-            }
-
-            .custom-scrollbar::-webkit-scrollbar {
-                width: 6px;
-            }
-
-            .custom-scrollbar::-webkit-scrollbar-track {
-                background: rgba(0, 0, 0, 0.05);
-                border-radius: 10px;
-            }
-
-            .custom-scrollbar::-webkit-scrollbar-thumb {
-                background: #C45C26;
-                border-radius: 10px;
-            }
-
-            #mobile-summary-content.active {
-                display: block !important;
-                animation: slideDown 0.3s ease-out;
-            }
-
-            #m-summary-items {
-                max-height: 280px;
-                overflow-y: auto;
-                padding-right: 8px;
-            }
-
-            /* Custom scrollbar for premium look */
-            #m-summary-items::-webkit-scrollbar,
-            #mobile-final-items::-webkit-scrollbar {
-                width: 3px;
-            }
-
-            #m-summary-items::-webkit-scrollbar-thumb,
-            #mobile-final-items::-webkit-scrollbar-thumb {
-                background: rgba(196, 92, 38, 0.2);
-                border-radius: 10px;
-            }
-
-            @keyframes slideDown {
-                from {
-                    transform: translateY(-20px);
-                    opacity: 0;
-                }
-
-                to {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
+            to {
+                transform: translateY(0);
+                opacity: 1;
             }
         }
+
 
         @media (min-width: 641px) {
             .mobile-summary-bar {
@@ -798,34 +873,90 @@
             const p = products.find(prod => String(prod.id) === String(id));
             if (!p) return;
 
+            const cartItem = cart.find(c => String(c.id) === String(id));
+            const quantity = cartItem ? cartItem.qty : 1;
+            const size = cartItem?.size || p.specs?.size || 'Standard';
+
             const body = document.getElementById('qv-body');
             body.innerHTML = `
-                <img src="${p.image}" class="quick-view-image" alt="${p.name}">
-                <div class="qv-content p-10">
-                    <div class="flex justify-between items-start gap-4 mb-4">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold tracking-widest text-terracotta bg-terracotta/5 px-3 py-1 rounded-full">${p.category}</span>
-                            <h2 class="font-display text-4xl font-bold text-charcoal mt-2">${p.name}</h2>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-2xl font-bold text-terracotta">₹${p.price.toLocaleString()}</p>
-                            <p class="text-[10px] text-muted line-through">₹${p.comparePrice.toLocaleString()}</p>
-                        </div>
+                <div class="quick-view-left">
+                    <img src="${p.image}" class="quick-view-image" alt="${p.name}">
+                    <div class="absolute bottom-4 left-4 bg-charcoal/80 backdrop-blur-md px-3 py-1 rounded-full text-white text-[9px] font-bold tracking-widest uppercase shadow-sm">
+                        ${p.collection || 'Luxury Collection'}
                     </div>
-                    <p class="text-sm text-gray-500 leading-relaxed mb-8">${p.description}</p>
-                    
-                    <div class="grid grid-cols-2 gap-6 p-6 bg-cream/30 rounded-2xl border border-black/5 mb-8">
-                        <div>
-                            <p class="text-[10px] uppercase font-bold text-muted tracking-widest mb-1">Metal</p>
-                            <p class="text-xs font-bold text-charcoal">${p.specs?.metal || 'Premium Polish'}</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] uppercase font-bold text-muted tracking-widest mb-1">Weight</p>
-                            <p class="text-xs font-bold text-charcoal">${p.specs?.weight || 'Standard'}</p>
+                </div>
+                <div class="quick-view-right custom-scrollbar">
+                    <div class="mb-4">
+                        <span class="text-[9px] uppercase font-bold tracking-widest text-terracotta bg-terracotta/5 px-2.5 py-1 rounded-full">${p.category}</span>
+                        <div class="flex justify-between items-baseline gap-4 mt-3">
+                            <h2 class="font-display text-2xl xs:text-3xl font-bold text-charcoal leading-tight">${p.name}</h2>
+                            <div class="text-right flex-shrink-0">
+                                <p class="text-xl font-bold text-terracotta">₹${p.price.toLocaleString()}</p>
+                                ${p.comparePrice ? `<p class="text-[10px] text-muted line-through">₹${p.comparePrice.toLocaleString()}</p>` : ''}
+                            </div>
                         </div>
                     </div>
 
-                    <button onclick="closeQuickView()" class="w-full py-4 bg-charcoal text-white rounded-xl font-bold uppercase tracking-widest hover:bg-terracotta transition-all shadow-lg">
+                    <p class="text-xs text-gray-500 leading-relaxed mb-5">${p.description}</p>
+                    
+                    <!-- Specifications Badge Grid -->
+                    <div class="grid grid-cols-3 gap-2.5 mb-5">
+                        <div class="bg-cream/40 rounded-xl p-2.5 border border-black/[0.03] flex flex-col justify-center">
+                            <span class="block text-[8px] uppercase font-bold text-muted tracking-wider mb-0.5">Metal</span>
+                            <span class="text-xs font-semibold text-charcoal truncate">${p.specs?.metal || 'Premium Polish'}</span>
+                        </div>
+                        <div class="bg-cream/40 rounded-xl p-2.5 border border-black/[0.03] flex flex-col justify-center">
+                            <span class="block text-[8px] uppercase font-bold text-muted tracking-wider mb-0.5">Weight</span>
+                            <span class="text-xs font-semibold text-charcoal truncate">${p.specs?.weight || 'Standard'}</span>
+                        </div>
+                        <div class="bg-cream/40 rounded-xl p-2.5 border border-black/[0.03] flex flex-col justify-center">
+                            <span class="block text-[8px] uppercase font-bold text-muted tracking-wider mb-0.5">Size</span>
+                            <span class="text-xs font-semibold text-charcoal truncate">${size}</span>
+                        </div>
+                    </div>
+
+                    <!-- Unique Ticket-Style Investment Details -->
+                    <div class="qv-ticket">
+                        <div class="qv-ticket-cutout-l"></div>
+                        <div class="qv-ticket-cutout-r"></div>
+                        
+                        <h4 class="text-[9px] font-bold uppercase tracking-widest text-terracotta mb-3 text-center">Order Item Details</h4>
+                        
+                        <div class="space-y-2 text-xs text-charcoal/80">
+                            <div class="flex justify-between items-center">
+                                <span>Unit Price</span>
+                                <span class="font-semibold text-charcoal">₹${p.price.toLocaleString()}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Selected Quantity</span>
+                                <span class="font-semibold text-charcoal">${quantity}x</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Shipping Status</span>
+                                <span class="text-sage font-bold uppercase text-[9px]">Free Delivery</span>
+                            </div>
+                            <div class="flex justify-between items-center border-t border-dashed border-terracotta/20 pt-2 mt-2 text-charcoal font-bold">
+                                <span>Item Subtotal</span>
+                                <span class="text-terracotta text-sm">₹${(p.price * quantity).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline tracker for checkout state -->
+                    <div class="mb-6 px-1">
+                        <div class="flex justify-between text-[8px] font-bold uppercase text-muted tracking-widest mb-1.5">
+                            <span>Bagged</span>
+                            <span class="text-terracotta">Checkout</span>
+                            <span>Delivery</span>
+                        </div>
+                        <div class="h-1 bg-gray-100 rounded-full overflow-hidden flex">
+                            <div class="h-full bg-sage" style="width: 33.33%"></div>
+                            <div class="h-full bg-terracotta animate-pulse" style="width: 33.33%"></div>
+                            <div class="h-full bg-gray-200" style="width: 33.33%"></div>
+                        </div>
+                    </div>
+
+                    <button onclick="closeQuickView()" class="w-full py-3 bg-charcoal hover:bg-terracotta text-white rounded-xl font-bold uppercase text-xs tracking-wider transition-all shadow-md mt-auto">
                         Back to Checkout
                     </button>
                 </div>
@@ -930,26 +1061,26 @@
                 subtotal += p.price * item.qty;
                 return `
                     <div class="flex gap-4 items-center group/item animate-in is-visible">
-                        <div onclick="openQuickView(${p.id})" class="relative w-16 h-16 bg-cream rounded-lg overflow-hidden border cursor-pointer hover:ring-1 ring-terracotta/30 transition-all flex-shrink-0">
+                        <div onclick="openQuickView('${p.id}')" class="relative w-16 h-16 bg-cream rounded-lg overflow-hidden border cursor-pointer hover:ring-1 ring-terracotta/30 transition-all flex-shrink-0">
                             <img loading="lazy" src="${p.image}" class="w-full h-full object-cover">
                         </div>
                         <div class="flex-1 min-w-0">
-                            <div onclick="openQuickView(${p.id})" class="cursor-pointer group">
+                            <div onclick="openQuickView('${p.id}')" class="cursor-pointer group">
                                 <h3 class="text-xs font-bold text-charcoal truncate uppercase tracking-tighter group-hover:text-terracotta transition-colors">${p.name}</h3>
                                 <p class="text-[9px] text-muted uppercase tracking-widest mt-0.5">Luxury Collection</p>
                             </div>
                             
                             <div class="flex items-center gap-3 mt-2">
                                 <div class="flex items-center bg-white border border-black/5 rounded-md px-1 py-0.5">
-                                    <button type="button" onclick="updateCheckoutQty(${p.id}, -1)" class="qty-control-btn w-5 h-5 flex items-center justify-center text-muted hover:text-charcoal transition-colors">
+                                    <button type="button" onclick="updateCheckoutQty('${p.id}', -1)" class="qty-control-btn w-5 h-5 flex items-center justify-center text-muted hover:text-charcoal transition-colors">
                                         <svg class="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 12H4" stroke-width="3" stroke-linecap="round"/></svg>
                                     </button>
                                     <span class="w-5 text-center text-[10px] font-bold text-charcoal">${item.qty}</span>
-                                    <button type="button" onclick="updateCheckoutQty(${p.id}, 1)" class="qty-control-btn w-5 h-5 flex items-center justify-center text-muted hover:text-charcoal transition-colors">
+                                    <button type="button" onclick="updateCheckoutQty('${p.id}', 1)" class="qty-control-btn w-5 h-5 flex items-center justify-center text-muted hover:text-charcoal transition-colors">
                                         <svg class="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-width="3" stroke-linecap="round"/></svg>
                                     </button>
                                 </div>
-                                <button type="button" onclick="removeFromCheckout(${p.id})" class="text-[9px] text-rose-500/60 hover:text-rose-500 font-bold uppercase tracking-widest transition-colors">
+                                <button type="button" onclick="removeFromCheckout('${p.id}')" class="text-[9px] text-rose-500/60 hover:text-rose-500 font-bold uppercase tracking-widest transition-colors">
                                     Remove
                                 </button>
                             </div>

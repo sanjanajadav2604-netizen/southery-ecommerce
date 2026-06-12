@@ -1017,7 +1017,7 @@
     function closeDetailModal(e) { if (!e || e.target === e.currentTarget) { document.getElementById('detail-modal').classList.remove('open'); document.body.style.overflow = ''; } }
     function updateDetailQty(c) { currentDetailQty = Math.max(1, currentDetailQty + c); document.getElementById('detail-qty').textContent = currentDetailQty; }
     function addDetailToCart() { addToCart(currentDetailProduct.id, currentDetailQty); closeDetailModal(); }
-    function buyNow() { addToCart(currentDetailProduct.id, currentDetailQty); setTimeout(() => { window.location.href = 'checkout.html'; }, 500); }
+    function buyNow() { addToCart(currentDetailProduct.id, currentDetailQty); window.location.href = 'checkout.html'; }
     function toggleDetailWishlist() {
       if (!currentDetailProduct) return;
       toggleWishlistItem(currentDetailProduct.id);

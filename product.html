@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1098,10 +1098,6 @@
 
         function buyNow() {
             if (typeof addToCart === 'function') {
-                if (!currentUser) {
-                    addToCart(currentId, qty); // This will open the modal smoothly
-                    return;
-                }
                 addToCart(currentId, qty);
                 window.location.href = 'checkout.html';
             }
@@ -1112,7 +1108,7 @@
             const product = prods ? prods.find(p => String(p.id) === String(currentId)) : null;
             if (!product) return;
             // UPDATE THIS: Replace with your actual WhatsApp Business Number
-            const phoneNumber = "919000000000";
+            const phoneNumber = "919624118668";
             const message = `Hi Southery Sentie! 🌸 I am interested in your ${product.name} (₹${product.price.toLocaleString()}). Could you please share more details? \n\nProduct Link: ${window.location.href}`;
             window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
         }
