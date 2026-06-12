@@ -1,4 +1,4 @@
-function getApiBase() {
+﻿function getApiBase() {
     if (typeof window === 'undefined') return 'https://southery-backend.vercel.app';
     const override = localStorage.getItem('southery_api_base');
     if (override) return override.replace(/\/$/, '');

@@ -1,4 +1,4 @@
-const products = [
+﻿const products = [
     { id: 1, name: 'Kundan Bridal Set', price: 24999, comparePrice: 34999, description: 'Elevate your bridal ensemble.', image: 'https://images.unsplash.com/photo-1512163143273-bde0e3cc7407?w=800&q=80', collection: 'handmade', category: 'necklace', stock: 2 },
     { id: 2, name: 'Pearl Drop Earrings', price: 2499, comparePrice: 3499, description: 'Timeless pearl drops.', image: 'https://images.unsplash.com/photo-1635767798638-3e25273a8236?w=800&q=80', collection: 'handmade', category: 'earring', stock: 12 },
     { id: 3, name: 'Gold Chain Necklace', price: 12999, comparePrice: 15999, description: 'Anti-tarnish gold chain.', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80', collection: 'anti-tarnish', category: 'necklace', stock: 3 },

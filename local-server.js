@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Southery Sentie — Local Development Server
  * Supports clean URLs: /account → account.html, /shop → shop.html, etc.
  * Mirrors production behaviour (Netlify / Apache / Nginx rewriting)

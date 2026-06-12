@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const CACHE_KEY = 'southery_products_cache';
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
