@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -780,15 +780,15 @@
                 slider.max = roundedMax;
                 slider.value = roundedMax;
             }
-            if (minLabel) minLabel.textContent = `?${roundedMin.toLocaleString('en-IN')}`;
-            if (maxLabel) maxLabel.textContent = `Up to ?${roundedMax.toLocaleString('en-IN')}`;
+            if (minLabel) minLabel.innerHTML = `&#8377;${roundedMin.toLocaleString('en-IN')}`;
+            if (maxLabel) maxLabel.innerHTML = `Up to &#8377;${roundedMax.toLocaleString('en-IN')}`;
         }
 
         function updatePriceLabel(val) {
             const label = document.getElementById('max-price');
             if (!label) return;
             const v = parseInt(val);
-            label.textContent = 'Up to ?' + v.toLocaleString('en-IN');
+            label.innerHTML = 'Up to &#8377;' + v.toLocaleString('en-IN');
         }
 
         function clearFilters() {
@@ -976,8 +976,8 @@
                 <p class="text-[9px] uppercase tracking-[0.2em] text-terracotta/60 font-bold mb-1">${p.category}</p>
                 <h3 class="text-sm font-semibold text-charcoal product-title leading-tight mb-2 hover:text-terracotta transition-colors">${p.name}</h3>
                 <div class="flex items-center gap-3">
-                    <span class="text-base font-bold text-terracotta">?${p.price.toLocaleString()}</span>
-                    ${p.comparePrice ? `<span class="text-xs line-through text-gray-400 font-medium">?${p.comparePrice.toLocaleString()}</span>` : ''}
+                    <span class="text-base font-bold text-terracotta">&#8377;${p.price.toLocaleString()}</span>
+                    ${p.comparePrice ? `<span class="text-xs line-through text-gray-400 font-medium">&#8377;${p.comparePrice.toLocaleString()}</span>` : ''}
                 </div>
             </div>
         </div>`;

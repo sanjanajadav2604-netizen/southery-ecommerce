@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -894,13 +894,13 @@
                 ${discount > 0 ? `<span class="badge-sale">-${discount}%</span>` : ''}
                 ${p.stock <= 5 ? `<span class="badge-stock animate-pulse">ONLY ${p.stock} LEFT</span>` : ''}
                 
-                <button type="button" onclick="event.stopPropagation(); toggleWishlistItem(${p.id}); updateWishlistUI();" class="card-icon-side w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform">
+                <button type="button" onclick="event.stopPropagation(); toggleWishlistItem('${p.id}'); updateWishlistUI();" class="card-icon-side w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform">
                     <svg class="w-4 h-4 ${isWish ? 'text-rose-500 fill-current' : 'text-gray-600'}" fill="${isWish ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                 </button>
-                <button type="button" title="Quick View" onclick="event.stopPropagation(); openDetailModal(${p.id})" class="card-icon-side second w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform">
+                <button type="button" title="Quick View" onclick="event.stopPropagation(); openDetailModal('${p.id}')" class="card-icon-side second w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform">
                     <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
-                <button type="button" onclick="event.stopPropagation(); addToCart(${p.id})" class="btn-floating-pill ${btnColorClass}">
+                <button type="button" onclick="event.stopPropagation(); addToCart('${p.id}')" class="btn-floating-pill ${btnColorClass}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     <span>Add to Cart</span>
                 </button>

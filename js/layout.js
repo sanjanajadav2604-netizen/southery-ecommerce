@@ -1,4 +1,4 @@
-﻿function getApiBase() {
+function getApiBase() {
     if (typeof window === 'undefined') return 'https://southery-backend.vercel.app';
     const override = localStorage.getItem('southery_api_base');
     if (override) return override.replace(/\/$/, '');
@@ -63,7 +63,7 @@ window.currentUser = null;
 window.recentSearches = [];
 // ADD THESE:
 window._productCache = null;
-window.getProducts = function () { return window._productCache || (typeof products !== 'undefined' ? products : []); };
+window.getProducts = function () { return window.products?.length ? window.products : (window._productCache || (typeof products !== 'undefined' ? products : [])); };
 
 
 try {
@@ -647,13 +647,15 @@ function renderRecentSearches() {
         container.innerHTML = '<p class="text-[11px] text-muted italic">No recent history</p>';
         return;
     }
-    container.innerHTML = recentSearches.map(s => `
-        <button onclick="fillSearch('${s.replace(/'/g, "\\'")}')" 
+    container.innerHTML = recentSearches.map(s => {
+        const safe = s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return `
+        <button onclick="fillSearch('${safe.replace(/'/g, "\\'")}')" 
                 class="flex items-center gap-2 px-4 py-2 rounded-full bg-cream text-[11px] font-bold text-charcoal hover:bg-terracotta hover:text-white transition-all">
             <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            ${s}
+            ${safe}
         </button>
-    `).join('');
+    `; }).join('');
 }
 
 function searchNow(q) {
@@ -742,14 +744,14 @@ function renderCart() {
                 <div class="flex-1 flex flex-col">
                     <div class="flex justify-between items-start mb-1">
                         <h4 class="font-bold text-sm text-charcoal pr-4">${p.name}</h4>
-                        <button onclick="updateCartQty(${c.id}, -${c.qty})" class="text-gray-300 hover:text-red-400 transition-colors">&times;</button>
+                        <button onclick="updateCartQty('${c.id}', -${c.qty})" class="text-gray-300 hover:text-red-400 transition-colors">&times;</button>
                     </div>
                     ${p.stock <= 5 ? `<p class="text-[9px] font-bold text-terracotta mb-1 animate-pulse uppercase tracking-wider">Only ${p.stock} left &bull; Order soon</p>` : ''}
                     <p class="text-terracotta font-bold text-sm mb-auto">&#8377;${p.price.toLocaleString()}</p>
                     <div class="flex items-center gap-2 mt-2 bg-white px-2 py-1 rounded-lg border border-gray-100 shadow-sm w-fit">
-                            <button onclick="updateCartQty(${c.id}, -1)" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-terracotta transition-colors">&minus;</button>
+                            <button onclick="updateCartQty('${c.id}', -1)" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-terracotta transition-colors">&minus;</button>
                             <span class="w-8 text-center text-xs font-bold text-charcoal">${c.qty}</span>
-                            <button onclick="updateCartQty(${c.id}, 1)" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-terracotta transition-colors">&plus;</button>
+                            <button onclick="updateCartQty('${c.id}', 1)" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-terracotta transition-colors">&plus;</button>
                     </div>
                 </div>
             </div>
@@ -783,10 +785,10 @@ function renderWishlist() {
                     <h4 class="font-bold text-sm text-charcoal truncate mb-1">${p.name}</h4>
                     <p class="text-terracotta font-bold text-xs">&#8377;${p.price.toLocaleString()}</p>
                     <div class="flex flex-col gap-1">
-                        <button onclick="event.stopPropagation(); addToCart(${p.id})" class="text-[10px] font-bold text-terracotta uppercase tracking-widest hover:text-charcoal transition-colors">Add to Bag</button>
+                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" class="text-[10px] font-bold text-terracotta uppercase tracking-widest hover:text-charcoal transition-colors">Add to Bag</button>
                     </div>
                 </div>
-                <button onclick="event.stopPropagation(); toggleWishlistItem(${p.id})" class="text-rose-400 hover:text-rose-600 transition-colors flex-shrink-0">
+                <button onclick="event.stopPropagation(); toggleWishlistItem('${p.id}')" class="text-rose-400 hover:text-rose-600 transition-colors flex-shrink-0">
                     <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                 </button>
             </div>
@@ -1588,9 +1590,6 @@ window.togglePasswordVisibility = function (btnElement) {
     const input = btnElement.parentElement.querySelector('input');
     if (!input) return;
 
-    if (input.type === 'password') {
-        input.type = 'text';
-    } else {
-        input.type = 'password';
-    }
+    const val = input.value; // read first
+    input.type = input.type === 'password' ? 'text' : 'password';
 };
