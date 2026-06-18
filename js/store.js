@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ============================================================
  *  Southery Sentie — Centralised State Store (store.js)
  * ============================================================
@@ -178,7 +178,7 @@ const SoutheryStore = (function () {
   }
 
   function addToCart(id, qty = 1) {
-    const existing = _cart.find(c => c.id === id);
+    const existing = _cart.find(c => String(c.id) === String(id));
     if (existing) existing.qty += qty;
     else _cart.push({ id, qty });
     _persistCart();
@@ -597,3 +597,4 @@ const SoutheryStore = (function () {
   });
 
 })();
+
