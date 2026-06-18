@@ -1,4 +1,4 @@
-function getApiBase() {
+﻿function getApiBase() {
     if (typeof window === 'undefined') return 'https://southery-backend.vercel.app';
     const override = localStorage.getItem('southery_api_base');
     if (override) return override.replace(/\/$/, '');
@@ -810,6 +810,7 @@ window.toggleWishlistItem = function (id) {
     updateAllCounts();
     renderWishlist();
     if (typeof updateWishlistUI === 'function') updateWishlistUI();
+    setTimeout(function(){ animateWishBadges(); }, 50);
     const token = localStorage.getItem('southery_token');
     if (token) {
         if (isAdding) {
@@ -858,6 +859,12 @@ window.addToCart = function (id, qty = 1) {
     animateCartBadges();
 };
 
+function animateWishBadges() {
+    document.querySelectorAll('[id$="-wish-count"]').forEach(function(badge) {
+        badge.style.transform = 'scale(1.3)';
+        setTimeout(function(){ badge.style.transform = 'scale(1)'; }, 300);
+    });
+}
 function animateCartBadges() {
     document.querySelectorAll('[id$="-cart-count"]').forEach(badge => {
         badge.style.transform = 'scale(1.3)';
@@ -1528,3 +1535,9 @@ window.togglePasswordVisibility = function (btnElement) {
     const val = input.value; // read first
     input.type = input.type === 'password' ? 'text' : 'password';
 };
+
+
+
+
+
+

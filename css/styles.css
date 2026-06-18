@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --bg: #F7F6F0;
     --fg: #2D312B;
     --accent: #C45C26;
@@ -354,10 +354,15 @@ html {
     box-shadow: 0 10px 30px -10px rgba(45, 49, 43, 0.05);
 }
 
+.header-icon-btn {
+    position: relative;
+    display: inline-flex;
+}
+
 .icon-badge {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -1px;
+    right: -1px;
     min-width: 18px;
     height: 18px;
     padding: 0 4px;
@@ -371,7 +376,7 @@ html {
     justify-content: center;
     border: 2px solid white;
     z-index: 50;
-    transform: translate(30%, -30%);
+    transform: none;
 }
 
 /* Products */
@@ -1318,6 +1323,11 @@ section:first-of-type {
     border-radius: 16px;
 }
 
+.header-icon-btn {
+    position: relative;
+    display: inline-flex;
+}
+
 .icon-badge {
     transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
@@ -1501,11 +1511,15 @@ input::-ms-clear {
    Utility: Scrollbar Hide (for mobile tab nav)
    ============================================ */
 .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE / Edge */
-    scrollbar-width: none;     /* Firefox */
+    -ms-overflow-style: none;
+    /* IE / Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
+
 .scrollbar-hide::-webkit-scrollbar {
-    display: none;             /* Chrome / Safari */
+    display: none;
+    /* Chrome / Safari */
 }
 
 /* ============================================
@@ -1517,6 +1531,7 @@ input::-ms-clear {
     #orders-container .bg-white {
         padding: 1rem;
     }
+
     .order-img-container {
         width: 70px !important;
         height: 90px !important;

@@ -963,6 +963,7 @@
     }
 
         function toggleHomeHeart(btn, id) {
+      setTimeout(function(){ if(typeof animateWishBadges==='function') animateWishBadges(); }, 100);
       toggleWishlistItem(id);
       var inWish = window.wishlist.find(function(w){ return String(w.id) === String(id); });
       var svg = btn.querySelector('svg');
@@ -1533,6 +1534,7 @@
 </body>
 
 </html>
+
 
 
 
