@@ -66,14 +66,12 @@ window._productCache = null;
 window.getProducts = function () { return window.products?.length ? window.products : (window._productCache || (typeof products !== 'undefined' ? products : [])); };
 
 
-try {
-    window.cart = JSON.parse(localStorage.getItem('southery_cart')) || [];
-    window.wishlist = JSON.parse(localStorage.getItem('southery_wishlist')) || [];
-    window.currentUser = JSON.parse(localStorage.getItem('southery_user')) || null;
-    window.recentSearches = JSON.parse(localStorage.getItem('recent_searches')) || [];
-} catch (e) {
-    console.warn("Error parsing global state:", e);
-}
+// ── Phase 2: State is now owned by SoutheryStore (hydrated at parse time). ──
+// window.* aliases keep backward-compat with the rest of layout.js.
+window.cart           = SoutheryStore.getCart();
+window.wishlist       = SoutheryStore.getWishlist();
+window.currentUser    = SoutheryStore.getCurrentUser();
+window.recentSearches = SoutheryStore.getRecentSearches();
 
 function dispatchAuthChange() {
     window.dispatchEvent(new CustomEvent('authChange', { detail: currentUser }));
@@ -404,10 +402,10 @@ function initLayout() {
         };
     }
 
-    // Data Load
-    try { window.cart = JSON.parse(localStorage.getItem('southery_cart')) || []; } catch (e) { window.cart = []; }
-    try { window.wishlist = JSON.parse(localStorage.getItem('southery_wishlist')) || []; } catch (e) { window.wishlist = []; }
-    try { window.currentUser = JSON.parse(localStorage.getItem('southery_user')) || null; } catch (e) { window.currentUser = null; }
+    // Data Load — delegated to SoutheryStore (already hydrated at script-parse time).
+    window.cart        = SoutheryStore.getCart();
+    window.wishlist    = SoutheryStore.getWishlist();
+    window.currentUser = SoutheryStore.getCurrentUser();
 
     // Wait for Live Products before initializing data-dependent UI
     updateAllCounts();
@@ -800,17 +798,8 @@ function renderWishlist() {
 }
 
 // Data Update Functions
-window.updateCartQty = function (id, change) {
-    const itemIndex = window.cart.findIndex(c => c.id === id);
-    if (itemIndex > -1) {
-        window.cart[itemIndex].qty += change;
-        if (window.cart[itemIndex].qty <= 0) window.cart.splice(itemIndex, 1);
-        localStorage.setItem('southery_cart', JSON.stringify(window.cart));
-        updateAllCounts();
-        renderCart();
-        if (typeof renderSummary === 'function') renderSummary();
-    }
-};
+// (First updateCartQty definition removed — superseded by the store-delegating
+//  definition below, which is the one that was always in effect at runtime.)
 
 window.toggleWishlistItem = function (id) {
     const index = window.wishlist.findIndex(w => String(w.id) === String(id));
@@ -845,41 +834,25 @@ window.addToCartFromWishlist = function (id) {
     animateCartBadges();
 };
 
+// ── Phase 2: updateCartQty → SoutheryStore ──────────────────────────────────
+// Store handles: mutation, localStorage persist, server sync (fire & forget).
+// window.cart is re-synced afterward so renderCart() still works unchanged.
 window.updateCartQty = function (id, change) {
-    const index = window.cart.findIndex(c => String(c.id) === String(id));
-    if (index === -1) return;
-    window.cart[index].qty += change;
-    const removed = window.cart[index].qty <= 0;
-    if (removed) window.cart.splice(index, 1);
-    localStorage.setItem('southery_cart', JSON.stringify(window.cart));
+    SoutheryStore.updateCartQty(id, change);
+    window.cart = SoutheryStore.getCart();
     updateAllCounts();
     renderCart();
     if (typeof renderSummary === 'function') renderSummary();
-    const token = localStorage.getItem('southery_token');
-    if (token) {
-        if (removed) {
-            apiCall('/api/cart/remove/' + id, 'DELETE')
-                .catch(e => console.warn('Cart remove sync failed:', e.message));
-        } else {
-            apiCall('/api/cart/add', 'POST', { productId: String(id), quantity: window.cart.find(c => String(c.id) === String(id))?.qty || 1 })
-                .catch(e => console.warn('Cart update sync failed:', e.message));
-        }
-    }
 };
 
+// ── Phase 2: addToCart → SoutheryStore ──────────────────────────────────────
+// Store handles: mutation, localStorage persist, server sync (fire & forget).
 window.addToCart = function (id, qty = 1) {
-    const item = window.cart.find(c => c.id === id);
-    if (item) item.qty += qty;
-    else window.cart.push({ id, qty });
-    localStorage.setItem('southery_cart', JSON.stringify(window.cart));
+    SoutheryStore.addToCart(id, qty);
+    window.cart = SoutheryStore.getCart();
     updateAllCounts();
     renderCart();
-    const token = localStorage.getItem('southery_token');
-    if (token) {
-        apiCall('/api/cart/add', 'POST', { productId: String(id), quantity: qty })
-            .catch(e => console.warn('Cart sync failed:', e.message));
-    }
-    const product = window.getProducts().find(p => p.id === id);
+    const product = window.getProducts().find(p => String(p.id) === String(id));
     const productName = product ? product.name : 'Item';
     showToast('Added to bag!', 'success', productName);
     animateCartBadges();
@@ -1044,14 +1017,12 @@ async function handleLogin(event) {
     const originalText = btn?.textContent;
     if (btn) { btn.textContent = 'Signing In...'; btn.disabled = true; }
     try {
-        const data = await apiCall('/api/auth/login', 'POST', { email, password });
-        localStorage.setItem('southery_token', data.token);
-        localStorage.setItem('southery_user', JSON.stringify(data.user));
-        localStorage.removeItem('southery_orders');
-        localStorage.removeItem('southery_cart');
-        localStorage.removeItem('southery_wishlist');
-        currentUser = data.user;
-        await fetchUserCartAndWishlist(); // fetch fresh and update badges
+        // ── Phase 3: store handles API call, token/user persist, cart+wishlist fetch ──
+        const data = await SoutheryStore.login(email, password);
+        window.currentUser = SoutheryStore.getCurrentUser();
+        window.cart        = SoutheryStore.getCart();
+        window.wishlist    = SoutheryStore.getWishlist();
+        updateAllCounts();
         updateAuthUI();
         closeAuthModal();
         showToast(data.message, 'success');
@@ -1074,16 +1045,12 @@ async function handleSignup(event) {
     const originalText = btn?.textContent;
     if (btn) { btn.textContent = 'Creating Account...'; btn.disabled = true; }
     try {
-        const data = await apiCall('/api/auth/signup', 'POST', { name, email, password });
-        localStorage.setItem('southery_token', data.token);
-        localStorage.setItem('southery_user', JSON.stringify(data.user));
-        localStorage.removeItem('southery_orders');
-        localStorage.removeItem('southery_cart');
-        localStorage.removeItem('southery_wishlist');
-        window.cart = [];
-        window.wishlist = [];
+        // ── Phase 3: store handles API call, token/user persist, clears cart+wishlist ──
+        const data = await SoutheryStore.signup(name, email, password);
+        window.currentUser = SoutheryStore.getCurrentUser();
+        window.cart        = SoutheryStore.getCart();
+        window.wishlist    = SoutheryStore.getWishlist();
         updateAllCounts();
-        currentUser = data.user;
         updateAuthUI();
         closeAuthModal();
         showToast(data.message, 'success');
@@ -1096,10 +1063,11 @@ async function handleSignup(event) {
 }
 
 function logout() {
-    localStorage.clear();
-    currentUser = null;
-    window.cart = [];
-    window.wishlist = [];
+    // ── Phase 3: store clears localStorage + resets all internal state ──
+    SoutheryStore.logout();
+    window.currentUser = null;
+    window.cart        = [];
+    window.wishlist    = [];
     updateAllCounts();
     updateAuthUI();
     showToast('You have been signed out.', 'success');
@@ -1529,58 +1497,25 @@ window.addEventListener('scroll', function () {
 
 // Load and validate user session on every page load
 async function loadUserFromServer() {
-    const token = localStorage.getItem('southery_token');
-    if (!token) {
-        currentUser = null;
-        localStorage.removeItem('southery_user');
-        updateAuthUI();
-        return;
-    }
+    // ── Phase 3: delegate ALL session logic to SoutheryStore.validateSession() ──
+    // It handles: no-token, /api/auth/me, 401 full-logout, offline fallback,
+    // and internally calls fetchUserCartAndWishlist.
+    await SoutheryStore.validateSession();
 
-    try {
-        const data = await apiCall('/api/auth/me');
-        window.currentUser = data.user;
-        localStorage.setItem('southery_user', JSON.stringify(window.currentUser));
-        updateAuthUI();
-        dispatchAuthChange();
-        // Fetch fresh cart & wishlist counts from API on every page load
-        await fetchUserCartAndWishlist();
-    } catch (error) {
-        console.warn('Session check failed:', error.message);
-
-        // Only log out if it is a definitive authentication failure (401 or 403).
-        // If it is a server error (5xx) or a network/offline error, do NOT log the user out. Keep local state.
-        const isAuthError = error.status === 401 || error.status === 403;
-        if (!isAuthError) {
-            console.log('Network/Server error or Offline detected. Falling back to local user state.');
-            try {
-                window.currentUser = JSON.parse(localStorage.getItem('southery_user'));
-            } catch (e) {
-                window.currentUser = null;
-            }
-            updateAuthUI();
-            dispatchAuthChange();
-            // Fetch cached items or try to reload user cart & wishlist anyways
-            await fetchUserCartAndWishlist();
-            return;
-        }
-
-        // Token expired or invalid (e.g. 401 Unauthorized) — clear session completely
-        localStorage.removeItem('southery_token');
-        localStorage.removeItem('southery_user');
-        currentUser = null;
-        updateAuthUI();
-        dispatchAuthChange();
-    }
+    // Re-sync window.* aliases so existing render functions still work.
+    window.currentUser = SoutheryStore.getCurrentUser();
+    window.cart        = SoutheryStore.getCart();
+    window.wishlist    = SoutheryStore.getWishlist();
+    updateAuthUI();
+    updateAllCounts();
+    renderCart();
+    renderWishlist();
+    dispatchAuthChange();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const appVersion = '2.0.0';
-    if (localStorage.getItem('southery_app_version') !== appVersion) {
-        // Only clear orders on migration, NOT cart/wishlist
-        localStorage.removeItem('southery_orders');
-        localStorage.setItem('southery_app_version', appVersion);
-    }
+    // Version migration (southery_orders clear on upgrade) is handled by
+    // SoutheryStore._hydrate() which runs at script-parse time — no duplicate needed here.
     initLayout();
     loadUserFromServer();
 });
