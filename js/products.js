@@ -12,59 +12,6 @@ const products = [
 
     // ── NECKLACE ─────────────────────────────────────────────────────────────
     {
-        id: 1, name: 'Kundan Bridal Set', price: 24999, comparePrice: 34999,
-        description: 'Elevate your bridal ensemble.', collection: 'handmade', category: 'necklace', stock: 2,
-        // photo: kundan statement necklace
-        image: 'https://images.unsplash.com/photo-1512163143273-bde0e3cc7407?w=800&q=80'
-    },
-    {
-        id: 3, name: 'Gold Chain Necklace', price: 12999, comparePrice: 15999,
-        description: 'Anti-tarnish gold chain.', collection: 'anti-tarnish', category: 'necklace', stock: 3,
-        // photo: gold chain necklace
-        image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80'
-    },
-    {
-        id: 7, name: 'Ruby Stone Pendant', price: 8999, comparePrice: 11000,
-        description: 'Deep crimson ruby stone.', collection: 'handmade', category: 'necklace', stock: 4,
-        // photo: gemstone pendant necklace
-        image: 'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=800&q=80'
-    },
-    {
-        id: 9, name: 'Emerald Choker', price: 18999, comparePrice: 22999,
-        description: 'Regal emerald choker.', collection: 'handmade', category: 'necklace', stock: 2,
-        // photo: choker / layered necklace
-        image: 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=800&q=80'
-    },
-    {
-        id: 13, name: 'Royal Polki Choker', price: 34999, comparePrice: 45000,
-        description: 'Handcrafted Polki choker.', collection: 'handmade', category: 'necklace', stock: 1,
-        // photo: Indian traditional gold necklace / choker
-        image: 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=800&q=80'
-    },
-    {
-        id: 14, name: 'Temple Lakshmi Pendant', price: 21999, comparePrice: 28000,
-        description: 'South Indian temple jewelry.', collection: 'handmade', category: 'necklace', stock: 4,
-        // photo: coin / pendant necklace
-        image: 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=800&q=80'
-    },
-    {
-        id: 15, name: 'Zodiac Coin Necklace', price: 4999, comparePrice: 6500,
-        description: 'Anti-tarnish zodiac necklace.', collection: 'anti-tarnish', category: 'necklace', stock: 40,
-        // photo: delicate coin / layered necklace
-        image: 'https://images.unsplash.com/photo-1602752275313-477eaabc497c?w=800&q=80'
-    },
-    {
-        id: 16, name: 'Celestial Moon Pendant', price: 3499, comparePrice: 4500,
-        description: 'Crescent moon necklace.', collection: 'anti-tarnish', category: 'necklace', stock: 35,
-        // photo: fine pendant necklace (celestial/moon themed)
-        image: 'https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=800&q=80'
-    },
-    {
-        id: 25, name: 'Diamond Layered Necklace', price: 15999, comparePrice: 19999,
-        description: 'Double layered diamond necklace.', collection: 'handmade', category: 'necklace', stock: 2,
-        image: 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=800&q=80'
-    },
-    {
         id: 26, name: 'Vintage Gold Choker', price: 12499, comparePrice: 16000,
         description: 'Antique finish gold choker.', collection: 'handmade', category: 'necklace', stock: 3,
         image: 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=800&q=80'
@@ -80,29 +27,9 @@ const products = [
         image: 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=800&q=80'
     },
     {
-        id: 29, name: 'Minimalist Bar Necklace', price: 2999, comparePrice: 3999,
-        description: 'Sleek horizontal bar pendant.', collection: 'anti-tarnish', category: 'necklace', stock: 12,
+        id: 29, name: 'Minimalist Moon Chain', price: 2999, comparePrice: 3999,
+        description: 'Sleek crescent moon pendant.', collection: 'anti-tarnish', category: 'necklace', stock: 12,
         image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80'
-    },
-    {
-        id: 30, name: 'Twisted Rope Chain', price: 5499, comparePrice: 7500,
-        description: 'Thick twisted rope chain necklace.', collection: 'anti-tarnish', category: 'necklace', stock: 6,
-        image: 'https://images.unsplash.com/photo-1602752275313-477eaabc497c?w=800&q=80'
-    },
-    {
-        id: 31, name: 'Cubic Zirconia Tennis Necklace', price: 19999, comparePrice: 25000,
-        description: 'Sparkling CZ tennis necklace.', collection: 'anti-tarnish', category: 'necklace', stock: 2,
-        image: 'https://images.unsplash.com/photo-1512163143273-bde0e3cc7407?w=800&q=80'
-    },
-    {
-        id: 32, name: 'Floral Motif Pendant', price: 3499, comparePrice: 4500,
-        description: 'Dainty floral design pendant.', collection: 'handmade', category: 'necklace', stock: 10,
-        image: 'https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=800&q=80'
-    },
-    {
-        id: 33, name: 'Two-Tone Heart Necklace', price: 3899, comparePrice: 4999,
-        description: 'Silver and gold two-tone heart.', collection: 'anti-tarnish', category: 'necklace', stock: 15,
-        image: 'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=800&q=80'
     },
     {
         id: 34, name: 'Tassel Lariat Necklace', price: 4299, comparePrice: 5500,
