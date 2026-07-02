@@ -46,12 +46,6 @@ const products = [
         image: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=800&q=80'
     },
     {
-        id: 10, name: 'Sapphire Studs', price: 5499, comparePrice: 7999,
-        description: 'Elegant sapphire studs.', collection: 'anti-tarnish', category: 'earring', stock: 18,
-        // photo: stud / drop earrings
-        image: 'https://images.unsplash.com/photo-1635767798638-3e25273a8236?w=800&q=80'
-    },
-    {
         id: 17, name: 'Baroque Pearl Drops', price: 5499, comparePrice: 7999,
         description: 'Natural baroque pearl earrings.', collection: 'handmade', category: 'earring', stock: 9,
         // photo: pearl drop earrings (baroque / teardrop style)
@@ -62,18 +56,6 @@ const products = [
         description: 'Hand-enameled Jhumkas.', collection: 'handmade', category: 'earring', stock: 5,
         // photo: antique jhumka earrings
         image: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=800&q=80'
-    },
-    {
-        id: 19, name: 'Evil Eye Studs', price: 2499, comparePrice: 3200,
-        description: 'Anti-tarnish evil eye studs.', collection: 'anti-tarnish', category: 'earring', stock: 55,
-        // photo: small drop / crystal earrings
-        image: 'https://images.unsplash.com/photo-1629224316810-9d8805b95e76?w=800&q=80'
-    },
-    {
-        id: 20, name: 'Geometric Crystal Drops', price: 3999, comparePrice: 5500,
-        description: 'Geometric crystal earrings.', collection: 'anti-tarnish', category: 'earring', stock: 22,
-        // photo: crystal / geometric drop earrings
-        image: 'https://images.unsplash.com/photo-1629224316810-9d8805b95e76?w=800&q=80'
     },
 
     // ── BRACELET ─────────────────────────────────────────────────────────────
