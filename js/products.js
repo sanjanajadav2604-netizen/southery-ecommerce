@@ -72,27 +72,9 @@ const products = [
         image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80'
     },
     {
-        id: 21, name: 'Heritage Kada Bracelet', price: 18999, comparePrice: 24000,
-        description: 'Heavy traditional kada.', collection: 'handmade', category: 'bracelet', stock: 3,
+        id: 21, name: 'Diamond Kada Bracelet', price: 18999, comparePrice: 24000,
+        description: 'Diamond studded bracelet.', collection: 'handmade', category: 'bracelet', stock: 3,
         // photo: heavy traditional bangle / kada
-        image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=800&q=80'
-    },
-    {
-        id: 22, name: 'Filigree Silver Bangle', price: 6499, comparePrice: 8500,
-        description: 'Delicate filigree bangle.', collection: 'handmade', category: 'bracelet', stock: 11,
-        // photo: silver bangle / bracelet
-        image: 'https://images.unsplash.com/photo-1611085583191-a3b1a30a5a40?w=800&q=80'
-    },
-    {
-        id: 23, name: 'Minimalist Snake Chain', price: 2999, comparePrice: 3999,
-        description: 'Sleek snake chain bracelet.', collection: 'anti-tarnish', category: 'bracelet', stock: 48,
-        // photo: thin gold/silver bangle (minimalist bracelet)
-        image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80'
-    },
-    {
-        id: 24, name: 'Paperclip Link Bracelet', price: 4499, comparePrice: 5999,
-        description: 'Modern paperclip link bracelet.', collection: 'anti-tarnish', category: 'bracelet', stock: 30,
-        // photo: traditional heavy bracelet / bangle
         image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=800&q=80'
     },
 
