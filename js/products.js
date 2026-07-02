@@ -22,11 +22,6 @@ const products = [
         image: 'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=800&q=80'
     },
     {
-        id: 28, name: 'Pearl Station Necklace', price: 4599, comparePrice: 6000,
-        description: 'Delicate pearl station chain.', collection: 'anti-tarnish', category: 'necklace', stock: 8,
-        image: 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=800&q=80'
-    },
-    {
         id: 29, name: 'Minimalist Moon Chain', price: 2999, comparePrice: 3999,
         description: 'Sleek crescent moon pendant.', collection: 'anti-tarnish', category: 'necklace', stock: 12,
         image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80'
