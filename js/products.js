@@ -59,6 +59,56 @@ const products = [
         // photo: fine pendant necklace (celestial/moon themed)
         image: 'https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=800&q=80'
     },
+    {
+        id: 25, name: 'Diamond Layered Necklace', price: 15999, comparePrice: 19999,
+        description: 'Double layered diamond necklace.', collection: 'handmade', category: 'necklace', stock: 2,
+        image: 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=800&q=80'
+    },
+    {
+        id: 26, name: 'Vintage Gold Choker', price: 12499, comparePrice: 16000,
+        description: 'Antique finish gold choker.', collection: 'handmade', category: 'necklace', stock: 3,
+        image: 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=800&q=80'
+    },
+    {
+        id: 27, name: 'Sapphire Drop Pendant', price: 7999, comparePrice: 9999,
+        description: 'Elegant sapphire drop necklace.', collection: 'anti-tarnish', category: 'necklace', stock: 5,
+        image: 'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=800&q=80'
+    },
+    {
+        id: 28, name: 'Pearl Station Necklace', price: 4599, comparePrice: 6000,
+        description: 'Delicate pearl station chain.', collection: 'anti-tarnish', category: 'necklace', stock: 8,
+        image: 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=800&q=80'
+    },
+    {
+        id: 29, name: 'Minimalist Bar Necklace', price: 2999, comparePrice: 3999,
+        description: 'Sleek horizontal bar pendant.', collection: 'anti-tarnish', category: 'necklace', stock: 12,
+        image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80'
+    },
+    {
+        id: 30, name: 'Twisted Rope Chain', price: 5499, comparePrice: 7500,
+        description: 'Thick twisted rope chain necklace.', collection: 'anti-tarnish', category: 'necklace', stock: 6,
+        image: 'https://images.unsplash.com/photo-1602752275313-477eaabc497c?w=800&q=80'
+    },
+    {
+        id: 31, name: 'Cubic Zirconia Tennis Necklace', price: 19999, comparePrice: 25000,
+        description: 'Sparkling CZ tennis necklace.', collection: 'anti-tarnish', category: 'necklace', stock: 2,
+        image: 'https://images.unsplash.com/photo-1512163143273-bde0e3cc7407?w=800&q=80'
+    },
+    {
+        id: 32, name: 'Floral Motif Pendant', price: 3499, comparePrice: 4500,
+        description: 'Dainty floral design pendant.', collection: 'handmade', category: 'necklace', stock: 10,
+        image: 'https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=800&q=80'
+    },
+    {
+        id: 33, name: 'Two-Tone Heart Necklace', price: 3899, comparePrice: 4999,
+        description: 'Silver and gold two-tone heart.', collection: 'anti-tarnish', category: 'necklace', stock: 15,
+        image: 'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=800&q=80'
+    },
+    {
+        id: 34, name: 'Tassel Lariat Necklace', price: 4299, comparePrice: 5500,
+        description: 'Long lariat necklace with tassel.', collection: 'anti-tarnish', category: 'necklace', stock: 7,
+        image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80'
+    },
 
     // ── EARRING ──────────────────────────────────────────────────────────────
     {
