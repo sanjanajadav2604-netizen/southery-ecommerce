@@ -1,4 +1,4 @@
-﻿function getApiBase() {
+function getApiBase() {
     if (typeof window === 'undefined') return 'https://southery-backend.vercel.app';
     const override = localStorage.getItem('southery_api_base');
     if (override) return override.replace(/\/$/, '');
@@ -609,7 +609,7 @@ function handleSearch(query) {
             <div class="flex gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-all cursor-pointer group" 
                  onclick="saveSearchQuery('${query.replace(/'/g, "\\'")}'); window.location.href='product.html?id=${p.id}'">
                 <div class="w-16 h-16 rounded-xl overflow-hidden bg-cream flex-shrink-0">
-                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'%3E%3Crect width=\'80\' height=\'80\' fill=\'%23f5f0eb\'/%3E%3Ctext x=\'50%25\' y=\'55%25\' text-anchor=\'middle\' font-size=\'28\' fill=\'%23c8a97e\'%3E✦%3C/text%3E%3C/svg%3E'">
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="font-bold text-sm text-charcoal truncate mb-1">${p.name}</p>
@@ -737,7 +737,7 @@ function renderCart() {
         return `
             <div class="flex gap-4 p-3 xs:p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:border-terracotta/20 transition-all group">
                 <div class="w-20 h-24 rounded-xl overflow-hidden bg-cream flex-shrink-0">
-                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'%3E%3Crect width=\'80\' height=\'80\' fill=\'%23f5f0eb\'/%3E%3Ctext x=\'50%25\' y=\'55%25\' text-anchor=\'middle\' font-size=\'28\' fill=\'%23c8a97e\'%3E✦%3C/text%3E%3C/svg%3E'">
                 </div>
                 <div class="flex-1 flex flex-col">
                     <div class="flex justify-between items-start mb-1">
@@ -777,7 +777,7 @@ function renderWishlist() {
         return `
             <div class="flex gap-4 p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:border-rose-200 transition-all group cursor-pointer" onclick="window.location.href='product.html?id=${p.id}'">
                 <div class="w-16 h-20 rounded-xl overflow-hidden bg-cream flex-shrink-0">
-                    <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'%3E%3Crect width=\'80\' height=\'80\' fill=\'%23f5f0eb\'/%3E%3Ctext x=\'50%25\' y=\'55%25\' text-anchor=\'middle\' font-size=\'28\' fill=\'%23c8a97e\'%3E✦%3C/text%3E%3C/svg%3E'">
                 </div>
                 <div class="flex-1 min-w-0">
                     <h4 class="font-bold text-sm text-charcoal truncate mb-1">${p.name}</h4>

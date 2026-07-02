@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -327,7 +327,7 @@
                 return `
                 <div class="product-card group flex flex-col h-full" onclick="window.location.href='product.html?id=${p.id}'">
                     <div class="relative aspect-square bg-white rounded-[20px] overflow-hidden shadow-sm border border-black/5">
-                        <img loading="lazy" src="${p.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <img loading="lazy" src="${p.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="${p.name}" onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\' viewBox=\'0 0 200 200\'%3E%3Crect width=\'200\' height=\'200\' fill=\'%23f5f0eb\'/%3E%3Ctext x=\'50%25\' y=\'55%25\' text-anchor=\'middle\' font-size=\'64\' fill=\'%23c8a97e\'%3E✦%3C/text%3E%3C/svg%3E'">
                         <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block"></div>
                         
                         <button onclick="event.stopPropagation(); toggleWishlistItem('${p.id}')" class="absolute top-2 right-2 md:top-4 md:right-4 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white shadow-md flex items-center justify-center text-rose-500 hover:scale-110 active:scale-90 transition-all z-20">
