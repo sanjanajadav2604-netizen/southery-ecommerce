@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -28,7 +28,6 @@
     <script src="js/products-api.js"></script>
     <script src="js/store.js"></script>
     <script src="js/layout.js"></script>
-    <script src="js/account.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
@@ -919,9 +918,10 @@
         async function loadAddresses() {
             try {
                 const token = localStorage.getItem('southery_token');
-                const res = await fetch('https://southery-backend.vercel.app/api/auth/addresses', {
+                const res = await fetch(`${SoutheryStore.getApiBase()}/api/auth/addresses`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 const data = await res.json();
                 userAddresses = data.addresses || [];
                 renderAddresses();
@@ -994,8 +994,8 @@
             const payload = { label: name, line1, line2, isPrimary: userAddresses.length === 0 };
             const method = addressIdBeingEdited ? 'PUT' : 'POST';
             const url = addressIdBeingEdited
-                ? `https://southery-backend.vercel.app/api/auth/addresses/${addressIdBeingEdited}`
-                : 'https://southery-backend.vercel.app/api/auth/addresses';
+                ? `${SoutheryStore.getApiBase()}/api/auth/addresses/${addressIdBeingEdited}`
+                : `${SoutheryStore.getApiBase()}/api/auth/addresses`;
 
             try {
                 const res = await fetch(url, {
@@ -1003,6 +1003,7 @@
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify(payload)
                 });
+                if (!res.ok) throw new Error('Failed to save address');
                 const data = await res.json();
                 userAddresses = data.addresses || [];
                 renderAddresses();
@@ -1036,10 +1037,11 @@
             if (!confirmed) return;
             try {
                 const token = localStorage.getItem('southery_token');
-                const res = await fetch(`https://southery-backend.vercel.app/api/auth/addresses/${id}`, {
+                const res = await fetch(`${SoutheryStore.getApiBase()}/api/auth/addresses/${id}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                if (!res.ok) throw new Error('Failed to delete address');
                 const data = await res.json();
                 userAddresses = data.addresses || [];
                 renderAddresses();

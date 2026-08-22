@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ============================================================
  *  Southery Sentie — Centralised State Store (store.js)
  * ============================================================
@@ -221,7 +221,17 @@ const SoutheryStore = (function () {
   function clearCart() {
     _cart = [];
     _persistCart();
+    if (_token) {
+      _apiCall('/api/cart/clear', 'DELETE')
+        .catch(e => console.warn('[store] cart clear sync failed:', e.message));
+    }
     _emit('cart:changed', { action: 'clear' });
+  }
+
+  function setCart(newCart) {
+    _cart = Array.isArray(newCart) ? newCart : [];
+    _persistCart();
+    _emit('cart:changed', { action: 'set', cart: _cart });
   }
 
   function _persistCart() {
@@ -270,6 +280,22 @@ const SoutheryStore = (function () {
 
   function _persistWishlist() {
     _writeJSON(KEYS.WISHLIST, _wishlist);
+  }
+
+  function setWishlist(newWishlist) {
+    _wishlist = Array.isArray(newWishlist) ? newWishlist : [];
+    _persistWishlist();
+    _emit('wishlist:changed', { action: 'set', wishlist: _wishlist });
+  }
+
+  function clearWishlist() {
+    _wishlist = [];
+    _persistWishlist();
+    if (_token) {
+      _apiCall('/api/wishlist/clear', 'DELETE')
+        .catch(e => console.warn('[store] wishlist clear sync failed:', e.message));
+    }
+    _emit('wishlist:changed', { action: 'clear' });
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -382,10 +408,11 @@ const SoutheryStore = (function () {
 
     // Cart
     try {
-      const cartData   = await _apiCall('/api/cart');
-      const serverCart  = (cartData.cart || []).map(item => ({ id: item.productId, qty: item.quantity }));
-      _cart = serverCart.length > 0 ? serverCart : localCart;
-      _persistCart();
+      const cartData = await _apiCall('/api/cart');
+      if (cartData && Array.isArray(cartData.cart)) {
+        _cart = cartData.cart.map(item => ({ id: item.productId, qty: item.quantity }));
+        _persistCart();
+      }
     } catch (e) {
       console.warn('[store] Failed to fetch cart from API:', e.message);
       _cart = localCart;
@@ -393,10 +420,11 @@ const SoutheryStore = (function () {
 
     // Wishlist
     try {
-      const wishData   = await _apiCall('/api/wishlist');
-      const serverWish = (wishData.wishlist || []).map(item => ({ id: item.productId }));
-      _wishlist = serverWish.length > 0 ? serverWish : localWish;
-      _persistWishlist();
+      const wishData = await _apiCall('/api/wishlist');
+      if (wishData && Array.isArray(wishData.wishlist)) {
+        _wishlist = wishData.wishlist.map(item => ({ id: item.productId }));
+        _persistWishlist();
+      }
     } catch (e) {
       console.warn('[store] Failed to fetch wishlist from API:', e.message);
       _wishlist = localWish;
@@ -556,6 +584,7 @@ const SoutheryStore = (function () {
     addToCart,
     updateCartQty,
     clearCart,
+    setCart,
 
     // Wishlist
     getWishlist,
@@ -563,6 +592,8 @@ const SoutheryStore = (function () {
     isInWishlist,
     toggleWishlistItem,
     addToCartFromWishlist,
+    clearWishlist,
+    setWishlist,
 
     // Auth
     getCurrentUser,

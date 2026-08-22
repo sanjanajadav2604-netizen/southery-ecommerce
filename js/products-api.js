@@ -1,19 +1,21 @@
-﻿(function () {
+(function () {
   const CACHE_KEY = 'southery_products_cache';
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-  window.products = [];
-  window.wishlist = window.wishlist || [];
-  window.cart = window.cart || [];
+  // NOTE: Do NOT reset window.cart or window.wishlist here.
+  // Those are owned by SoutheryStore and hydrated from localStorage at parse time.
+  window.products = window.products || [];
 
   async function loadProducts() {
-    // Try cache first
+    // Try sessionStorage cache first
     try {
       const cached = sessionStorage.getItem(CACHE_KEY);
       if (cached) {
         const { data, timestamp } = JSON.parse(cached);
         if (Date.now() - timestamp < CACHE_TTL && data.length > 0) {
           window.products = data;
+          // Feed into SoutheryStore so window.getProducts() always finds them via store
+          if (typeof SoutheryStore !== 'undefined') SoutheryStore.setProducts(data);
           document.dispatchEvent(new CustomEvent('productsLoaded', { detail: data }));
           return;
         }
@@ -22,13 +24,14 @@
 
     // Fetch from API
     try {
-      const res = await fetch('https://southery-backend.vercel.app/api/products');
+      const base = typeof SoutheryStore !== 'undefined' ? SoutheryStore.getApiBase() : 'https://southery-backend.vercel.app';
+      const res = await fetch(`${base}/api/products`);
       if (!res.ok) throw new Error('API error ' + res.status);
       const json = await res.json();
       const raw = json.data?.products || [];
 
-      // Normalise API shape to match what frontend already expects
-      window.products = raw.map(function(p) {
+      // Normalise API shape to match what frontend expects
+      const normalised = raw.map(function(p) {
         return {
           id: p._id,
           _id: p._id,
@@ -49,14 +52,19 @@
         };
       });
 
+      window.products = normalised;
+
+      // Feed into SoutheryStore — the canonical source for renderCart/renderWishlist
+      if (typeof SoutheryStore !== 'undefined') SoutheryStore.setProducts(normalised);
+
       try {
         sessionStorage.setItem(CACHE_KEY, JSON.stringify({
-          data: window.products,
+          data: normalised,
           timestamp: Date.now()
         }));
       } catch (_) {}
 
-      document.dispatchEvent(new CustomEvent('productsLoaded', { detail: window.products }));
+      document.dispatchEvent(new CustomEvent('productsLoaded', { detail: normalised }));
     } catch (err) {
       console.error('[products-api.js] Failed to load products:', err.message);
       document.dispatchEvent(new CustomEvent('productsLoaded', { detail: [] }));

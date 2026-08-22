@@ -1,77 +1,46 @@
-function getApiBase() {
-    if (typeof window === 'undefined') return 'https://southery-backend.vercel.app';
-    const override = localStorage.getItem('southery_api_base');
-    if (override) return override.replace(/\/$/, '');
-    const host = window.location.hostname;
-    const isLocal = host === 'localhost' ||
-        host === '127.0.0.1' ||
-        host === '[::1]' ||
-        host.endsWith('.local') ||
-        /^192\.168\./.test(host) ||
-        /^10\./.test(host) ||
-        /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host);
-    if (isLocal) {
-        return 'http://localhost:5000';
-    }
-    return 'https://southery-backend.vercel.app';
-}
-
+const getApiBase = () => SoutheryStore.getApiBase();
+const apiCall = (endpoint, method = 'GET', body = null) => SoutheryStore.apiCall(endpoint, method, body);
 const API_URL = getApiBase();
-
-async function apiCall(endpoint, method = 'GET', body = null) {
-    const token = localStorage.getItem('southery_token');
-    const options = {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-            ...(token && { 'Authorization': `Bearer ${token}` })
-        },
-        ...(body && { body: JSON.stringify(body) })
-    };
-    const base = getApiBase();
-    const url = `${base}${endpoint}`;
-
-    console.log(`[API Request] ${method} ${url}`, body);
-
-    try {
-        const response = await fetch(url, options);
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) {
-            const err = new Error(data.message || `API Error: ${response.status} ${response.statusText}`);
-            err.status = response.status;
-            throw err;
-        }
-        return data;
-    } catch (error) {
-        if (error instanceof TypeError) {
-            throw new Error(`Cannot reach the server at ${url}. \nPossible causes:\n• Backend not running (start it with npm run dev on port 5000)\n• CORS: your origin may not be in allowedOrigins on the backend\n• You are on HTTP but the API is HTTPS (mixed content blocked)\nCheck the browser DevTools Network tab for more details.`);
-        }
-        throw error;
-    }
-}
-
 
 /**
  * Unified Layout & Sidebar System for Southery Sentie
  * Handles Cart, Wishlist, Auth, Search, and Mobile Nav site-wide.
  */
 
-// Global State
-window.cart = [];
-window.wishlist = [];
-window.currentUser = null;
-window.recentSearches = [];
-// ADD THESE:
-window._productCache = null;
-window.getProducts = function () { return window.products?.length ? window.products : (window._productCache || (typeof products !== 'undefined' ? products : [])); };
+// ─── Global State ──────────────────────────────────────────────────────────
+// Define reactive getters/setters on window to keep legacy pages perfectly synced with SoutheryStore.
+Object.defineProperty(window, 'cart', {
+    get: () => SoutheryStore.getCart(),
+    set: (val) => SoutheryStore.setCart(val),
+    configurable: true
+});
 
+Object.defineProperty(window, 'wishlist', {
+    get: () => SoutheryStore.getWishlist(),
+    set: (val) => SoutheryStore.setWishlist(val),
+    configurable: true
+});
 
-// ── Phase 2: State is now owned by SoutheryStore (hydrated at parse time). ──
-// window.* aliases keep backward-compat with the rest of layout.js.
-window.cart           = SoutheryStore.getCart();
-window.wishlist       = SoutheryStore.getWishlist();
 window.currentUser    = SoutheryStore.getCurrentUser();
 window.recentSearches = SoutheryStore.getRecentSearches();
+
+/**
+ * getProducts() — CANONICAL product catalogue accessor.
+ *
+ * Priority order:
+ *  1. SoutheryStore._products  — populated by products-api.js via store.setProducts()
+ *  2. window.products          — set directly by products-api.js (legacy fallback)
+ *
+ * This function is called from renderCart(), renderWishlist(), addToCart(), etc.
+ * It MUST always return the most up-to-date list. Previously it only checked
+ * window.products which could be stale or empty after a page sub-render.
+ */
+window.getProducts = function () {
+    const storeProds = SoutheryStore.getProducts();
+    if (storeProds && storeProds.length > 0) return storeProds;
+    if (window.products && window.products.length > 0) return window.products;
+    return [];
+};
 
 function dispatchAuthChange() {
     window.dispatchEvent(new CustomEvent('authChange', { detail: currentUser }));
@@ -714,13 +683,62 @@ function isAnySidebarOpen() {
 }
 
 // Rendering Functions
+// ── One-time cleanse: remove stale/orphaned IDs from cart & wishlist after products load.
+// Called once from initLayout() after window.productsReady resolves.
+// NEVER called inside renderCart/renderWishlist to avoid destructive mutation on every render.
+function cleanStaleCartItems() {
+    const prods = window.getProducts();
+    if (!prods || prods.length === 0) return; // products not ready yet — skip
+
+    const cleanCart = window.cart.filter(c => prods.find(x => String(x.id) === String(c.id)));
+    if (cleanCart.length !== window.cart.length) {
+        window.cart = cleanCart;
+        localStorage.setItem('southery_cart', JSON.stringify(window.cart));
+        if (typeof updateAllCounts === 'function') updateAllCounts();
+    }
+
+    const cleanWish = window.wishlist.filter(w => prods.find(x => String(x.id) === String(w.id)));
+    if (cleanWish.length !== window.wishlist.length) {
+        window.wishlist = cleanWish;
+        localStorage.setItem('southery_wishlist', JSON.stringify(window.wishlist));
+        if (typeof updateAllCounts === 'function') updateAllCounts();
+    }
+}
+
 function renderCart() {
     const items = document.getElementById('cart-items');
     const empty = document.getElementById('cart-empty');
     const footer = document.getElementById('cart-footer');
     if (!items) return;
 
-    if (window.cart.length === 0) {
+    // Always read live state from SoutheryStore — window.cart is a stale alias
+    // that may not reflect mutations made by updateCartQty.
+    const cart  = SoutheryStore.getCart();
+    const prods = window.getProducts();
+
+    // If products not loaded yet, show items that match cart count
+    // but can't display details — show a loading skeleton instead
+    if (prods.length === 0 && cart.length > 0) {
+        items.innerHTML = cart.map(() => `
+            <div class="flex gap-4 p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 animate-pulse">
+                <div class="w-20 h-24 rounded-xl bg-gray-200 flex-shrink-0"></div>
+                <div class="flex-1 space-y-3 py-1">
+                    <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+                    <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                    <div class="h-3 bg-gray-200 rounded w-1/4"></div>
+                </div>
+            </div>
+        `).join('');
+        empty.classList.add('hidden');
+        footer.classList.remove('hidden');
+        const totalEl = document.getElementById('cart-total');
+        if (totalEl) totalEl.innerHTML = '&#8377;...';
+        return;
+    }
+
+    const visibleCart = cart.filter(c => prods.find(x => String(x.id) === String(c.id)));
+
+    if (visibleCart.length === 0) {
         items.innerHTML = '';
         empty.classList.remove('hidden');
         footer.classList.add('hidden');
@@ -729,10 +747,10 @@ function renderCart() {
 
     empty.classList.add('hidden');
     footer.classList.remove('hidden');
-    let total = 0;
 
-    items.innerHTML = window.cart.map(c => {
-        const p = window.getProducts().find(x => String(x.id) === String(c.id)); if (!p) return '';
+    let total = 0;
+    items.innerHTML = visibleCart.map(c => {
+        const p = prods.find(x => String(x.id) === String(c.id)); if (!p) return '';
         total += p.price * c.qty;
         return `
             <div class="flex gap-4 p-3 xs:p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:border-terracotta/20 transition-all group">
@@ -765,14 +783,41 @@ function renderWishlist() {
     const empty = document.getElementById('wishlist-empty');
     if (!items) return;
 
-    if (window.wishlist.length === 0) {
+    // Always read live state from SoutheryStore
+    const wishlist = SoutheryStore.getWishlist();
+    const prods    = window.getProducts();
+
+    if (wishlist.length === 0) {
+        items.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+    }
+
+    // Products loading skeleton
+    if (prods.length === 0) {
+        items.innerHTML = wishlist.map(() => `
+            <div class="flex gap-4 p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 animate-pulse">
+                <div class="w-16 h-20 rounded-xl bg-gray-200 flex-shrink-0"></div>
+                <div class="flex-1 space-y-3 py-1">
+                    <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+                    <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                </div>
+            </div>
+        `).join('');
+        empty.classList.add('hidden');
+        return;
+    }
+
+    const visibleWishlist = wishlist.filter(w => prods.find(x => String(x.id) === String(w.id)));
+
+    if (visibleWishlist.length === 0) {
         items.innerHTML = '';
         empty.classList.remove('hidden');
         return;
     }
 
     empty.classList.add('hidden');
-    items.innerHTML = window.wishlist.map(w => {
+    items.innerHTML = visibleWishlist.map(w => {
         const p = window.getProducts().find(x => String(x.id) === String(w.id)); if (!p) return '';
         return `
             <div class="flex gap-4 p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:border-rose-200 transition-all group cursor-pointer" onclick="window.location.href='product.html?id=${p.id}'">
@@ -802,45 +847,27 @@ function renderWishlist() {
 //  definition below, which is the one that was always in effect at runtime.)
 
 window.toggleWishlistItem = function (id) {
-    const index = window.wishlist.findIndex(w => String(w.id) === String(id));
-    const isAdding = index === -1;
-    if (index > -1) window.wishlist.splice(index, 1);
-    else window.wishlist.push({ id });
-    localStorage.setItem('southery_wishlist', JSON.stringify(window.wishlist));
+    const isAdding = SoutheryStore.toggleWishlistItem(id);
     updateAllCounts();
     renderWishlist();
     if (typeof updateWishlistUI === 'function') updateWishlistUI();
     setTimeout(function(){ animateWishBadges(); }, 50);
-    const token = localStorage.getItem('southery_token');
-    if (token) {
-        if (isAdding) {
-            apiCall('/api/wishlist/add', 'POST', { productId: String(id) })
-                .catch(e => console.warn('Wishlist sync failed:', e.message));
-        } else {
-            apiCall('/api/wishlist/remove/' + id, 'DELETE')
-                .catch(e => console.warn('Wishlist sync failed:', e.message));
-        }
-    }
     showToast(isAdding ? "Saved to wishlist" : "Removed from wishlist");
 };
 
 window.addToCartFromWishlist = function (id) {
-    const item = window.cart.find(c => c.id === id);
-    if (item) item.qty += 1;
-    else window.cart.push({ id, qty: 1 });
-    localStorage.setItem('southery_cart', JSON.stringify(window.cart));
+    SoutheryStore.addToCart(id, 1);
     updateAllCounts();
-    const product = window.getProducts().find(p => p.id === id);
+    renderCart();
+    const product = window.getProducts().find(p => String(p.id) === String(id));
     showToast('Added to bag!', 'success', product ? product.name : '');
     animateCartBadges();
 };
 
 // ── Phase 2: updateCartQty → SoutheryStore ──────────────────────────────────
 // Store handles: mutation, localStorage persist, server sync (fire & forget).
-// window.cart is re-synced afterward so renderCart() still works unchanged.
 window.updateCartQty = function (id, change) {
     SoutheryStore.updateCartQty(id, change);
-    window.cart = SoutheryStore.getCart();
     updateAllCounts();
     renderCart();
     if (typeof renderSummary === 'function') renderSummary();
@@ -850,7 +877,6 @@ window.updateCartQty = function (id, change) {
 // Store handles: mutation, localStorage persist, server sync (fire & forget).
 window.addToCart = function (id, qty = 1) {
     SoutheryStore.addToCart(id, qty);
-    window.cart = SoutheryStore.getCart();
     updateAllCounts();
     renderCart();
     const product = window.getProducts().find(p => String(p.id) === String(id));
@@ -873,19 +899,33 @@ function animateCartBadges() {
 }
 
 function updateAllCounts() {
-    const cartCount = window.cart.reduce((a, b) => a + (b.qty || 0), 0);
-    const wishCount = window.wishlist.length;
-    const badgeIds = ['d-cart-count', 'd-wish-count', 'm-top-cart-count', 'm-top-wish-count', 'm-bot-cart-count', 'm-bot-wish-count'];
+    const cartCount = SoutheryStore.getCart().reduce((a, b) => a + (b.qty || 0), 0);
+    const wishCount = SoutheryStore.getWishlist().length;
 
-    badgeIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            const count = id.includes('cart') ? cartCount : wishCount;
-            el.textContent = count;
-            count > 0 ? el.classList.remove('hidden') : el.classList.add('hidden');
-        }
+    document.querySelectorAll('[id$="-cart-count"]').forEach(el => {
+        el.textContent = cartCount;
+        cartCount > 0 ? el.classList.remove('hidden') : el.classList.add('hidden');
     });
+
+    document.querySelectorAll('[id$="-wish-count"]').forEach(el => {
+        el.textContent = wishCount;
+        wishCount > 0 ? el.classList.remove('hidden') : el.classList.add('hidden');
+    });
+
     window.dispatchEvent(new Event('cartUpdated'));
+}
+
+// ── Event Bus Subscriptions ──────────────────────────────────────────────────
+// Automatically re-render UI and update badges whenever SoutheryStore mutates.
+if (typeof SoutheryStore !== 'undefined') {
+    SoutheryStore.on('cart:changed', () => {
+        updateAllCounts();
+        renderCart();
+    });
+    SoutheryStore.on('wishlist:changed', () => {
+        updateAllCounts();
+        renderWishlist();
+    });
 }
 
 function updateAuthUI() {
@@ -1525,6 +1565,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // SoutheryStore._hydrate() which runs at script-parse time — no duplicate needed here.
     initLayout();
     loadUserFromServer();
+
+    // After products are fetched, run the one-time stale-ID cleanse THEN re-render.
+    // This fires once: if products were already cached it resolves immediately,
+    // otherwise it resolves after the API fetch completes.
+    if (window.productsReady) {
+        window.productsReady
+            .then(() => {
+                cleanStaleCartItems();
+                renderCart();
+                renderWishlist();
+                if (typeof renderSummary === 'function') renderSummary();
+            })
+            .catch(() => {});
+    }
 });
 
 // Password Visibility Toggle Function
