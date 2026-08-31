@@ -482,7 +482,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4">
+                        <div class="mt-4" id="create-account-wrapper">
                             <label class="flex items-start gap-3 cursor-pointer group">
                                 <input type="checkbox" id="create-account"
                                     class="w-5 h-5 rounded border-gray-300 text-terracotta focus:ring-terracotta mt-0.5">
@@ -975,6 +975,11 @@
         function prefillUser() {
             const user = window.currentUser || JSON.parse(localStorage.getItem('southery_user') || 'null');
             if (!user) return;
+            
+            // Hide the create account checkbox for logged-in users
+            const createAccountWrapper = document.getElementById('create-account-wrapper');
+            if (createAccountWrapper) createAccountWrapper.style.display = 'none';
+
             if (document.getElementById('email')) document.getElementById('email').value = user.email || '';
             if (document.getElementById('phone') && user.phone) document.getElementById('phone').value = user.phone;
             if (user.name) {
@@ -1487,15 +1492,20 @@
                 window.currentUser = JSON.parse(sessionUser);
             }
             prefillUser();
-            renderSummary();
 
-            window.addEventListener('cartUpdated', function () {
+            window.addEventListener('cartUpdated', async function () {
+                if (window.productsReady) {
+                    await window.productsReady.catch(() => {});
+                }
                 cart = window.cart || [];
                 renderSummary();
             });
-            try { cart = JSON.parse(localStorage.getItem('southery_cart')) || []; } catch (e) { cart = []; }
-            renderSummary();
 
+            if (window.productsReady) {
+                await window.productsReady.catch(() => {});
+            }
+            try { cart = window.cart || JSON.parse(localStorage.getItem('southery_cart')) || []; } catch (e) { cart = []; }
+            renderSummary();
         });
     </script>
 </body>
