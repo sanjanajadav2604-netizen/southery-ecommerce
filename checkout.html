@@ -39,9 +39,11 @@
             padding: 20px;
         }
 
-        .quick-view-overlay.active {
+        .quick-view-overlay.active,
+        .quick-view-overlay.open {
             opacity: 1;
             pointer-events: auto;
+            visibility: visible;
         }
 
         .quick-view-card {
@@ -876,7 +878,7 @@
                     '</div>';
 
                 const modal = document.getElementById('quick-view-modal');
-                if (modal) modal.classList.add('active');
+                if (modal) modal.classList.add('active', 'open');
                 document.body.style.overflow = 'hidden';
 
             } catch (err) {
@@ -887,7 +889,7 @@
 
         function closeQuickView() {
             const modal = document.getElementById('quick-view-modal');
-            if (modal) modal.classList.remove('active');
+            if (modal) modal.classList.remove('active', 'open');
             document.body.style.overflow = '';
         }
 
