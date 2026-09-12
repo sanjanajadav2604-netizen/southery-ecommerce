@@ -1208,6 +1208,39 @@
             setTimeout(() => { banner.classList.add('opacity-0', '-translate-y-4'); setTimeout(() => banner.remove(), 500); }, 5000);
         }
 
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        async function validatePincodeResilient(pincode) {
+            const pincodeRegex = /^[1-9][0-9]{5}$/;
+            if (!pincodeRegex.test(pincode)) {
+                return { valid: false, message: 'Invalid Pincode: Please enter a valid 6-digit area pincode.' };
+            }
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3500);
+                const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                const data = await response.json();
+
+                if (Array.isArray(data) && data[0]?.Status === 'Error') {
+                    return { valid: false, message: "Pincode Error: Delivery is currently not available for this pincode." };
+                }
+                return { valid: true };
+            } catch (err) {
+                console.warn("External pincode service unreachable, using fallback regex validation:", err.message);
+                return { valid: true };
+            }
+        }
+
         async function handleSubmit() {
             if (cart.length === 0) {
                 showCheckoutError('Empty Cart: Please add items before checking out.', null);
@@ -1229,7 +1262,7 @@
                 showCheckoutError('Invalid Email: Please enter a valid email address.', 'email');
                 return;
             }
-            if (phone.length !== 10) {
+            if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
                 showCheckoutError('Invalid Phone: Please enter a valid 10-digit mobile number.', 'phone');
                 return;
             }
@@ -1249,97 +1282,119 @@
                 showCheckoutError('State Not Selected: Please select your state.', 'state');
                 return;
             }
-            if (pincode.length !== 6) {
-                showCheckoutError('Invalid Pincode: Please enter a valid 6-digit area pincode.', 'pincode');
-                return;
-            }
             if (termsBox && !termsBox.checked) {
                 showCheckoutError('Terms & Conditions: You must agree to the terms to place an order.', null);
                 return;
             }
 
             const btn = document.querySelector('button[onclick="handleSubmit()"]');
+            if (!btn) return;
+            
+            const originalBtnHtml = btn.innerHTML;
             btn.disabled = true;
             btn.classList.add('opacity-70', 'cursor-not-allowed');
-            const originalBtnHtml = btn.innerHTML;
-            btn.innerHTML = `<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Validating Pincode...</span>`;
+            btn.innerHTML = `<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Validating Details...</span>`;
+
+            const restoreButton = () => {
+                btn.disabled = false;
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                btn.innerHTML = originalBtnHtml;
+            };
 
             try {
-                const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
-                const data = await response.json();
-
-                if (!data || data.length === 0 || data[0].Status !== 'Success') {
-                    showCheckoutError("Invalid Pincode: Sorry, we don't deliver to this pincode yet.", 'pincode');
-                    btn.disabled = false;
-                    btn.classList.remove('opacity-70', 'cursor-not-allowed');
-                    btn.innerHTML = originalBtnHtml;
+                const pincodeResult = await validatePincodeResilient(pincode);
+                if (!pincodeResult.valid) {
+                    showCheckoutError(pincodeResult.message, 'pincode');
+                    restoreButton();
                     return;
                 }
 
                 const selectedPayment = document.querySelector('input[name="payment"]:checked')?.value || 'online';
 
                 if (selectedPayment === 'cod') {
-                    btn.innerHTML = `<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Placing Order...</span>`;
-                    setTimeout(async () => {
-                        const orderId = 'SS-' + Math.floor(100000 + Math.random() * 900000);
-                        saveOrderToLocal(orderId, 'cod');
-                        const serverResult = await submitOrderToServer(orderId, 'cod');
-                        if (serverResult && serverResult.ok) {
-                            localStorage.removeItem('southery_cart'); window.cart = []; if (typeof updateAllCounts === 'function') updateAllCounts();
-                            if (localStorage.getItem('southery_token')) apiCall('/api/cart/clear', 'DELETE').catch(e => console.warn('Cart clear failed:', e.message));
-                            redirectAfterOrder(orderId, 'cod', null, serverResult);
-                        } else {
-                            showCheckoutError('Order could not be confirmed. Please try again or contact support.', null);
-                            btn.disabled = false;
-                            btn.classList.remove('opacity-70', 'cursor-not-allowed');
-                            btn.innerHTML = originalBtnHtml;
-                        }
-                    }, 1200);
+                    btn.innerHTML = `<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing COD Order...</span>`;
+                    
+                    const orderId = 'SS-' + Date.now().toString(36).toUpperCase();
+                    saveOrderToLocal(orderId, 'cod');
+                    const serverResult = await submitOrderToServer(orderId, 'cod');
 
-                } else {
-                    btn.disabled = false;
-                    btn.classList.remove('opacity-70', 'cursor-not-allowed');
-                    btn.innerHTML = originalBtnHtml;
-
-                    if (typeof Razorpay === 'undefined') {
-                        showCheckoutError('Payment Error: Razorpay could not load. Please check your internet or disable ad-blockers.', null);
-                        return;
+                    if (serverResult && serverResult.ok) {
+                        localStorage.removeItem('southery_cart');
+                        window.cart = [];
+                        if (typeof updateAllCounts === 'function') updateAllCounts();
+                        if (localStorage.getItem('southery_token')) apiCall('/api/cart/clear', 'DELETE').catch(e => console.warn('Cart clear failed:', e.message));
+                        redirectAfterOrder(orderId, 'cod', null, serverResult);
+                    } else {
+                        showCheckoutError('Order Confirmation Error: Could not confirm order on server. Please try again.', null);
+                        restoreButton();
                     }
 
-                    if (!RAZORPAY_KEY) {
-                        showCheckoutError('Payment Error: Security Key missing. Please ensure your backend is running and providing the Razorpay Key.', null);
+                } else {
+                    if (typeof Razorpay === 'undefined') {
+                        showCheckoutError('Payment Gateway Error: Razorpay SDK unavailable. Please check your internet connection or ad-blocker.', null);
+                        restoreButton();
                         return;
                     }
 
                     if (checkoutTotal <= 0) {
-                        showCheckoutError('Order Error: The cart total must be greater than 0 to proceed with payment.', null);
+                        showCheckoutError('Order Error: Cart total must be greater than zero to proceed with payment.', null);
+                        restoreButton();
+                        return;
+                    }
+
+                    btn.innerHTML = `<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Preparing Secure Gateway...</span>`;
+
+                    let rzpServerOrder = null;
+                    try {
+                        const orderItemsPayload = cart.map(item => {
+                            const p = products.find(prod => String(prod.id) === String(item.id));
+                            return p ? { name: p.name, quantity: item.qty } : null;
+                        }).filter(Boolean);
+
+                        rzpServerOrder = await apiCall('/api/orders/razorpay-order', 'POST', { orderItems: orderItemsPayload });
+                    } catch (rzpErr) {
+                        console.warn("Server Razorpay order pre-creation notice:", rzpErr.message);
+                    }
+
+                    const activeKey = rzpServerOrder?.keyId || RAZORPAY_KEY;
+                    if (!activeKey) {
+                        showCheckoutError('Payment Configuration Error: Security Key missing. Please ensure your backend is operational.', null);
+                        restoreButton();
                         return;
                     }
 
                     const options = {
-                        key: RAZORPAY_KEY,
-                        amount: checkoutTotal * 100,
+                        key: activeKey,
+                        amount: rzpServerOrder?.amount || (checkoutTotal * 100),
                         currency: 'INR',
                         name: 'Southery Sentie',
                         description: 'Handcrafted Jewelry Order',
+                        order_id: rzpServerOrder?.razorpayOrderId || undefined,
                         handler: async function (response) {
-                            showToast('Payment Successful! Order Confirmed.');
-                            const orderRef = 'SS-' + response.razorpay_payment_id.slice(-6).toUpperCase();
+                            showToast('Payment Captured! Securing Order...');
+                            const orderRef = 'SS-' + (response.razorpay_payment_id ? response.razorpay_payment_id.slice(-8).toUpperCase() : Date.now().toString(36).toUpperCase());
                             saveOrderToLocal(orderRef, 'online');
-                            const serverResult = await submitOrderToServer(orderRef, 'online', {
+                            
+                            const paymentProof = {
                                 id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id || rzpServerOrder?.razorpayOrderId,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
                                 status: 'paid',
                                 update_time: new Date().toISOString()
-                            });
+                            };
+
+                            const serverResult = await submitOrderToServer(orderRef, 'online', paymentProof);
+
                             if (serverResult && serverResult.ok) {
-                                localStorage.removeItem('southery_cart'); window.cart = []; if (typeof updateAllCounts === 'function') updateAllCounts();
+                                localStorage.removeItem('southery_cart');
+                                window.cart = [];
+                                if (typeof updateAllCounts === 'function') updateAllCounts();
                                 if (localStorage.getItem('southery_token')) apiCall('/api/cart/clear', 'DELETE').catch(e => console.warn('Cart clear failed:', e.message));
                                 redirectAfterOrder(orderRef, 'online', response.razorpay_payment_id, serverResult);
                             } else {
-                                showCheckoutError('Order could not be confirmed on our server, but payment was captured. Please contact support.', null);
-                                btn.disabled = false;
-                                btn.classList.remove('opacity-70', 'cursor-not-allowed');
-                                btn.innerHTML = originalBtnHtml;
+                                showCheckoutError('Order saving issue on server. Your payment was captured. Please contact support with payment ID: ' + response.razorpay_payment_id, null);
+                                restoreButton();
                             }
                         },
                         prefill: {
@@ -1348,50 +1403,32 @@
                             contact: '+91' + phone
                         },
                         notes: {
-                            address: address + ', ' + city + ', ' + state + ' - ' + pincode,
-                            order_notes: document.getElementById('notes').value || ''
+                            address: escapeHtml(address + ', ' + city + ', ' + state + ' - ' + pincode),
+                            order_notes: escapeHtml(document.getElementById('notes')?.value || '')
                         },
                         theme: { color: '#C45C26' },
                         modal: {
                             backdropclose: false,
                             ondismiss: function () {
-                                showToast('Payment cancelled. Your cart is saved.');
+                                showToast('Payment modal closed. Your cart remains saved.');
+                                restoreButton();
                             }
                         }
                     };
 
+                    restoreButton();
                     const rzp = new Razorpay(options);
                     rzp.on('payment.failed', function (response) {
-                        showCheckoutError('Payment Failed: ' + (response.error.description || 'Please try again.'), null);
+                        showCheckoutError('Payment Failed: ' + (response.error?.description || 'Transaction declined. Please try again.'), null);
+                        restoreButton();
                     });
                     rzp.open();
                 }
 
             } catch (err) {
-                console.error("Pincode validation failed:", err);
-                const selectedPayment = document.querySelector('input[name="payment"]:checked')?.value || 'cod';
-                if (selectedPayment === 'cod') {
-                    setTimeout(async () => {
-                        const orderId = 'SS-' + Math.floor(100000 + Math.random() * 900000);
-                        saveOrderToLocal(orderId, 'cod');
-                        const serverResult = await submitOrderToServer(orderId, 'cod');
-                        if (serverResult && serverResult.ok) {
-                            localStorage.removeItem('southery_cart'); window.cart = []; if (typeof updateAllCounts === 'function') updateAllCounts();
-                            if (localStorage.getItem('southery_token')) apiCall('/api/cart/clear', 'DELETE').catch(e => console.warn('Cart clear failed:', e.message));
-                            redirectAfterOrder(orderId, 'cod', null, serverResult);
-                        } else {
-                            showCheckoutError('Order could not be confirmed. Please try again or contact support.', null);
-                            btn.disabled = false;
-                            btn.classList.remove('opacity-70', 'cursor-not-allowed');
-                            btn.innerHTML = originalBtnHtml;
-                        }
-                    }, 1000);
-                } else {
-                    btn.disabled = false;
-                    btn.classList.remove('opacity-70', 'cursor-not-allowed');
-                    btn.innerHTML = originalBtnHtml;
-                    showCheckoutError('Pincode Error: Unable to verify pincode. Please check your connection and try again.', 'pincode');
-                }
+                console.error("Checkout process error:", err);
+                showCheckoutError('Checkout Exception: An unexpected error occurred. Please try again.', null);
+                restoreButton();
             }
         }
 
