@@ -827,63 +827,76 @@
         let RAZORPAY_KEY = '';
 
         function openQuickView(id) {
-            const p = products.find(prod => String(prod.id) === String(id));
-            if (!p) return;
+            try {
+                const allProducts = window.products || [];
+                const allCart = window.cart || [];
 
-            const cartItem = cart.find(c => String(c.id) === String(id));
-            const quantity = cartItem ? cartItem.qty : 1;
-            const size = cartItem?.size || p.specs?.size; // if undefined/null, sizeHtml will be empty
+                const p = allProducts.find(function(prod) { return String(prod.id) === String(id); });
+                if (!p) return;
 
-            const sizeHtml = size ? `
-                <div class="flex justify-between items-center pb-3 border-b border-gray-100">
-                    <span class="text-sm text-gray-500">Size</span>
-                    <span class="text-sm font-semibold text-charcoal">${size}</span>
-                </div>
-            ` : '';
+                const cartItem = allCart.find(function(c) { return String(c.id) === String(id); });
+                const quantity = cartItem ? cartItem.qty : 1;
+                const size = (cartItem && cartItem.size) ? cartItem.size : (p.specs && p.specs.size) ? p.specs.size : null;
 
-            const body = document.getElementById('qv-body');
-            body.innerHTML = `
-                <div class="p-6 md:p-8">
-                    <div class="flex items-center gap-5 mb-6">
-                        <div class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-cream border border-black/5">
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'80\\' height=\\'80\\' viewBox=\\'0 0 80 80\\'%3E%3Crect width=\\'80\\' height=\\'80\\' fill=\\'%23f5f0eb\\'/%3E%3Ctext x=\\'50%25\\' y=\\'55%25\\' text-anchor=\\'middle\\' font-size=\\'30\\' fill=\\'%23c8a97e\\'%3E✦%3C/text%3E%3C/svg%3E'">
-                        </div>
-                        <div>
-                            <h3 class="font-display font-bold text-xl text-charcoal leading-tight mb-1">${p.name}</h3>
-                            <p class="text-xs font-semibold text-terracotta tracking-widest uppercase">My Selection</p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-3 mb-8">
-                        ${sizeHtml}
-                        <div class="flex justify-between items-center pb-3 border-b border-gray-100">
-                            <span class="text-sm text-gray-500">Quantity</span>
-                            <span class="text-sm font-semibold text-charcoal">${quantity}</span>
-                        </div>
-                        <div class="flex justify-between items-center pt-1">
-                            <span class="text-sm font-bold text-charcoal">Item Subtotal</span>
-                            <span class="text-lg font-bold text-terracotta">₹${(p.price * quantity).toLocaleString()}</span>
-                        </div>
-                    </div>
+                const sizeRow = size
+                    ? '<div class="flex justify-between items-center pb-3 border-b border-gray-100"><span class="text-sm text-gray-500">Size</span><span class="text-sm font-semibold text-charcoal">' + size + '</span></div>'
+                    : '';
 
-                    <button onclick="closeQuickView()" class="w-full py-3.5 bg-charcoal hover:bg-terracotta text-white rounded-xl font-bold uppercase text-xs tracking-wider transition-colors shadow-md">
-                        Done
-                    </button>
-                </div>
-            `;
+                const imgSrc = p.image || '';
+                const itemSubtotal = '&#8377;' + (p.price * quantity).toLocaleString('en-IN');
 
-            document.getElementById('quick-view-modal').classList.add('active');
-            document.body.style.overflow = 'hidden';
+                const body = document.getElementById('qv-body');
+                if (!body) return;
+
+                body.innerHTML =
+                    '<div class="p-6">' +
+                        '<div class="flex items-center gap-4 mb-6">' +
+                            '<div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-50 border border-black/5">' +
+                                '<img src="' + imgSrc + '" alt="' + p.name + '" class="w-full h-full object-cover" onerror="this.style.display=\'none\'">' +
+                            '</div>' +
+                            '<div>' +
+                                '<h3 class="font-bold text-base text-charcoal leading-snug mb-1">' + p.name + '</h3>' +
+                                '<p class="text-xs font-semibold text-terracotta tracking-widest uppercase">My Selection</p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="space-y-3 mb-6">' +
+                            sizeRow +
+                            '<div class="flex justify-between items-center pb-3 border-b border-gray-100">' +
+                                '<span class="text-sm text-gray-500">Quantity</span>' +
+                                '<span class="text-sm font-semibold text-charcoal">' + quantity + '</span>' +
+                            '</div>' +
+                            '<div class="flex justify-between items-center pt-1">' +
+                                '<span class="text-sm font-bold text-charcoal">Item Subtotal</span>' +
+                                '<span class="text-lg font-bold text-terracotta">' + itemSubtotal + '</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<button type="button" onclick="closeQuickView()" class="w-full py-3 bg-charcoal hover:bg-terracotta text-white rounded-xl font-bold uppercase text-xs tracking-wider transition-colors">' +
+                            'Done' +
+                        '</button>' +
+                    '</div>';
+
+                const modal = document.getElementById('quick-view-modal');
+                if (modal) modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+            } catch (err) {
+                console.error('openQuickView error:', err);
+                closeQuickView(); // always restore scroll on any error
+            }
         }
 
         function closeQuickView() {
-            document.getElementById('quick-view-modal').classList.remove('active');
+            const modal = document.getElementById('quick-view-modal');
+            if (modal) modal.classList.remove('active');
             document.body.style.overflow = '';
         }
 
-        // Safety net: Escape key always closes the modal
+        // Safety nets: Escape key + click outside card both close the modal
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeQuickView();
+        });
+        document.getElementById('quick-view-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeQuickView();
         });
 
 
