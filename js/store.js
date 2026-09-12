@@ -177,19 +177,24 @@ const SoutheryStore = (function () {
     }, 0);
   }
 
-  function addToCart(id, qty = 1) {
-    const existing = _cart.find(c => String(c.id) === String(id));
-    if (existing) existing.qty += qty;
-    else _cart.push({ id, qty });
+  function addToCart(id, qty = 1, size = null) {
+    const itemSize = size || 'Standard';
+    const existing = _cart.find(c => String(c.id) === String(id) && (c.size === itemSize || (!c.size && itemSize === 'Standard')));
+    if (existing) {
+      existing.qty += qty;
+      if (size) existing.size = size;
+    } else {
+      _cart.push({ id, qty, size: itemSize });
+    }
     _persistCart();
 
     // Server sync (fire & forget)
     if (_token) {
-      _apiCall('/api/cart/add', 'POST', { productId: String(id), quantity: qty })
+      _apiCall('/api/cart/add', 'POST', { productId: String(id), quantity: qty, size: itemSize })
         .catch(e => console.warn('[store] cart sync failed:', e.message));
     }
 
-    _emit('cart:changed', { action: 'add', id, qty });
+    _emit('cart:changed', { action: 'add', id, qty, size: itemSize });
   }
 
   function updateCartQty(id, change) {

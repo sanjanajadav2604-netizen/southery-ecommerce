@@ -32,14 +32,20 @@
 
       // Normalise API shape to match what frontend expects
       const normalised = raw.map(function(p) {
+        const cat = (p.category || '').toLowerCase();
+        let defaultSizes = ['Standard'];
+        if (cat === 'ring') defaultSizes = ['Size 5', 'Size 6', 'Size 7', 'Size 8', 'Size 9'];
+        else if (cat === 'bracelet' || cat === 'anklet') defaultSizes = ['XS (2.4")', 'S (2.6")', 'M (2.8")', 'L (3.0")'];
+
         return {
           id: p._id,
           _id: p._id,
           name: p.name,
+          sku: p.sku || ('SS-' + (p.category ? p.category.slice(0, 3).toUpperCase() : 'JW') + '-20K-0' + (p.name ? (p.name.length % 9 + 1) : '1')),
           slug: p.slug,
           price: p.price,
           comparePrice: p.comparePrice,
-          category: (p.category || '').toLowerCase(),
+          category: cat,
           collection: (p.collectionName || '').toLowerCase(),
           description: p.description,
           images: p.images || [],
@@ -47,6 +53,7 @@
           stock: p.stock !== undefined ? p.stock : 0,
           isFeatured: p.isFeatured || false,
           specs: p.specs || {},
+          availableSizes: p.availableSizes || defaultSizes,
           ratingsAverage: p.ratingsAverage,
           salesCount: p.salesCount
         };
