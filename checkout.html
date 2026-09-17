@@ -975,14 +975,18 @@
                     item.qty = window._qvTempQty;
                     item.size = window._qvTempSize;
                     
+                    // Update local cart reference first so renderSummary reads the right data
+                    cart = allCart;
+                    window.cart = allCart;
+                    
                     if (typeof window.SoutheryStore !== 'undefined' && typeof window.SoutheryStore.setCart === 'function') {
-                        // Let the store handle localStorage, server sync, and emitting cart:changed
+                        // Let the store persist to localStorage and fire cart:changed for badges
                         window.SoutheryStore.setCart(allCart);
                     } else {
-                        // Fallback if store is missing
                         localStorage.setItem('southery_cart', JSON.stringify(allCart));
-                        if (typeof renderSummary === 'function') renderSummary();
                     }
+                    // Always re-render the summary with the already-mutated local cart
+                    if (typeof renderSummary === 'function') renderSummary();
                 }
             } catch (e) {
                 console.error('qvSaveEdit error:', e);
@@ -1568,12 +1572,16 @@
             prefillUser();
 
             window.addEventListener('cartUpdated', async function () {
-                if (window.productsReady) {
-                    await window.productsReady.catch(() => {});
+                // Only sync the local cart reference to match SoutheryStore
+                // Do NOT call renderSummary here - that causes a feedback loop and
+                // can overwrite size changes made by qvSaveEdit before they are flushed
+                if (typeof SoutheryStore !== 'undefined') {
+                    const storeCart = SoutheryStore.getCart();
+                    if (storeCart.length > 0) {
+                        cart = storeCart;
+                        window.cart = storeCart;
+                    }
                 }
-                const storeCart = typeof SoutheryStore !== 'undefined' ? SoutheryStore.getCart() : [];
-                cart = (storeCart.length > 0 ? storeCart : null) || (window.cart && window.cart.length > 0 ? window.cart : null) || JSON.parse(localStorage.getItem('southery_cart') || '[]');
-                renderSummary();
             });
 
             if (window.productsReady) {

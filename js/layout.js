@@ -912,8 +912,8 @@ function updateAllCounts() {
         el.textContent = wishCount;
         wishCount > 0 ? el.classList.remove('hidden') : el.classList.add('hidden');
     });
-
-    window.dispatchEvent(new Event('cartUpdated'));
+    // NOTE: Do NOT dispatch cartUpdated here — checkout.html listens to that event
+    // and re-reads the cart. Dispatching it from updateAllCounts creates a feedback loop.
 }
 
 // ── Event Bus Subscriptions ──────────────────────────────────────────────────
