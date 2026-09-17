@@ -3,55 +3,149 @@
         let checkoutTotal = 0;
         let RAZORPAY_KEY = '';
 
+        window._qvCurrentId = null;
+        window._qvTempQty = 1;
+        window._qvTempSize = 'Standard';
+        window._qvUnitPrice = 0;
+
         function openQuickView(id) {
-            const p = products.find(prod => String(prod.id) === String(id));
-            if (!p) return;
+            try {
+                const allProducts = window.products || products || [];
+                const allCart = window.cart || cart || [];
 
-            const cartItem = cart.find(c => String(c.id) === String(id));
-            const quantity = cartItem ? cartItem.qty : 1;
-            const size = cartItem?.size || p.specs?.size; // if undefined/null, sizeHtml will be empty
+                const p = allProducts.find(prod => String(prod.id) === String(id));
+                if (!p) return;
 
-            const sizeHtml = size ? `
-                <div class="flex justify-between items-center pb-3 border-b border-gray-100">
-                    <span class="text-sm text-gray-500">Size</span>
-                    <span class="text-sm font-semibold text-charcoal">${size}</span>
-                </div>
-            ` : '';
+                const cartItem = allCart.find(c => String(c.id) === String(id));
+                const quantity = cartItem ? cartItem.qty : 1;
+                const size = cartItem?.size || p.specs?.size || 'Standard';
 
-            const body = document.getElementById('qv-body');
-            body.innerHTML = `
-                <div class="p-6 md:p-8">
-                    <div class="flex items-center gap-5 mb-6">
-                        <div class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-cream border border-black/5">
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'80\\' height=\\'80\\' viewBox=\\'0 0 80 80\\'%3E%3Crect width=\\'80\\' height=\\'80\\' fill=\\'%23f5f0eb\\'/%3E%3Ctext x=\\'50%25\\' y=\\'55%25\\' text-anchor=\\'middle\\' font-size=\\'30\\' fill=\\'%23c8a97e\\'%3E✦%3C/text%3E%3C/svg%3E'">
+                window._qvCurrentId = id;
+                window._qvTempQty = quantity;
+                window._qvTempSize = size;
+                window._qvUnitPrice = p.price || 0;
+
+                const availableSizes = (p.sizes && p.sizes.length) ? p.sizes : ['5', '6', '7', '8', '9', 'Standard'];
+                if (size && !availableSizes.includes(size)) {
+                    availableSizes.unshift(size);
+                }
+
+                const sizePillsHtml = availableSizes.map(sz => {
+                    const isSelected = String(sz) === String(window._qvTempSize);
+                    const activeClasses = isSelected
+                        ? 'bg-charcoal text-white shadow-sm border-charcoal'
+                        : 'bg-gray-100 text-charcoal hover:bg-gray-200 border-transparent';
+                    return `<button type="button" onclick="qvSelectSize('${sz}')" class="qv-size-pill px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 active:scale-95 ${activeClasses}" data-size="${sz}">${sz}</button>`;
+                }).join(' ');
+
+                const imgSrc = p.image || '';
+                const itemSubtotal = '₹' + (p.price * quantity).toLocaleString('en-IN');
+
+                const body = document.getElementById('qv-body');
+                if (!body) return;
+
+                body.innerHTML = `
+                    <div class="p-6 md:p-7">
+                        <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
+                            <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-cream border border-black/5 shadow-sm">
+                                <img src="${imgSrc}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.style.display='none'">
+                            </div>
+                            <div>
+                                <h3 class="font-display font-bold text-lg text-charcoal leading-snug mb-1">${p.name}</h3>
+                                <p class="text-xs font-semibold text-terracotta tracking-widest uppercase">Quick Edit Item</p>
+                                <p class="text-xs text-muted mt-0.5">₹${(p.price || 0).toLocaleString('en-IN')} each</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="font-display font-bold text-xl text-charcoal leading-tight mb-1">${p.name}</h3>
-                            <p class="text-xs font-semibold text-terracotta tracking-widest uppercase">My Selection</p>
+                        <div class="space-y-4 mb-6">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Select Size</span>
+                                    <span id="qv-size-display" class="text-xs font-bold text-terracotta">${window._qvTempSize}</span>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    ${sizePillsHtml}
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center py-3 border-y border-gray-100">
+                                <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Quantity</span>
+                                <div class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl p-1">
+                                    <button type="button" onclick="qvChangeQty(-1)" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center font-bold text-charcoal hover:bg-terracotta hover:text-white hover:border-terracotta transition-all active:scale-90 shadow-sm">-</button>
+                                    <span id="qv-qty-val" class="w-8 text-center font-bold text-sm text-charcoal">${quantity}</span>
+                                    <button type="button" onclick="qvChangeQty(1)" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center font-bold text-charcoal hover:bg-terracotta hover:text-white hover:border-terracotta transition-all active:scale-90 shadow-sm">+</button>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center pt-1">
+                                <span class="text-sm font-bold text-charcoal">Item Subtotal</span>
+                                <span id="qv-subtotal" class="text-xl font-bold text-terracotta font-display">${itemSubtotal}</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="button" onclick="closeQuickView()" class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-charcoal rounded-xl font-bold uppercase text-xs tracking-wider transition-all">
+                                Cancel
+                            </button>
+                            <button type="button" onclick="qvSaveEdit()" class="w-full py-3 bg-charcoal hover:bg-terracotta text-white rounded-xl font-bold uppercase text-xs tracking-wider transition-all shadow-md active:scale-95">
+                                Save Edit
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="space-y-3 mb-8">
-                        ${sizeHtml}
-                        <div class="flex justify-between items-center pb-3 border-b border-gray-100">
-                            <span class="text-sm text-gray-500">Quantity</span>
-                            <span class="text-sm font-semibold text-charcoal">${quantity}</span>
-                        </div>
-                        <div class="flex justify-between items-center pt-1">
-                            <span class="text-sm font-bold text-charcoal">Item Subtotal</span>
-                            <span class="text-lg font-bold text-terracotta">₹${(p.price * quantity).toLocaleString()}</span>
-                        </div>
-                    </div>
+                `;
 
-                    <button onclick="closeQuickView()" class="w-full py-3.5 bg-charcoal hover:bg-terracotta text-white rounded-xl font-bold uppercase text-xs tracking-wider transition-colors shadow-md">
-                        Done
-                    </button>
-                </div>
-            `;
+                const modal = document.getElementById('quick-view-modal');
+                if (modal) modal.classList.add('active', 'open');
+                document.body.style.overflow = 'hidden';
 
-            const modal = document.getElementById('quick-view-modal');
-            if (modal) modal.classList.add('active', 'open');
-            document.body.style.overflow = 'hidden';
+            } catch (err) {
+                console.error('openQuickView error:', err);
+                closeQuickView();
+            }
+        }
+
+        function qvSelectSize(sizeVal) {
+            window._qvTempSize = sizeVal;
+            const sizeDisp = document.getElementById('qv-size-display');
+            if (sizeDisp) sizeDisp.innerText = sizeVal;
+
+            const pills = document.querySelectorAll('.qv-size-pill');
+            pills.forEach(btn => {
+                if (btn.getAttribute('data-size') === String(sizeVal)) {
+                    btn.className = 'qv-size-pill px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 active:scale-95 bg-charcoal text-white shadow-sm border-charcoal';
+                } else {
+                    btn.className = 'qv-size-pill px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 active:scale-95 bg-gray-100 text-charcoal hover:bg-gray-200 border-transparent';
+                }
+            });
+        }
+
+        function qvChangeQty(delta) {
+            window._qvTempQty = Math.max(1, window._qvTempQty + delta);
+            const qtyVal = document.getElementById('qv-qty-val');
+            if (qtyVal) qtyVal.innerText = window._qvTempQty;
+
+            const subtotalVal = document.getElementById('qv-subtotal');
+            if (subtotalVal) {
+                const newTotal = window._qvUnitPrice * window._qvTempQty;
+                subtotalVal.innerHTML = '₹' + newTotal.toLocaleString('en-IN');
+            }
+        }
+
+        function qvSaveEdit() {
+            try {
+                const allCart = window.cart || cart || [];
+                const item = allCart.find(c => String(c.id) === String(window._qvCurrentId));
+                if (item) {
+                    item.qty = window._qvTempQty;
+                    item.size = window._qvTempSize;
+                    localStorage.setItem('southery_cart', JSON.stringify(allCart));
+                    if (typeof window.SoutheryStore !== 'undefined' && typeof window.SoutheryStore.updateCartBadge === 'function') {
+                        window.SoutheryStore.updateCartBadge();
+                    }
+                    if (typeof renderSummary === 'function') {
+                        renderSummary();
+                    }
+                }
+            } catch (e) {
+                console.error('qvSaveEdit error:', e);
+            }
+            closeQuickView();
         }
 
         function closeQuickView() {
