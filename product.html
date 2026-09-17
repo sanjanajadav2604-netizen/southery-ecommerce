@@ -890,13 +890,20 @@
                 if (cat.includes('ring')) defaultSizes = ['5', '6', '7', '8', '9'];
                 else if (cat.includes('bracelet') || cat.includes('anklet') || cat.includes('bangle') || cat.includes('kada')) defaultSizes = ['XS (2.4")', 'S (2.6")', 'M (2.8")', 'L (3.0")'];
 
-                const sizes = (p.availableSizes && p.availableSizes.length) ? p.availableSizes : (p.sizes && p.sizes.length) ? p.sizes : (p.specs && p.specs.size ? [p.specs.size] : defaultSizes);
-                window.selectedSize = sizes[0] || 'Standard';
+                let sizes = (p.availableSizes && p.availableSizes.length) ? p.availableSizes.slice() : (p.sizes && p.sizes.length) ? p.sizes.slice() : (p.specs && p.specs.size ? [p.specs.size] : defaultSizes.slice());
+                if (sizes.length > 1 && sizes.includes('Standard')) {
+                    sizes = sizes.filter(s => s !== 'Standard');
+                }
+                if (!window.selectedSize || window.selectedSize === 'Standard' || !sizes.includes(window.selectedSize)) {
+                    window.selectedSize = sizes[0] || 'Standard';
+                }
+
                 const label = document.getElementById('selected-size-label');
                 if (label) label.textContent = window.selectedSize;
-                container.innerHTML = sizes.map((s, idx) => {
+                container.innerHTML = sizes.map((s) => {
                     const safeS = String(s).replace(/"/g, '&quot;');
-                    return `<button type="button" onclick="window.selectProductSize(this)" data-size="${safeS}" class="size-chip-btn text-xs font-bold px-4 py-2 rounded-xl border transition-all ${idx === 0 ? 'bg-terracotta text-white border-terracotta shadow-sm' : 'bg-white text-charcoal border-gray-200 hover:border-terracotta/50'}">
+                    const isSelected = String(s) === String(window.selectedSize);
+                    return `<button type="button" onclick="window.selectProductSize(this)" data-size="${safeS}" class="size-chip-btn text-xs font-bold px-4 py-2 rounded-xl border transition-all ${isSelected ? 'bg-terracotta text-white border-terracotta shadow-sm' : 'bg-white text-charcoal border-gray-200 hover:border-terracotta/50'}">
                         ${s}
                     </button>`;
                 }).join('');

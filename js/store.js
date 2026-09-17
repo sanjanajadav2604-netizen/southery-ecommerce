@@ -179,10 +179,11 @@ const SoutheryStore = (function () {
 
   function addToCart(id, qty = 1, size = null) {
     const itemSize = size || 'Standard';
-    const existing = _cart.find(c => String(c.id) === String(id) && (c.size === itemSize || (!c.size && itemSize === 'Standard')));
+    // Look for existing item with the SAME id (regardless of old size) — update size + qty
+    const existing = _cart.find(c => String(c.id) === String(id));
     if (existing) {
       existing.qty += qty;
-      if (size) existing.size = size;
+      existing.size = itemSize; // always update to the latest selected size
     } else {
       _cart.push({ id, qty, size: itemSize });
     }
