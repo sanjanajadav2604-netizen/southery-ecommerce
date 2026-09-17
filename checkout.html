@@ -842,23 +842,31 @@
                 if (!p) return;
 
                 const cartItem = allCart.find(function(c) { return String(c.id) === String(id); });
+                const quantity = cartItem ? cartItem.qty : 1;
                 const cat = (p.category || '').toLowerCase();
                 let defaultSizes = ['Standard'];
                 if (cat.includes('ring')) defaultSizes = ['5', '6', '7', '8', '9'];
                 else if (cat.includes('bracelet') || cat.includes('anklet') || cat.includes('bangle') || cat.includes('kada')) defaultSizes = ['XS (2.4")', 'S (2.6")', 'M (2.8")', 'L (3.0")'];
 
-                let availableSizes = (p.availableSizes && p.availableSizes.length) ? p.availableSizes.slice() : (p.sizes && p.sizes.length) ? p.sizes.slice() : defaultSizes.slice();
+                // Safely get available sizes as strings
+                let availableSizes = [];
+                if (p.availableSizes && p.availableSizes.length) availableSizes = p.availableSizes.map(function(s) { return String(s); });
+                else if (p.sizes && p.sizes.length) availableSizes = p.sizes.map(function(s) { return String(s); });
+                else availableSizes = defaultSizes.map(function(s) { return String(s); });
+
                 if (availableSizes.length > 1 && availableSizes.includes('Standard')) {
-                    availableSizes = availableSizes.filter(s => s !== 'Standard');
+                    availableSizes = availableSizes.filter(function(s) { return s !== 'Standard'; });
                 }
 
+                // Resolve current size from cart item — fall back to first available
+                let size = (cartItem && cartItem.size) ? String(cartItem.size) : null;
                 if (!size || size === 'Standard' || !availableSizes.includes(size)) {
                     size = availableSizes[0] || 'Standard';
                 }
 
                 window._qvCurrentId = id;
                 window._qvTempQty = quantity;
-                window._qvTempSize = size;
+                window._qvTempSize = String(size);
                 window._qvUnitPrice = p.price || 0;
 
                 const sizePillsHtml = availableSizes.map(function(sz) {
@@ -966,12 +974,14 @@
                 if (item) {
                     item.qty = window._qvTempQty;
                     item.size = window._qvTempSize;
-                    localStorage.setItem('southery_cart', JSON.stringify(allCart));
-                    if (typeof window.SoutheryStore !== 'undefined' && typeof window.SoutheryStore.updateCartBadge === 'function') {
-                        window.SoutheryStore.updateCartBadge();
-                    }
-                    if (typeof renderSummary === 'function') {
-                        renderSummary();
+                    
+                    if (typeof window.SoutheryStore !== 'undefined' && typeof window.SoutheryStore.setCart === 'function') {
+                        // Let the store handle localStorage, server sync, and emitting cart:changed
+                        window.SoutheryStore.setCart(allCart);
+                    } else {
+                        // Fallback if store is missing
+                        localStorage.setItem('southery_cart', JSON.stringify(allCart));
+                        if (typeof renderSummary === 'function') renderSummary();
                     }
                 }
             } catch (e) {
