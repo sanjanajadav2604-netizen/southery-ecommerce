@@ -969,7 +969,13 @@
 
         function qvSaveEdit() {
             try {
-                const allCart = window.cart || [];
+                // Use SoutheryStore as the authoritative source; fall back to local cart or localStorage
+                let allCart;
+                if (typeof window.SoutheryStore !== 'undefined') {
+                    allCart = window.SoutheryStore.getCart();
+                } else {
+                    allCart = window.cart || cart || JSON.parse(localStorage.getItem('southery_cart') || '[]');
+                }
                 const item = allCart.find(function(c) { return String(c.id) === String(window._qvCurrentId); });
                 if (item) {
                     item.qty = window._qvTempQty;
@@ -1551,6 +1557,7 @@
         });
 
         let cart = JSON.parse(localStorage.getItem('southery_cart')) || [];
+        window.cart = cart; // expose to window so qvSaveEdit can access it
         async function fetchSecureConfig() {
             try {
                 const data = await apiCall('/api/config/razorpay');
@@ -1589,7 +1596,8 @@
             }
             try {
                 const storeCart = typeof SoutheryStore !== 'undefined' ? SoutheryStore.getCart() : [];
-                cart = (storeCart.length > 0 ? storeCart : null) || (window.cart && window.cart.length > 0 ? window.cart : null) || JSON.parse(localStorage.getItem('southery_cart') || '[]');
+                cart = (storeCart.length > 0 ? storeCart : null) || JSON.parse(localStorage.getItem('southery_cart') || '[]');
+                window.cart = cart; // keep window.cart in sync for qvSaveEdit
             } catch (e) { cart = []; }
             renderSummary();
         });
