@@ -1464,14 +1464,18 @@
                 if (window.productsReady) {
                     await window.productsReady.catch(() => {});
                 }
-                cart = window.cart || [];
+                const storeCart = typeof SoutheryStore !== 'undefined' ? SoutheryStore.getCart() : [];
+                cart = (storeCart.length > 0 ? storeCart : null) || (window.cart && window.cart.length > 0 ? window.cart : null) || JSON.parse(localStorage.getItem('southery_cart') || '[]');
                 renderSummary();
             });
 
             if (window.productsReady) {
                 await window.productsReady.catch(() => {});
             }
-            try { cart = window.cart || JSON.parse(localStorage.getItem('southery_cart')) || []; } catch (e) { cart = []; }
+            try {
+                const storeCart = typeof SoutheryStore !== 'undefined' ? SoutheryStore.getCart() : [];
+                cart = (storeCart.length > 0 ? storeCart : null) || (window.cart && window.cart.length > 0 ? window.cart : null) || JSON.parse(localStorage.getItem('southery_cart') || '[]');
+            } catch (e) { cart = []; }
             renderSummary();
         });
     </script>

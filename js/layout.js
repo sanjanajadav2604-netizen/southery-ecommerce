@@ -1030,9 +1030,14 @@ async function fetchUserCartAndWishlist() {
 
     try {
         const cartData = await apiCall('/api/cart');
-        const serverCart = (cartData.cart || []).map(item => ({ id: item.productId, qty: item.quantity }));
-        // Server is source of truth when logged in — use server cart directly
-        window.cart = serverCart.length > 0 ? serverCart : localCart;
+        const serverCart = (cartData.cart || []).map(item => ({ id: item.productId, qty: item.quantity, size: item.size || 'Standard' }));
+        if (serverCart.length > 0) {
+            window.cart = serverCart;
+        } else if (localCart.length > 0) {
+            window.cart = localCart;
+        } else {
+            window.cart = [];
+        }
         localStorage.setItem('southery_cart', JSON.stringify(window.cart));
     } catch (e) {
         console.warn('Failed to fetch cart from API, using local data:', e.message);

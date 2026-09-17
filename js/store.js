@@ -415,8 +415,21 @@ const SoutheryStore = (function () {
     try {
       const cartData = await _apiCall('/api/cart');
       if (cartData && Array.isArray(cartData.cart)) {
-        _cart = cartData.cart.map(item => ({ id: item.productId, qty: item.quantity }));
-        _persistCart();
+        const serverCart = cartData.cart.map(item => ({ id: item.productId, qty: item.quantity, size: item.size || 'Standard' }));
+        if (serverCart.length > 0) {
+          _cart = serverCart;
+          _persistCart();
+        } else if (localCart.length > 0) {
+          _cart = localCart;
+          _persistCart();
+          for (const item of localCart) {
+            _apiCall('/api/cart/add', 'POST', { productId: String(item.id), quantity: item.qty, size: item.size || 'Standard' })
+              .catch(e => console.warn('[store] Sync local cart item failed:', e.message));
+          }
+        } else {
+          _cart = [];
+          _persistCart();
+        }
       }
     } catch (e) {
       console.warn('[store] Failed to fetch cart from API:', e.message);
