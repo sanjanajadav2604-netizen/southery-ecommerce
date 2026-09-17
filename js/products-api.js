@@ -34,7 +34,7 @@
       const normalised = raw.map(function(p) {
         const cat = (p.category || '').toLowerCase();
         let defaultSizes = ['Standard'];
-        if (cat.includes('ring')) defaultSizes = ['5', '6', '7', '8', '9'];
+        if (cat.includes('ring') && !cat.includes('earring')) defaultSizes = ['5', '6', '7', '8', '9'];
         else if (cat.includes('bracelet') || cat.includes('anklet') || cat.includes('bangle') || cat.includes('kada')) defaultSizes = ['XS (2.4")', 'S (2.6")', 'M (2.8")', 'L (3.0")'];
 
         return {
