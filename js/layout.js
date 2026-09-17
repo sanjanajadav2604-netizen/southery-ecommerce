@@ -875,8 +875,8 @@ window.updateCartQty = function (id, change) {
 
 // ── Phase 2: addToCart → SoutheryStore ──────────────────────────────────────
 // Store handles: mutation, localStorage persist, server sync (fire & forget).
-window.addToCart = function (id, qty = 1) {
-    SoutheryStore.addToCart(id, qty);
+window.addToCart = function (id, qty = 1, size = null) {
+    SoutheryStore.addToCart(id, qty, size);
     updateAllCounts();
     renderCart();
     const product = window.getProducts().find(p => String(p.id) === String(id));
