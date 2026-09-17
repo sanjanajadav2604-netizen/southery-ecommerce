@@ -997,14 +997,14 @@
                 subtotal += p.price * item.qty;
                 return `
                     <div class="flex gap-4 items-center group/item animate-in is-visible">
-                        <div onclick="openQuickView('${p.id}')" class="relative w-16 h-16 bg-cream rounded-lg overflow-hidden border cursor-pointer hover:ring-1 ring-terracotta/30 transition-all flex-shrink-0">
+                        <a href="product.html?id=${p.id}" target="_blank" title="View product details in new tab" class="relative w-16 h-16 bg-cream rounded-lg overflow-hidden border cursor-pointer hover:ring-1 ring-terracotta/30 transition-all flex-shrink-0">
                             <img loading="lazy" src="${p.image}" class="w-full h-full object-cover" alt="${p.name}" onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'64\' height=\'64\' viewBox=\'0 0 64 64\'%3E%3Crect width=\'64\' height=\'64\' fill=\'%23f5f0eb\'/%3E%3Ctext x=\'50%25\' y=\'55%25\' text-anchor=\'middle\' font-size=\'24\' fill=\'%23c8a97e\'%3E✦%3C/text%3E%3C/svg%3E'">
-                        </div>
+                        </a>
                         <div class="flex-1 min-w-0">
-                            <div onclick="openQuickView('${p.id}')" class="cursor-pointer group">
+                            <a href="product.html?id=${p.id}" target="_blank" title="View product details in new tab" class="cursor-pointer group block">
                                 <h3 class="text-xs font-bold text-charcoal truncate uppercase tracking-tighter group-hover:text-terracotta transition-colors">${p.name}</h3>
                                 <p class="text-[9px] text-muted uppercase tracking-widest mt-0.5">Luxury Collection</p>
-                            </div>
+                            </a>
                             
                             <div class="flex items-center gap-3 mt-2">
                                 <div class="flex items-center bg-white border border-black/5 rounded-md px-1 py-0.5">
