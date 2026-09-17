@@ -1135,6 +1135,7 @@
             }).join('');
 
             container.innerHTML = itemsHtml;
+            if (mContainer) mContainer.innerHTML = itemsHtml; // Ensure mobile summary is updated
 
             const tax = Math.round(subtotal * 0.03);
             const total = subtotal + tax - discount;

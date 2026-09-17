@@ -762,6 +762,7 @@ function renderCart() {
                         <h4 class="font-bold text-sm text-charcoal pr-4">${p.name}</h4>
                         <button onclick="updateCartQty('${c.id}', -${c.qty})" class="text-gray-300 hover:text-red-400 transition-colors">&times;</button>
                     </div>
+                    ${c.size && c.size !== 'Standard' ? `<p class="text-[9px] font-bold text-terracotta mb-1 uppercase tracking-wider">Size ${c.size}</p>` : ''}
                     ${p.stock <= 5 ? `<p class="text-[9px] font-bold text-terracotta mb-1 animate-pulse uppercase tracking-wider">Only ${p.stock} left &bull; Order soon</p>` : ''}
                     <p class="text-terracotta font-bold text-sm mb-auto">&#8377;${p.price.toLocaleString()}</p>
                     <div class="flex items-center gap-2 mt-2 bg-white px-2 py-1 rounded-lg border border-gray-100 shadow-sm w-fit">
