@@ -881,29 +881,37 @@
             const params = new URLSearchParams(window.location.search);
             currentId = params.get('id');
             window.selectedSize = window.selectedSize || 'Standard';
-            window.renderSizeSelector = window.renderSizeSelector || function(p) {
+            window.renderSizeSelector = function(p) {
                 const container = document.getElementById('size-options-container');
                 const section = document.getElementById('size-selector-section');
                 if (!container || !section) return;
-                const sizes = p.availableSizes || p.sizes || (p.specs && p.specs.size ? [p.specs.size] : ['5', '6', '7', '8', '9', 'Standard']);
+                const cat = (p.category || '').toLowerCase();
+                let defaultSizes = ['Standard'];
+                if (cat.includes('ring')) defaultSizes = ['5', '6', '7', '8', '9'];
+                else if (cat.includes('bracelet') || cat.includes('anklet') || cat.includes('bangle') || cat.includes('kada')) defaultSizes = ['XS (2.4")', 'S (2.6")', 'M (2.8")', 'L (3.0")'];
+
+                const sizes = (p.availableSizes && p.availableSizes.length) ? p.availableSizes : (p.sizes && p.sizes.length) ? p.sizes : (p.specs && p.specs.size ? [p.specs.size] : defaultSizes);
                 window.selectedSize = sizes[0] || 'Standard';
                 const label = document.getElementById('selected-size-label');
                 if (label) label.textContent = window.selectedSize;
-                container.innerHTML = sizes.map((s, idx) => `
-                    <button type="button" onclick="window.selectSize('${s}')" data-size="${s}" class="size-chip-btn text-xs font-bold px-4 py-2 rounded-xl border transition-all ${idx === 0 ? 'bg-terracotta text-white border-terracotta shadow-sm' : 'bg-white text-charcoal border-gray-200 hover:border-terracotta/50'}">
+                container.innerHTML = sizes.map((s, idx) => {
+                    const safeS = String(s).replace(/"/g, '&quot;');
+                    return `<button type="button" onclick="window.selectProductSize(this)" data-size="${safeS}" class="size-chip-btn text-xs font-bold px-4 py-2 rounded-xl border transition-all ${idx === 0 ? 'bg-terracotta text-white border-terracotta shadow-sm' : 'bg-white text-charcoal border-gray-200 hover:border-terracotta/50'}">
                         ${s}
-                    </button>
-                `).join('');
+                    </button>`;
+                }).join('');
             };
-            window.selectSize = window.selectSize || function(s) {
+            window.selectProductSize = function(btn) {
+                const s = btn.getAttribute('data-size');
                 window.selectedSize = s;
                 const label = document.getElementById('selected-size-label');
                 if (label) label.textContent = s;
-                document.querySelectorAll('.size-chip-btn').forEach(btn => {
-                    const isMatch = btn.getAttribute('data-size') === s;
-                    btn.className = `size-chip-btn text-xs font-bold px-4 py-2 rounded-xl border transition-all ${isMatch ? 'bg-terracotta text-white border-terracotta shadow-sm' : 'bg-white text-charcoal border-gray-200 hover:border-terracotta/50'}`;
+                document.querySelectorAll('.size-chip-btn').forEach(b => {
+                    const isMatch = b.getAttribute('data-size') === s;
+                    b.className = `size-chip-btn text-xs font-bold px-4 py-2 rounded-xl border transition-all ${isMatch ? 'bg-terracotta text-white border-terracotta shadow-sm' : 'bg-white text-charcoal border-gray-200 hover:border-terracotta/50'}`;
                 });
             };
+            window.selectSize = window.selectProductSize;
             const prods = window.getProducts();
             if (!prods || prods.length === 0) return;
             const product = prods.find(p => String(p.id) === String(currentId));

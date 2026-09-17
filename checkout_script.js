@@ -25,7 +25,12 @@
                 window._qvTempSize = size;
                 window._qvUnitPrice = p.price || 0;
 
-                const availableSizes = (p.sizes && p.sizes.length) ? p.sizes : ['5', '6', '7', '8', '9', 'Standard'];
+                const cat = (p.category || '').toLowerCase();
+                let defaultSizes = ['Standard'];
+                if (cat.includes('ring')) defaultSizes = ['5', '6', '7', '8', '9'];
+                else if (cat.includes('bracelet') || cat.includes('anklet') || cat.includes('bangle') || cat.includes('kada')) defaultSizes = ['XS (2.4")', 'S (2.6")', 'M (2.8")', 'L (3.0")'];
+
+                const availableSizes = (p.availableSizes && p.availableSizes.length) ? p.availableSizes : (p.sizes && p.sizes.length) ? p.sizes : defaultSizes;
                 if (size && !availableSizes.includes(size)) {
                     availableSizes.unshift(size);
                 }
@@ -35,7 +40,8 @@
                     const activeClasses = isSelected
                         ? 'bg-charcoal text-white shadow-sm border-charcoal'
                         : 'bg-gray-100 text-charcoal hover:bg-gray-200 border-transparent';
-                    return `<button type="button" onclick="qvSelectSize('${sz}')" class="qv-size-pill px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 active:scale-95 ${activeClasses}" data-size="${sz}">${sz}</button>`;
+                    const safeSz = String(sz).replace(/"/g, '&quot;');
+                    return `<button type="button" onclick="qvSelectSize(this)" class="qv-size-pill px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 active:scale-95 ${activeClasses}" data-size="${safeSz}">${sz}</button>`;
                 }).join(' ');
 
                 const imgSrc = p.image || '';
@@ -100,17 +106,18 @@
             }
         }
 
-        function qvSelectSize(sizeVal) {
+        function qvSelectSize(btn) {
+            const sizeVal = typeof btn === 'string' ? btn : btn.getAttribute('data-size');
             window._qvTempSize = sizeVal;
             const sizeDisp = document.getElementById('qv-size-display');
             if (sizeDisp) sizeDisp.innerText = sizeVal;
 
             const pills = document.querySelectorAll('.qv-size-pill');
-            pills.forEach(btn => {
-                if (btn.getAttribute('data-size') === String(sizeVal)) {
-                    btn.className = 'qv-size-pill px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 active:scale-95 bg-charcoal text-white shadow-sm border-charcoal';
+            pills.forEach(b => {
+                if (b.getAttribute('data-size') === String(sizeVal)) {
+                    b.className = 'qv-size-pill px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 active:scale-95 bg-charcoal text-white shadow-sm border-charcoal';
                 } else {
-                    btn.className = 'qv-size-pill px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 active:scale-95 bg-gray-100 text-charcoal hover:bg-gray-200 border-transparent';
+                    b.className = 'qv-size-pill px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 active:scale-95 bg-gray-100 text-charcoal hover:bg-gray-200 border-transparent';
                 }
             });
         }
